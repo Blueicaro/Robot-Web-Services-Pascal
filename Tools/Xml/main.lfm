@@ -1,0 +1,91 @@
+object Form1: TForm1
+  Left = 368
+  Height = 499
+  Top = 31
+  Width = 791
+  Caption = 'Form1'
+  ClientHeight = 499
+  ClientWidth = 791
+  object Panel1: TPanel
+    Left = 0
+    Height = 50
+    Top = 0
+    Width = 791
+    Align = alTop
+    ClientHeight = 50
+    ClientWidth = 791
+    TabOrder = 0
+    object btProcresar: TButton
+      Left = 40
+      Height = 25
+      Top = 16
+      Width = 75
+      Caption = 'Procesar'
+      OnClick = btProcresarClick
+      TabOrder = 0
+    end
+  end
+  object Memo1: TMemo
+    Left = 0
+    Height = 230
+    Top = 50
+    Width = 791
+    Align = alTop
+    Lines.Strings = (
+      '<?xml version="1.0" encoding="utf-8"?>'
+      '<html xmlns="http://www.w3.org/1999/xhtml">'
+      #9'<head>'
+      #9#9'<base href="https://localhost:80/"/>'
+      #9'</head>'
+      #9'<body>'
+      #9#9'<div class="state">'
+      #9#9#9'<a href="" rel="self"/>'
+      #9#9#9'<ul>'
+      #9#9#9#9'<li class="srvlst-service-li" title="ctrl">'
+      #9#9#9#9#9'<a href="ctrl" rel="self"> </a>'
+      #9#9#9#9'</li>'
+      #9#9#9#9'<li class="srvlst-service-li" title="rw">'
+      #9#9#9#9#9'<a href="rw" rel="self"> </a>'
+      #9#9#9#9'</li>'
+      #9#9#9#9'<li class="srvlst-service-li" title="progress">'
+      #9#9#9#9#9'<a href="progress" rel="self"> </a>'
+      #9#9#9#9'</li>'
+      #9#9#9#9'<li class="srvlst-service-li" title="fileservice">'
+      #9#9#9#9#9'<a href="fileservice" rel="self"> </a>'
+      #9#9#9#9'</li>'
+      #9#9#9#9'<li class="srvlst-service-li" title="users">'
+      #9#9#9#9#9'<a href="users" rel="self"> </a>'
+      #9#9#9#9'</li>'
+      #9#9#9#9'<li class="srvlst-service-li" title="subscription">'
+      #9#9#9#9#9'<a href="subscription" rel="self"> </a>'
+      #9#9#9#9'</li>'
+      #9#9#9#9'<li class="srvlst-service-li" title="uas">'
+      #9#9#9#9#9'<a href="uas" rel="self"> </a>'
+      #9#9#9#9'</li>'
+      #9#9#9'</ul>'
+      #9#9'</div>'
+      #9'</body>'
+      '</html>'
+    )
+    ScrollBars = ssAutoBoth
+    TabOrder = 1
+  end
+  object Memo2: TMemo
+    Left = 0
+    Height = 214
+    Top = 285
+    Width = 791
+    Align = alClient
+    ScrollBars = ssAutoBoth
+    TabOrder = 2
+  end
+  object Splitter1: TSplitter
+    Cursor = crVSplit
+    Left = 0
+    Height = 5
+    Top = 280
+    Width = 791
+    Align = alTop
+    ResizeAnchor = akTop
+  end
+end

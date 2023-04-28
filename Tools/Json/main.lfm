@@ -1,0 +1,130 @@
+object Form1: TForm1
+  Left = -8
+  Height = 575
+  Top = -8
+  Width = 877
+  Caption = 'Form1'
+  ClientHeight = 575
+  ClientWidth = 877
+  LCLVersion = '2.2.6.0'
+  WindowState = wsMaximized
+  object Panel1: TPanel
+    Left = 0
+    Height = 50
+    Top = 0
+    Width = 1237
+    Align = alTop
+    ClientHeight = 50
+    ClientWidth = 1237
+    TabOrder = 0
+    object brProbar: TButton
+      Left = 184
+      Height = 25
+      Top = 8
+      Width = 75
+      Caption = 'Probar'
+      OnClick = brProbarClick
+      TabOrder = 0
+    end
+  end
+  object Memo1: TMemo
+    Left = 0
+    Height = 321
+    Top = 50
+    Width = 1237
+    Align = alTop
+    Lines.Strings = (
+      '{'
+      '    "_links": {'
+      '        "base": {'
+      '            "href": "https://localhost:80/rw/rapid/"'
+      '        },'
+      '        "self": {'
+      '            "href": "tasks"'
+      '        }'
+      '    },'
+      '    "_embedded": {'
+      '        "resources": ['
+      '            {'
+      '                "_links": {'
+      '                    "self": {'
+      '                        "href": "tasks/spy"'
+      '                    }'
+      '                },'
+      '                "_type": "rap-tasks-spy-li",'
+      '                "_title": "spy"'
+      '            },'
+      '            {'
+      '                "_links": {'
+      '                    "self": {'
+      '                        "href": "tasks/syncstate/program-pointer"'
+      '                    }'
+      '                },'
+      '                "_type": "rap-tasks-syncstate-pp-li",'
+      '                "_title": "program-pointer"'
+      '            },'
+      '            {'
+      '                "_links": {'
+      '                    "self": {'
+      '                        "href": "tasks/syncstate/motion-pointer"'
+      '                    }'
+      '                },'
+      '                "_type": "rap-tasks-syncstate-mp-li",'
+      '                "_title": "motion-pointer"'
+      '            },'
+      '            {'
+      '                "_links": {'
+      '                    "self": {'
+      '                        "href": "tasks/T_ROB1"'
+      '                    }'
+      '                },'
+      '                "_type": "rap-task-li",'
+      '                "_title": "T_ROB1",'
+      '                "name": "T_ROB1",'
+      '                "type": "normal",'
+      '                "taskstate": "linked",'
+      '                "excstate": "ready",'
+      '                "active": "On",'
+      '                "motiontask": "TRUE"'
+      '            },'
+      '            {'
+      '                "_links": {'
+      '                    "self": {'
+      '                        "href": "tasks/T_Multi"'
+      '                    }'
+      '                },'
+      '                "_type": "rap-task-li",'
+      '                "_title": "T_Multi",'
+      '                "name": "T_Multi",'
+      '                "type": "semistatic",'
+      '                "taskstate": "initiated",'
+      '                "excstate": "ready",'
+      '                "active": "Off",'
+      '                "motiontask": "FALSE"'
+      '            }'
+      '        ]'
+      '    }'
+      '}'
+    )
+    ScrollBars = ssAutoBoth
+    TabOrder = 1
+  end
+  object Splitter1: TSplitter
+    Cursor = crVSplit
+    Left = 0
+    Height = 5
+    Top = 371
+    Width = 1237
+    Align = alTop
+    ResizeAnchor = akTop
+  end
+  object Memo2: TMemo
+    Left = 0
+    Height = 199
+    Top = 376
+    Width = 1237
+    Align = alClient
+    ScrollBars = ssAutoBoth
+    TabOrder = 3
+  end
+end
