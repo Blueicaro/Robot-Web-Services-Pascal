@@ -10,6 +10,55 @@ uses
 type
   TAbbWebServicesError = class(Exception);
 
+
+
+type
+
+  { TResourceItem }
+
+  TResourceItem = class(TCollectionItem)
+  private
+    Ftitle: string;
+    F_type: string;
+  published
+    property _title: string read Ftitle write Ftitle;
+    property _type: string read F_type write F_type;
+  end;
+  { "_type": "cfg-dt-attribute",
+            "_title": "Name",
+            "name": "Name",
+            "type": "string",
+            "numbers": "1",
+            "min": "",
+            "max": "",
+            "init": "",
+            "mandatory": "false"}
+   Type
+
+   { TCfgDtAtributeItem }
+
+ TCfgDtAtributeItem = class (TCollectionItem)
+   private
+     Finit: string;
+     Fmandatory: string;
+     Fmax: string;
+     Fmin: string;
+     Fname: strign;
+     Fnumbers: String;
+     Ftitle: string;
+     Ttype: string;
+   published
+    property title: string read Ftitle write Ftitle;
+    property Ttype: string read Ttype write Ttype;
+    property name : string read Fname write Fname;
+    property numbers: String read Fnumbers write Fnumbers;
+    property min:string read Fmin write Fmin;
+    property max: string read Fmax write Fmax;
+    property init: string read Finit write Finit;
+    property mandatory : string read Fmandatory write Fmandatory;
+
+   end;
+
 type
 
   { TTaskItem }
@@ -53,10 +102,11 @@ type
 
   end;
 
-
-
-
-
+const
+  CFG_DOMAIN_LI: string = 'cfg-domain-li';
+  RAP_TASK_LI: string = 'rap-task-li';
+  CFG_DT_LI   :string = 'cfg-dt-li';
+  CFG_DT_ATTRIBUTE : string = 'cfg-dt-attribute';
 
 procedure ErrorWebService(ainfo: string);
 {
@@ -65,7 +115,7 @@ procedure ErrorWebService(ainfo: string);
 function Formatjsonkey(aKeyName: string): string;
 
 procedure GetClassList(aDatos: string; aListItems: TCollection;
-  aItemClass: TCollectionItemClass);
+  aItemClass: TCollectionItemClass; TipoLista:string);
 
 implementation
 
@@ -89,7 +139,7 @@ begin
 end;
 
 procedure GetClassList(aDatos: string; aListItems: TCollection;
-  aItemClass: TCollectionItemClass);
+  aItemClass: TCollectionItemClass; TipoLista: string);
 var
   I, X: integer;
   Cadena: TJSONStringType;
@@ -108,8 +158,9 @@ begin
     begin
       ErrorWebService('No se puede procesar la respuesta');
     end;
+
     for I := 0 to DataResources.Count - 1 do
-      if DataResources.Items[I].FindPath('_type').AsString = 'rap-task-li' then
+      if DataResources.Items[I].FindPath('_type').AsString = TipoLista then
       begin
         // RapTaskObject := TRapTaskObject.Create;
         ItemActual := aListItems.Add;

@@ -25,6 +25,9 @@ type
   public
     procedure GetListModules(aListModule: TStringList);
   public
+    procedure GetListDomains(aList: TStringList);
+    procedure GetListDomain(aDomain: string; ListDomain:TStringList);
+  public
     constructor Create(aRobotConexion: TRobotConexion);
     destructor Destroy; override;
   end;
@@ -142,7 +145,7 @@ begin
   try
     if FConexion.StatusCode = 200 then
     begin
-      GetClassList(FConexion.Respuesta.Text, Lista, TTaskItem);
+      GetClassList(FConexion.Respuesta.Text, Lista, TTaskItem, rap_task_li);
     end;
     for I := 0 to Lista.Count - 1 do
     begin
@@ -159,10 +162,68 @@ end;
 
 procedure TRobotWareService.GetListModules(aListModule: TStringList);
 begin
-   try
+  try
     FConexion.Get(FLocalUrl + '/rapid/tasks');
   except
     ErrorWebService('Error conexión. codigo: ' + FConexion.StatusText);
+  end;
+end;
+
+procedure TRobotWareService.GetListDomains(aList: TStringList);
+var
+  Lista: TListItems;
+  I: integer;
+begin
+  try
+    FConexion.Get(FLocalUrl + '/cfg');
+  except
+    ErrorWebService('Error conexión. codigo: ' + FConexion.StatusText);
+  end;
+  Lista := TListItems.Create(TResourceItem);
+  try
+    if FConexion.StatusCode = 200 then
+    begin
+      GetClassList(FConexion.Respuesta.Text, Lista, TResourceItem, cfg_domain_li);
+      for I := 0 to Lista.Count - 1 do
+      begin
+        with Lista.Items[I] as TResourceItem do
+        begin
+          aList.Add(_title);
+        end;
+      end;
+    end;
+  finally
+    FreeAndNil(Lista);
+  end;
+
+end;
+
+procedure TRobotWareService.GetListDomain(aDomain: string;
+  ListDomain: TStringList);
+var
+  Lista: TListItems;
+  I: Integer;
+begin
+  try
+    FConexion.Get(FLocalUrl + '/cfg' + '/'+aDomain);
+  except
+    ErrorWebService('Error conexión. codigo: ' + FConexion.StatusText);
+  end;
+  Lista := TListItems.Create(TResourceItem);
+  try
+    if FConexion.StatusCode = 200 then
+    begin
+      GetClassList(FConexion.Respuesta.Text, Lista, TResourceItem, CFG_DT_LI);
+      for I := 0 to Lista.Count - 1 do
+      begin
+        with Lista.Items[I] as TResourceItem do
+        begin
+          ListDomain.Add(_title);
+        end;
+      end;
+    end;
+  finally
+    FreeAndNil(Lista);
   end;
 end;
 

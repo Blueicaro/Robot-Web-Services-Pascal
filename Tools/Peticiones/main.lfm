@@ -1,11 +1,11 @@
 object Form1: TForm1
   Left = -8
-  Height = 691
+  Height = 730
   Top = -8
-  Width = 904
+  Width = 920
   Caption = 'Enviar peticiones'
-  ClientHeight = 668
-  ClientWidth = 904
+  ClientHeight = 707
+  ClientWidth = 920
   Icon.Data = {
     BE1000000000010001002020000001002000A810000016000000280000002000
     0000400000000100200000000000001000006400000064000000000000000000
@@ -148,10 +148,10 @@ object Form1: TForm1
     Left = 0
     Height = 50
     Top = 0
-    Width = 904
+    Width = 920
     Align = alTop
     ClientHeight = 50
-    ClientWidth = 904
+    ClientWidth = 920
     TabOrder = 0
     object btEnviar: TButton
       Left = 24
@@ -163,9 +163,9 @@ object Form1: TForm1
       TabOrder = 0
     end
     object chkJson: TCheckBox
-      Left = 435
+      Left = 800
       Height = 19
-      Top = 17
+      Top = 21
       Width = 43
       Caption = 'Json'
       TabOrder = 1
@@ -174,7 +174,7 @@ object Form1: TForm1
       Left = 120
       Height = 23
       Top = 17
-      Width = 256
+      Width = 648
       ItemHeight = 15
       OnKeyPress = cbTextoToSendKeyPress
       TabOrder = 2
@@ -183,9 +183,9 @@ object Form1: TForm1
   end
   inline SynEditRespuesta: TSynEdit
     Left = 0
-    Height = 308
+    Height = 347
     Top = 360
-    Width = 904
+    Width = 920
     Align = alClient
     BlockTabIndent = 1
     Font.Height = -13
@@ -684,7 +684,7 @@ object Form1: TForm1
     Left = 0
     Height = 310
     Top = 50
-    Width = 904
+    Width = 920
     Align = alTop
     Font.Height = -13
     Font.Name = 'Courier New'

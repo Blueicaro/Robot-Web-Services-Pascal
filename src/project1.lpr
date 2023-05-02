@@ -20,7 +20,7 @@ begin
   try
     try
       L := TStringList.Create;
-      Robot.RobotWare.GetListTasks(L);
+      Robot.RobotWare.GetListDomain('eio',L);
       For X := 0 TO L.Count-1 do
       begin
         Writeln (L[x]);
