@@ -5,32 +5,24 @@ program project1;
 uses
  {$IFDEF UNIX}
   cthreads,
-              {$ENDIF}
+                {$ENDIF}
   Classes { you can add units after this },
   SysUtils,
   AbbWebServices;
 
 var
   Robot: TAbbWebServices;
-  L: TStringList;
-  X: Integer;
 begin
 
   Robot := TAbbWebServices.Create('https://localhost:80');
   try
     try
-      L := TStringList.Create;
-      Robot.RobotWare.GetListDomain('eio',L);
-      For X := 0 TO L.Count-1 do
-      begin
-        Writeln (L[x]);
-      end;
+      Robot.RobotWare.RequestMastership;
     except
-      on E: Exception do
-        Writeln(e.Message);
+      on e: Exception do
+        WriteLn(e.Message)
     end;
   finally
-    FreeAndNil(L);
     FreeAndNil(Robot);
     ReadLn;
   end;

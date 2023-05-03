@@ -43,13 +43,13 @@ type
      Fmandatory: string;
      Fmax: string;
      Fmin: string;
-     Fname: strign;
+     Fname: string;
      Fnumbers: String;
      Ftitle: string;
-     Ttype: string;
+     Ftype: string;
    published
     property title: string read Ftitle write Ftitle;
-    property Ttype: string read Ttype write Ttype;
+    property Ttype: string read Ftype write Ftype;
     property name : string read Fname write Fname;
     property numbers: String read Fnumbers write Fnumbers;
     property min:string read Fmin write Fmin;

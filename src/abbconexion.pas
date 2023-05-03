@@ -23,7 +23,7 @@ type
     FUser: string;
     FHttpSend: TFPHTTPClient;
     FClave: string;
-    procedure GenerarCabeceras;
+    procedure GenerarCabeceras(Get: boolean = True);
     procedure GenerarClave;
   public
     procedure SetRobotUrl(Url: string);
@@ -35,6 +35,7 @@ type
   public
     procedure SetUserPassword(aUser, aPassword: string);
     procedure Get(UrlRelative: string);
+    procedure Post(UrlRelative: string; BodyText: string = '');
 
   public
     procedure GetListResources(aJson: TStringList; Lista: TStringList);
@@ -70,37 +71,58 @@ begin
   GenerarClave;
 end;
 
-{ #todo : Arreglar: Cuando falla la conexión y se eleva la excepción da un error de excepcion en lugar de enviarla a la rutina superior }
+
 procedure TRobotConexion.Get(UrlRelative: string);
 var
   RutaAbsoluta: string;
 begin
   RutaAbsoluta := FRobotUrl + UrlRelative;
   FRespuesta.Clear;
+
+  GenerarCabeceras;
+  FHttpSend.Get(RutaAbsoluta, FRespuesta);
+  FStatusText := FHttpSend.ResponseStatusText;
+  FStatusCode := FHttpSend.ResponseStatusCode;
+  FCookie := FHttpSend.ResponseHeaders.Values['Set-Cookie'];
+
+end;
+
+procedure TRobotConexion.Post(UrlRelative: string; BodyText: string);
+var
+  RutaAbsoluta: string;
+  Response: TStringStream;
+begin
+  RutaAbsoluta := FRobotUrl + UrlRelative;
+  FRespuesta.Clear;
+  GenerarCabeceras(False);
   try
-    GenerarCabeceras;
-    FHttpSend.Get(RutaAbsoluta, FRespuesta);
+    Response := TStringStream.Create('');
+    FHttpSend.RequestBody := TRawByteStringStream(BodyText);
+    FHttpSend.Post(RutaAbsoluta, Response);
     FStatusText := FHttpSend.ResponseStatusText;
     FStatusCode := FHttpSend.ResponseStatusCode;
     FCookie := FHttpSend.ResponseHeaders.Values['Set-Cookie'];
-  except
-    on E: Exception do
-    begin
-      raise E;
-    end;
+    FRespuesta.Append(Response.DataString);
+  finally
+    FHttpSend.RequestBody.Free;
+    FreeAndNil(Response);
   end;
 
 end;
 
 
 
-procedure TRobotConexion.GenerarCabeceras;
+procedure TRobotConexion.GenerarCabeceras(Get: boolean);
 begin
-  with FHttpSend do
+  FHttpSend.AddHeader('Authorization', 'Basic ' + FClave);
+  FHttpSend.AddHeader('Accept', 'application/hal+json;v=2.0');
+  if get then
   begin
-    AddHeader('Authorization', 'Basic ' + FClave);
-    AddHeader('Content-Type', 'application/xhtml+xml;v=2.0');
-    AddHeader('Accept', 'application/hal+json;v=2.0');
+    FHttpSend.AddHeader('Content-Type', 'application/xhtml+xml;v=2.0');
+  end
+  else
+  begin
+    FHttpSend.AddHeader('Content-Type', 'application/x-www-form-urlencoded;v=2.0');
   end;
 end;
 

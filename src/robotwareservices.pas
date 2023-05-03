@@ -16,6 +16,8 @@ type
   private
     FLocalUrl: string;
     FConexion: TRobotConexion;
+  protected
+    procedure doMasterShip(Operation: string);
   public
     //Returns a list  RobotWare services. The content of the list depends on which services are installed
     procedure GetListServices(aList: TStringList);
@@ -26,7 +28,11 @@ type
     procedure GetListModules(aListModule: TStringList);
   public
     procedure GetListDomains(aList: TStringList);
-    procedure GetListDomain(aDomain: string; ListDomain:TStringList);
+    procedure GetListDomain(aDomain: string; ListDomain: TStringList);
+  public //MasterShip
+    procedure RequestMastership;
+    procedure ReleaseMastership;
+    procedure RemoveMastership;
   public
     constructor Create(aRobotConexion: TRobotConexion);
     destructor Destroy; override;
@@ -35,6 +41,19 @@ type
 implementation
 
 { TRobotWareService }
+
+procedure TRobotWareService.doMasterShip(Operation: string);
+begin
+  try
+    FConexion.Post(FLocalUrl + Operation);
+  except
+    ErrorWebService('Error conexión. codigo: ' + FConexion.StatusText);
+  end;
+  if FConexion.StatusCode <> 204 then
+  begin
+   Raise TAbbWebServicesError.Create(FConexion.StatusText);
+  end;
+end;
 
 procedure TRobotWareService.GetListServices(aList: TStringList);
 begin
@@ -198,14 +217,13 @@ begin
 
 end;
 
-procedure TRobotWareService.GetListDomain(aDomain: string;
-  ListDomain: TStringList);
+procedure TRobotWareService.GetListDomain(aDomain: string; ListDomain: TStringList);
 var
   Lista: TListItems;
-  I: Integer;
+  I: integer;
 begin
   try
-    FConexion.Get(FLocalUrl + '/cfg' + '/'+aDomain);
+    FConexion.Get(FLocalUrl + '/cfg' + '/' + aDomain);
   except
     ErrorWebService('Error conexión. codigo: ' + FConexion.StatusText);
   end;
@@ -227,11 +245,25 @@ begin
   end;
 end;
 
+procedure TRobotWareService.RequestMastership;
+begin
+  doMasterShip('/mastership/request');
+end;
+
+procedure TRobotWareService.ReleaseMastership;
+begin
+  doMasterShip('/mastership/release');
+end;
+
+procedure TRobotWareService.RemoveMastership;
+begin
+  doMasterShip('mastership/watchdog');
+end;
+
 constructor TRobotWareService.Create(aRobotConexion: TRobotConexion);
 begin
   FConexion := aRobotConexion;
   FLocalUrl := 'rw';
-
 end;
 
 destructor TRobotWareService.Destroy;
