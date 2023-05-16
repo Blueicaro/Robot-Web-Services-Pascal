@@ -1,21 +1,21 @@
 object Form1: TForm1
   Left = -8
-  Height = 575
+  Height = 614
   Top = -8
-  Width = 877
+  Width = 893
   Caption = 'Form1'
-  ClientHeight = 575
-  ClientWidth = 877
+  ClientHeight = 614
+  ClientWidth = 893
   LCLVersion = '2.2.6.0'
   WindowState = wsMaximized
   object Panel1: TPanel
     Left = 0
     Height = 50
     Top = 0
-    Width = 1237
+    Width = 893
     Align = alTop
     ClientHeight = 50
-    ClientWidth = 1237
+    ClientWidth = 893
     TabOrder = 0
     object brProbar: TButton
       Left = 184
@@ -31,16 +31,16 @@ object Form1: TForm1
     Left = 0
     Height = 321
     Top = 50
-    Width = 1237
+    Width = 893
     Align = alTop
     Lines.Strings = (
       '{'
       '    "_links": {'
       '        "base": {'
-      '            "href": "https://localhost:80/rw/rapid/"'
+      '            "href": "https://localhost:80/rw/cfg/"'
       '        },'
       '        "self": {'
-      '            "href": "tasks"'
+      '            "href": ""'
       '        }'
       '    },'
       '    "_embedded": {'
@@ -48,64 +48,62 @@ object Form1: TForm1
       '            {'
       '                "_links": {'
       '                    "self": {'
-      '                        "href": "tasks/spy"'
+      '                        "href": "EIO"'
       '                    }'
       '                },'
-      '                "_type": "rap-tasks-spy-li",'
-      '                "_title": "spy"'
+      '                "_type": "cfg-domain-li",'
+      '                "_title": "EIO"'
       '            },'
       '            {'
       '                "_links": {'
       '                    "self": {'
-      '                        "href": "tasks/syncstate/program-pointer"'
+      '                        "href": "MMC"'
       '                    }'
       '                },'
-      '                "_type": "rap-tasks-syncstate-pp-li",'
-      '                "_title": "program-pointer"'
+      '                "_type": "cfg-domain-li",'
+      '                "_title": "MMC"'
       '            },'
       '            {'
       '                "_links": {'
       '                    "self": {'
-      '                        "href": "tasks/syncstate/motion-pointer"'
+      '                        "href": "MOC"'
       '                    }'
       '                },'
-      '                "_type": "rap-tasks-syncstate-mp-li",'
-      '                "_title": "motion-pointer"'
+      '                "_type": "cfg-domain-li",'
+      '                "_title": "MOC"'
       '            },'
       '            {'
       '                "_links": {'
       '                    "self": {'
-      '                        "href": "tasks/T_ROB1"'
+      '                        "href": "PROC"'
       '                    }'
       '                },'
-      '                "_type": "rap-task-li",'
-      '                "_title": "T_ROB1",'
-      '                "name": "T_ROB1",'
-      '                "type": "normal",'
-      '                "taskstate": "linked",'
-      '                "excstate": "ready",'
-      '                "active": "On",'
-      '                "motiontask": "TRUE"'
+      '                "_type": "cfg-domain-li",'
+      '                "_title": "PROC"'
       '            },'
       '            {'
       '                "_links": {'
       '                    "self": {'
-      '                        "href": "tasks/T_Multi"'
+      '                        "href": "SIO"'
       '                    }'
       '                },'
-      '                "_type": "rap-task-li",'
-      '                "_title": "T_Multi",'
-      '                "name": "T_Multi",'
-      '                "type": "semistatic",'
-      '                "taskstate": "initiated",'
-      '                "excstate": "ready",'
-      '                "active": "Off",'
-      '                "motiontask": "FALSE"'
+      '                "_type": "cfg-domain-li",'
+      '                "_title": "SIO"'
+      '            },'
+      '            {'
+      '                "_links": {'
+      '                    "self": {'
+      '                        "href": "SYS"'
+      '                    }'
+      '                },'
+      '                "_type": "cfg-domain-li",'
+      '                "_title": "SYS"'
       '            }'
       '        ]'
       '    }'
       '}'
     )
+    OnChange = Memo1Change
     ScrollBars = ssAutoBoth
     TabOrder = 1
   end
@@ -114,15 +112,15 @@ object Form1: TForm1
     Left = 0
     Height = 5
     Top = 371
-    Width = 1237
+    Width = 893
     Align = alTop
     ResizeAnchor = akTop
   end
   object Memo2: TMemo
     Left = 0
-    Height = 199
+    Height = 215
     Top = 376
-    Width = 1237
+    Width = 893
     Align = alClient
     ScrollBars = ssAutoBoth
     TabOrder = 3

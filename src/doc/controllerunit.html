@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<title>Webservices: controllerunit</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="PasDoc 0.16.0">
+<meta http-equiv="content-type" content="text/html; charset=iso-8859-15">
+<link rel="StyleSheet" type="text/css" href="pasdoc.css">
+</head>
+<body>
+<div class="container"><div class="navigation">
+<h2><a href="index.html">Webservices</a></h2><ul><li><a href="AllUnits.html">Unidades</a></li><li><a href="ClassHierarchy.html">Jerarquía de clases</a></li><li><a href="AllClasses.html">Clases, interfaces y objetos</a></li><li><a href="AllTypes.html">Tipos</a></li><li><a href="AllVariables.html">Variables</a></li><li><a href="AllConstants.html">Constantes</a></li><li><a href="AllFunctions.html">Funciones y procedimientos</a></li><li><a href="AllIdentifiers.html">Identificadores</a></li></ul></div><div class="content">
+<h1 class="unit">Unidad controllerunit</h1>
+<div class="sections">
+<div class="one_section"><a class="section" href="#PasDoc-Description">Descripción</a></div><div class="one_section"><a class="section" href="#PasDoc-Uses">Unidades</a></div><div class="one_section"><a class="section" href="#PasDoc-Classes">Clases, interfaces y objetos</a></div><div class="one_section">Funciones y procedimientos</div><div class="one_section"><a class="section" href="#PasDoc-Types">Tipos</a></div><div class="one_section">Constantes</div><div class="one_section">Variables</div></div>
+<span id="PasDoc-Description"></span><h2 class="description">Descripción</h2>
+<p>
+Controller, contains basic functionality for manipulating the controller, e.g. get system information, create/restore backup, set motors on/off, restart controller, etc. To facilitate easy subscription to controller states there is a Monitor object.</p>
+<span id="PasDoc-Uses"></span><h2 class="uses">Unidades</h2>
+<ul class="useslist"><li>Classes</li><li>SysUtils</li></ul><h2 class="overview">Resumen</h2>
+<span id="PasDoc-Classes"></span><h3 class="cio">Clases, interfaces y objetos</h3>
+<table class="classestable wide_list">
+<tr class="listheader">
+<th class="itemname">Nombre</th>
+<th class="itemdesc">Descripción</th>
+</tr>
+<tr class="list">
+<td class="itemname">Clase&nbsp;<a class="bold" href="controllerunit.TController.html"><code>TController</code></a></td>
+<td class="itemdesc">&nbsp;</td>
+</tr>
+</table>
+<span id="PasDoc-Types"></span><h3 class="summary">Tipos</h3>
+<table class="summary wide_list">
+<tr class="list">
+<td class="itemcode"><code><strong><a href="controllerunit.html#TControllerResource">TControllerResource</a></strong> = (...);</code></td>
+</tr>
+<tr class="list2">
+<td class="itemcode"><code><strong><a href="controllerunit.html#TControllerState">TControllerState</a></strong> = (...);</code></td>
+</tr>
+</table>
+<h2 class="description">Descripción</h2>
+<h3 class="detail">Tipos</h3>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="TControllerResource"></span><code><strong>TControllerResource</strong> = (...);</code></td>
+</tr>
+<tr><td colspan="1">
+<p>
+Valid Resources for Controller monitor crControllerState: State of the controller crOperatonMode: Operation mode of the controller</p>
+<h6 class="description_section">Valores</h6>
+<ul>
+<li>
+<span id="crControllerState">crControllerState</span></li>
+<li>
+<span id="crOperationMode">crOperationMode</span></li>
+</ul>
+</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="TControllerState"></span><code><strong>TControllerState</strong> = (...);</code></td>
+</tr>
+<tr><td colspan="1">
+<p>
+Controllerâs system state.</p>
+<h6 class="description_section">Valores</h6>
+<ul>
+<li>
+<span id="csInitializing">csInitializing</span></li>
+<li>
+<span id="csMotors_on">csMotors_on</span></li>
+<li>
+<span id="csMotors_off">csMotors_off</span></li>
+<li>
+<span id="csGuard_stop">csGuard_stop</span></li>
+<li>
+<span id="csEmergency_stop">csEmergency_stop</span></li>
+<li>
+<span id="csEmergency_stop_resetting">csEmergency_stop_resetting</span></li>
+<li>
+<span id="csSystem_failure">csSystem_failure</span></li>
+</ul>
+</td></tr>
+</table>
+<hr><span class="appinfo"><em>Generado por <a href="https://pasdoc.github.io/">PasDoc 0.16.0</a>. </em>
+</span>
+</div></div></body></html>

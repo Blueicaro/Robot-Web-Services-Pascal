@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<title>Webservices: abbwstypes</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="PasDoc 0.16.0">
+<meta http-equiv="content-type" content="text/html; charset=iso-8859-15">
+<link rel="StyleSheet" type="text/css" href="pasdoc.css">
+</head>
+<body>
+<div class="container"><div class="navigation">
+<h2><a href="index.html">Webservices</a></h2><ul><li><a href="AllUnits.html">Unidades</a></li><li><a href="ClassHierarchy.html">Jerarquía de clases</a></li><li><a href="AllClasses.html">Clases, interfaces y objetos</a></li><li><a href="AllTypes.html">Tipos</a></li><li><a href="AllVariables.html">Variables</a></li><li><a href="AllConstants.html">Constantes</a></li><li><a href="AllFunctions.html">Funciones y procedimientos</a></li><li><a href="AllIdentifiers.html">Identificadores</a></li></ul></div><div class="content">
+<h1 class="unit">Unidad abbwstypes</h1>
+<div class="sections">
+<div class="one_section"><a class="section" href="#PasDoc-Description">Descripción</a></div><div class="one_section"><a class="section" href="#PasDoc-Uses">Unidades</a></div><div class="one_section"><a class="section" href="#PasDoc-Classes">Clases, interfaces y objetos</a></div><div class="one_section"><a class="section" href="#PasDoc-FuncsProcs">Funciones y procedimientos</a></div><div class="one_section">Tipos</div><div class="one_section"><a class="section" href="#PasDoc-Constants">Constantes</a></div><div class="one_section">Variables</div></div>
+<span id="PasDoc-Description"></span><h2 class="description">Descripción</h2>
+&nbsp;<span id="PasDoc-Uses"></span><h2 class="uses">Unidades</h2>
+<ul class="useslist"><li>Classes</li><li>SysUtils</li></ul><h2 class="overview">Resumen</h2>
+<span id="PasDoc-Classes"></span><h3 class="cio">Clases, interfaces y objetos</h3>
+<table class="classestable wide_list">
+<tr class="listheader">
+<th class="itemname">Nombre</th>
+<th class="itemdesc">Descripción</th>
+</tr>
+<tr class="list">
+<td class="itemname">Clase&nbsp;<a class="bold" href="abbwstypes.TAbbWebServicesError.html"><code>TAbbWebServicesError</code></a></td>
+<td class="itemdesc">&nbsp;</td>
+</tr>
+<tr class="list2">
+<td class="itemname">Clase&nbsp;<a class="bold" href="abbwstypes.TResourceItem.html"><code>TResourceItem</code></a></td>
+<td class="itemdesc">&nbsp;</td>
+</tr>
+<tr class="list">
+<td class="itemname">Clase&nbsp;<a class="bold" href="abbwstypes.TCfgDtAtributeItem.html"><code>TCfgDtAtributeItem</code></a></td>
+<td class="itemdesc">&nbsp;</td>
+</tr>
+<tr class="list2">
+<td class="itemname">Clase&nbsp;<a class="bold" href="abbwstypes.TTaskItem.html"><code>TTaskItem</code></a></td>
+<td class="itemdesc">&nbsp;</td>
+</tr>
+<tr class="list">
+<td class="itemname">Clase&nbsp;<a class="bold" href="abbwstypes.TModuleInfoItem.html"><code>TModuleInfoItem</code></a></td>
+<td class="itemdesc">&nbsp;</td>
+</tr>
+<tr class="list2">
+<td class="itemname">Clase&nbsp;<a class="bold" href="abbwstypes.TListItems.html"><code>TListItems</code></a></td>
+<td class="itemdesc">&nbsp;</td>
+</tr>
+</table>
+<span id="PasDoc-FuncsProcs"></span><h3 class="summary">Funciones y procedimientos</h3>
+<table class="summary wide_list">
+<tr class="list">
+<td class="itemcode"><code>procedure <strong><a href="abbwstypes.html#ErrorWebService">ErrorWebService</a></strong>(ainfo: string);</code></td>
+</tr>
+<tr class="list2">
+<td class="itemcode"><code>function <strong><a href="abbwstypes.html#Formatjsonkey">Formatjsonkey</a></strong>(aKeyName: string): string;</code></td>
+</tr>
+<tr class="list">
+<td class="itemcode"><code>procedure <strong><a href="abbwstypes.html#GetClassList">GetClassList</a></strong>(aDatos: string; aListItems: TCollection; aItemClass: TCollectionItemClass; TipoLista:string);</code></td>
+</tr>
+</table>
+<span id="PasDoc-Constants"></span><h3 class="summary">Constantes</h3>
+<table class="summary wide_list">
+<tr class="list">
+<td class="itemcode"><code><strong><a href="abbwstypes.html#CFG_DOMAIN_LI">CFG_DOMAIN_LI</a></strong>: string = 'cfg-domain-li';</code></td>
+</tr>
+<tr class="list2">
+<td class="itemcode"><code><strong><a href="abbwstypes.html#RAP_TASK_LI">RAP_TASK_LI</a></strong>: string = 'rap-task-li';</code></td>
+</tr>
+<tr class="list">
+<td class="itemcode"><code><strong><a href="abbwstypes.html#CFG_DT_LI">CFG_DT_LI</a></strong>   :string = 'cfg-dt-li';</code></td>
+</tr>
+<tr class="list2">
+<td class="itemcode"><code><strong><a href="abbwstypes.html#CFG_DT_ATTRIBUTE">CFG_DT_ATTRIBUTE</a></strong> : string = 'cfg-dt-attribute';</code></td>
+</tr>
+</table>
+<h2 class="description">Descripción</h2>
+<h3 class="detail">Funciones y procedimientos</h3>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="ErrorWebService"></span><code>procedure <strong>ErrorWebService</strong>(ainfo: string);</code></td>
+</tr>
+<tr><td colspan="1">
+&nbsp;</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="Formatjsonkey"></span><code>function <strong>Formatjsonkey</strong>(aKeyName: string): string;</code></td>
+</tr>
+<tr><td colspan="1">
+<p>
+Gets a key a checks if is a protected word of pascal</p>
+</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="GetClassList"></span><code>procedure <strong>GetClassList</strong>(aDatos: string; aListItems: TCollection; aItemClass: TCollectionItemClass; TipoLista:string);</code></td>
+</tr>
+<tr><td colspan="1">
+&nbsp;</td></tr>
+</table>
+<h3 class="detail">Constantes</h3>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="CFG_DOMAIN_LI"></span><code><strong>CFG_DOMAIN_LI</strong>: string = 'cfg-domain-li';</code></td>
+</tr>
+<tr><td colspan="1">
+&nbsp;</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="RAP_TASK_LI"></span><code><strong>RAP_TASK_LI</strong>: string = 'rap-task-li';</code></td>
+</tr>
+<tr><td colspan="1">
+&nbsp;</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="CFG_DT_LI"></span><code><strong>CFG_DT_LI</strong>   :string = 'cfg-dt-li';</code></td>
+</tr>
+<tr><td colspan="1">
+&nbsp;</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="CFG_DT_ATTRIBUTE"></span><code><strong>CFG_DT_ATTRIBUTE</strong> : string = 'cfg-dt-attribute';</code></td>
+</tr>
+<tr><td colspan="1">
+&nbsp;</td></tr>
+</table>
+<hr><span class="appinfo"><em>Generado por <a href="https://pasdoc.github.io/">PasDoc 0.16.0</a>. </em>
+</span>
+</div></div></body></html>

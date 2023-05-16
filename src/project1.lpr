@@ -12,18 +12,21 @@ uses
 
 var
   Robot: TAbbWebServices;
+  Lista: TStringList;
 begin
 
   Robot := TAbbWebServices.Create('https://localhost:80');
   try
     try
-      Robot.RobotWare.RequestMastership;
+      Lista :=TStringList.Create;
+      Robot.RobotWare.GetListDomains(Lista);
     except
       on e: Exception do
         WriteLn(e.Message)
     end;
   finally
     FreeAndNil(Robot);
+    FreeAndNil(Lista);
     ReadLn;
   end;
 

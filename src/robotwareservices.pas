@@ -26,13 +26,15 @@ type
     procedure GetListTasks(aListTask: TStringList); overload;
   public
     procedure GetListModules(aListModule: TStringList);
-  public
+  public //cfg domain
     procedure GetListDomains(aList: TStringList);
     procedure GetListDomain(aDomain: string; ListDomain: TStringList);
   public //MasterShip
     procedure RequestMastership;
     procedure ReleaseMastership;
     procedure RemoveMastership;
+
+
   public
     constructor Create(aRobotConexion: TRobotConexion);
     destructor Destroy; override;

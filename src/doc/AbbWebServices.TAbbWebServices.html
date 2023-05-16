@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<title>Webservices: AbbWebServices: Clase TAbbWebServices</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="PasDoc 0.16.0">
+<meta http-equiv="content-type" content="text/html; charset=iso-8859-15">
+<link rel="StyleSheet" type="text/css" href="pasdoc.css">
+</head>
+<body>
+<div class="container"><div class="navigation">
+<h2><a href="index.html">Webservices</a></h2><ul><li><a href="AllUnits.html">Unidades</a></li><li><a href="ClassHierarchy.html">Jerarquía de clases</a></li><li><a href="AllClasses.html">Clases, interfaces y objetos</a></li><li><a href="AllTypes.html">Tipos</a></li><li><a href="AllVariables.html">Variables</a></li><li><a href="AllConstants.html">Constantes</a></li><li><a href="AllFunctions.html">Funciones y procedimientos</a></li><li><a href="AllIdentifiers.html">Identificadores</a></li></ul></div><div class="content">
+<span id="TAbbWebServices"></span><h1 class="cio">Clase TAbbWebServices</h1>
+<div class="sections">
+<div class="one_section"><a class="section" href="#PasDoc-Description">Descripción</a></div><div class="one_section"><a class="section" href="#PasDoc-Hierarchy">Jerarquía</a></div><div class="one_section">Campos</div><div class="one_section"><a class="section" href="#PasDoc-Methods">Métodos</a></div><div class="one_section"><a class="section" href="#PasDoc-Properties">Propiedades</a></div></div>
+<span id="PasDoc-Description"></span><h2 class="unit">Unidad</h2>
+<p class="unitlink">
+<a href="AbbWebServices.html">AbbWebServices</a></p>
+<h2 class="declaration">Declaración</h2>
+<p class="declaration">
+<code>type TAbbWebServices = class(TObject)</code></p>
+<h2 class="description">Descripción</h2>
+<p>
+TAbbWebServices</p>
+<span id="PasDoc-Hierarchy"></span><h2 class="hierarchy">Jerarquía</h2>
+<ul class="hierarchy"><li class="ancestor">TObject</li>
+<li class="thisitem">TAbbWebServices</li></ul><h2 class="overview">Resumen</h2>
+<span id="PasDoc-Methods"></span><h3 class="summary">Métodos</h3>
+<table class="summary wide_list">
+<tr class="list">
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Público" title="Público"></a></td>
+<td class="itemcode"><code>constructor <strong><a href="AbbWebServices.TAbbWebServices.html#Create">Create</a></strong>(aUrlRobot: string; aUser: string = 'Default User'; aPassword: string = 'robotics');</code></td>
+</tr>
+<tr class="list2">
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Público" title="Público"></a></td>
+<td class="itemcode"><code>destructor <strong><a href="AbbWebServices.TAbbWebServices.html#Destroy">Destroy</a></strong>; override;</code></td>
+</tr>
+</table>
+<span id="PasDoc-Properties"></span><h3 class="summary">Propiedades</h3>
+<table class="summary wide_list">
+<tr class="list">
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Público" title="Público"></a></td>
+<td class="itemcode"><code>property <strong><a href="AbbWebServices.TAbbWebServices.html#Conection">Conection</a></strong>: <a href="abbconexion.TRobotConexion.html">TRobotConexion</a> read FConection;</code></td>
+</tr>
+<tr class="list2">
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Público" title="Público"></a></td>
+<td class="itemcode"><code>property <strong><a href="AbbWebServices.TAbbWebServices.html#RobotWare">RobotWare</a></strong>: <a href="robotwareservices.TRobotWareService.html">TRobotWareService</a> read FRobotWareService;</code></td>
+</tr>
+<tr class="list">
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Público" title="Público"></a></td>
+<td class="itemcode"><code>property <strong><a href="AbbWebServices.TAbbWebServices.html#Controller">Controller</a></strong>: <a href="ControllerServices.TControllerServices.html">TControllerServices</a> read FController;</code></td>
+</tr>
+</table>
+<h2 class="description">Descripción</h2>
+<h3 class="detail">Métodos</h3>
+<table class="detail wide_list">
+<tr class="list">
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Público" title="Público"></a></td>
+<td class="itemcode"><span id="Create"></span><code>constructor <strong>Create</strong>(aUrlRobot: string; aUser: string = 'Default User'; aPassword: string = 'robotics');</code></td>
+</tr>
+<tr><td colspan="2">
+&nbsp;</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Público" title="Público"></a></td>
+<td class="itemcode"><span id="Destroy"></span><code>destructor <strong>Destroy</strong>; override;</code></td>
+</tr>
+<tr><td colspan="2">
+&nbsp;</td></tr>
+</table>
+<h3 class="detail">Propiedades</h3>
+<table class="detail wide_list">
+<tr class="list">
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Público" title="Público"></a></td>
+<td class="itemcode"><span id="Conection"></span><code>property <strong>Conection</strong>: <a href="abbconexion.TRobotConexion.html">TRobotConexion</a> read FConection;</code></td>
+</tr>
+<tr><td colspan="2">
+&nbsp;</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Público" title="Público"></a></td>
+<td class="itemcode"><span id="RobotWare"></span><code>property <strong>RobotWare</strong>: <a href="robotwareservices.TRobotWareService.html">TRobotWareService</a> read FRobotWareService;</code></td>
+</tr>
+<tr><td colspan="2">
+&nbsp;</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Público" title="Público"></a></td>
+<td class="itemcode"><span id="Controller"></span><code>property <strong>Controller</strong>: <a href="ControllerServices.TControllerServices.html">TControllerServices</a> read FController;</code></td>
+</tr>
+<tr><td colspan="2">
+&nbsp;</td></tr>
+</table>
+<hr><span class="appinfo"><em>Generado por <a href="https://pasdoc.github.io/">PasDoc 0.16.0</a>. </em>
+</span>
+</div></div></body></html>
