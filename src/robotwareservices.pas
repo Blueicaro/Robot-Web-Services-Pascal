@@ -25,7 +25,7 @@ type
     procedure GetListTasks(aListItems: TCollection);
     procedure GetListTasks(aListTask: TStringList); overload;
   public
-    procedure GetListModules(aListModule: TStringList);
+    procedure GetListModules(TaksName: string; aListModule: TStringList);
   public //cfg domain
     procedure GetListDomains(aList: TStringList);
     procedure GetListDomain(aDomain: string; ListDomain: TStringList);
@@ -53,7 +53,7 @@ begin
   end;
   if FConexion.StatusCode <> 204 then
   begin
-   Raise TAbbWebServicesError.Create(FConexion.StatusText);
+    raise TAbbWebServicesError.Create(FConexion.StatusText);
   end;
 end;
 
@@ -166,7 +166,7 @@ begin
   try
     if FConexion.StatusCode = 200 then
     begin
-      GetClassList(FConexion.Respuesta.Text, Lista, TTaskItem, rap_task_li);
+      GetEmbeddedClassList(FConexion.Respuesta.Text, Lista, TTaskItem, rap_task_li);
     end;
     for I := 0 to Lista.Count - 1 do
     begin
@@ -181,13 +181,36 @@ begin
 
 end;
 
-procedure TRobotWareService.GetListModules(aListModule: TStringList);
+procedure TRobotWareService.GetListModules(TaksName: string; aListModule: TStringList);
+var
+  Lista: TCollection;
+  I: integer;
 begin
   try
-    FConexion.Get(FLocalUrl + '/rapid/tasks');
+    FConexion.Get(FLocalUrl + '/rapid/tasks/' + TaksName + '/modules');
   except
     ErrorWebService('Error conexión. codigo: ' + FConexion.StatusText);
   end;
+
+  Lista := TCollection.Create(TModuleInfoItem);
+
+  try
+    if FConexion.StatusCode = 200 then
+    begin
+      GetStatusClassList(FConexion.Respuesta.Text, Lista, TModuleInfoItem,
+        rap_module_info_li);
+      for I := 0 to Lista.Count - 1 do
+      begin
+        with Lista.Items[I] as TModuleInfoItem do
+        begin
+          aListModule.Add(Name);
+        end;
+      end;
+    end;
+  finally
+    FreeAndNil(Lista);
+  end;
+
 end;
 
 procedure TRobotWareService.GetListDomains(aList: TStringList);
@@ -204,7 +227,8 @@ begin
   try
     if FConexion.StatusCode = 200 then
     begin
-      GetClassList(FConexion.Respuesta.Text, Lista, TResourceItem, cfg_domain_li);
+      GetEmbeddedClassList(FConexion.Respuesta.Text, Lista, TResourceItem,
+        cfg_domain_li);
       for I := 0 to Lista.Count - 1 do
       begin
         with Lista.Items[I] as TResourceItem do
@@ -233,7 +257,7 @@ begin
   try
     if FConexion.StatusCode = 200 then
     begin
-      GetClassList(FConexion.Respuesta.Text, Lista, TResourceItem, CFG_DT_LI);
+      GetEmbeddedClassList(FConexion.Respuesta.Text, Lista, TResourceItem, CFG_DT_LI);
       for I := 0 to Lista.Count - 1 do
       begin
         with Lista.Items[I] as TResourceItem do

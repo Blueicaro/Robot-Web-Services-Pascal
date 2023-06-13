@@ -110,6 +110,7 @@ const
   RAP_TASK_LI: string = 'rap-task-li';
   CFG_DT_LI: string = 'cfg-dt-li';
   CFG_DT_ATTRIBUTE: string = 'cfg-dt-attribute';
+  RAP_MODULE_INFO_LI: string = 'rap-module-info-li';
 
 procedure ErrorWebService(ainfo: string);
 {
@@ -117,7 +118,10 @@ procedure ErrorWebService(ainfo: string);
 }
 function Formatjsonkey(aKeyName: string): string;
 
-procedure GetClassList(aDatos: string; aListItems: TCollection;
+procedure GetEmbeddedClassList(aDatos: string; aListItems: TCollection;
+  aItemClass: TCollectionItemClass; TipoLista: string);
+
+procedure GetStatusClassList(aDatos: string; aListItems: TCollection;
   aItemClass: TCollectionItemClass; TipoLista: string);
 
 implementation
@@ -141,7 +145,7 @@ begin
 
 end;
 
-procedure GetClassList(aDatos: string; aListItems: TCollection;
+procedure GetEmbeddedClassList(aDatos: string; aListItems: TCollection;
   aItemClass: TCollectionItemClass; TipoLista: string);
 var
   I, X: integer;
@@ -158,59 +162,115 @@ begin
     jData := GetJSON(aDatos);
     myJsonObject := jData as TJSONObject;
     DataResources := myJsonObject.GetPath('_embedded').GetPath('resources');
-    if DataResources = nil then
-    begin
-      ErrorWebService('No se puede procesar la respuesta');
-    end;
 
     for I := 0 to DataResources.Count - 1 do
-      if DataResources.Items[I].FindPath('_type').AsString = TipoLista then
+      Cadena := DataResources.Items[I].FindPath('_type').AsString;
+    if DataResources.Items[I].FindPath('_type').AsString = TipoLista then
+    begin
+      ItemActual := aListItems.Add;
+      for X := 0 to DataResources.Items[I].Count - 1 do
       begin
-        ItemActual := aListItems.Add;
-        for X := 0 to DataResources.Items[I].Count - 1 do
+        if DataResources.Items[I].JSONType = jtObject then
         begin
-          if DataResources.Items[I].JSONType = jtObject then
+          Cadena := DataResources.Items[I].AsJSON;
+          tipo := DataResources.Items[I].Items[X].JSONType;
+          if DataResources.Items[I].Items[X].JSONType = jtString then
           begin
-            Cadena := DataResources.Items[I].AsJSON;
-            tipo := DataResources.Items[I].Items[X].JSONType;
-            if DataResources.Items[I].Items[X].JSONType = jtString then
+            Cadena := DataResources.Items[I].Items[X].AsString;
+            NombreClave := TJSONObject(DataResources.Items[I]).Names[X];
+            propInfo := GetPropInfo(aItemClass, NombreClave);
+            if propInfo <> nil then
             begin
-              Cadena := DataResources.Items[I].Items[X].AsString;
-              NombreClave := TJSONObject(DataResources.Items[I]).Names[X];
-              propInfo := GetPropInfo(aItemClass, NombreClave);
-              if propInfo <> nil then
-              begin
-                SetPropValue(ItemActual, propInfo, Cadena);
-              end;
-            end
-            else if DataResources.Items[I].Items[X].JSONType = jtObject then
+              SetPropValue(ItemActual, propInfo, Cadena);
+            end;
+          end
+          else if DataResources.Items[I].Items[X].JSONType = jtObject then
+          begin
+            if DataResources.Items[I].Items[X].Count > 0 then
             begin
-              if DataResources.Items[I].Items[X].Count > 0 then
+              if DataResources.Items[I].Items[X].Items[0].FindPath(
+                'href') <> nil then
               begin
-                if DataResources.Items[I].Items[X].Items[0].FindPath(
-                  'href') <> nil then
+                Cadena := DataResources.Items[I].Items[X].Items[0].Items[0].AsString;
+                NombreClave := 'href';
+                propInfo := GetPropInfo(aItemClass, NombreClave);
+                if propInfo <> nil then
                 begin
-                  Cadena := DataResources.Items[I].Items[X].Items[0].Items[0].AsString;
-                  NombreClave := 'href';
-                  propInfo := GetPropInfo(aItemClass, NombreClave);
-                  if propInfo <> nil then
-                  begin
-                    SetPropValue(ItemActual, propInfo, Cadena);
-                  end;
+                  SetPropValue(ItemActual, propInfo, Cadena);
                 end;
               end;
             end;
           end;
         end;
       end;
+    end;
     jData.Free
   except
     on E: Exception do
     begin
+      if Assigned(jdata) then
+      begin
+        jData.Free;
+      end;
       ErrorWebService(E.Message);
     end;
   end;
 
+end;
+
+procedure GetStatusClassList(aDatos: string; aListItems: TCollection;
+  aItemClass: TCollectionItemClass; TipoLista: string);
+var
+  jData, DataResources: TJSONData;
+  myJsonObject: TJSONObject;
+  I, X: integer;
+  Cadena: TJSONStringType;
+  NombreClave: string;
+  propInfo: PPropInfo;
+  ItemActual: TCollectionItem;
+begin
+  try
+    jData := GetJSON(aDatos);
+    myJsonObject := jData as TJSONObject;
+    DataResources := myJsonObject.GetPath('state');
+    for I := 0 to DataResources.Count - 1 do
+    begin
+      if DataResources.Items[I].JSONType = jtObject then
+      begin
+        if DataResources.Items[I].FindPath('_type').AsString = TipoLista then
+        begin
+          ItemActual := aListItems.Add;
+          for X := 0 to DataResources.Items[I].Count - 1 do
+          begin
+            if DataResources.Items[I].Items[X].JSONType = jtString then
+            begin
+              Cadena := DataResources.Items[I].Items[X].AsString;
+              NombreClave := TJSONObject(DataResources.Items[I]).Names[X];
+              propInfo := GetPropInfo(aItemClass, NombreClave);
+              if (propInfo <> nil)  and (cadena <> '') then
+              begin
+                SetPropValue(ItemActual, propInfo, Cadena);
+              end;
+            end;
+          end;
+        end;
+      end;
+    end;
+  except
+    on E: Exception do
+    begin
+      if Assigned(jdata) then
+      begin
+        jData.Free;
+      end;
+      ErrorWebService(E.Message);
+    end;
+
+  end;
+  if Assigned(jData) then
+  begin
+    jData.Free;
+  end;
 end;
 
 
