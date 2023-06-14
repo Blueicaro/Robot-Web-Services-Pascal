@@ -33,6 +33,7 @@ type
     procedure RequestMastership;
     procedure ReleaseMastership;
     procedure RemoveMastership;
+  public //rw/iosystem
 
 
   public

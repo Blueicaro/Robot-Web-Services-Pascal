@@ -27,6 +27,8 @@ type
     property _type: string read F_type write F_type;
   end;
 
+
+
   { "_type": "cfg-dt-attribute",
             "_title": "Name",
             "name": "Name",
@@ -99,6 +101,8 @@ type
     property Name: string read fname write fname;
     property Ttype: string read FTtype write FTtype;
   end;
+
+
 
 type
   TListItems = class(TCollection)
@@ -272,6 +276,7 @@ begin
     jData.Free;
   end;
 end;
+
 
 
 
