@@ -28,16 +28,86 @@ type
   end;
 
 
+//ios-signal-li
 
-  { "_type": "cfg-dt-attribute",
-            "_title": "Name",
-            "name": "Name",
-            "type": "string",
-            "numbers": "1",
-            "min": "",
-            "max": "",
-            "init": "",
-            "mandatory": "false"}
+type
+
+  { TIoSignalItem }
+
+  TIoSignalItem = class(TCollectionItem)
+  private
+    Fcategory: string;
+    Fhref: string;
+    Flstate: string;
+    Flvalue: string;
+    Fname: string;
+    Ftitle: string;
+    FTType: string;
+    F_type: string;
+  published
+    property href: string read Fhref write Fhref;
+    property _title: string read Ftitle write Ftitle;
+    property _type: string read F_type write F_type;
+    property Name: string read Fname write Fname;
+    property TType: string read FTType write FTType;
+    property category: string read Fcategory write Fcategory;
+    property lvalue: string read Flvalue write Flvalue;
+    property lstate: string read Flstate write Flstate;
+  end;
+
+
+
+//ios-device-li
+type
+
+  { TIoDeviceItem }
+
+  TIoDeviceItem = class(TCollectionItem)
+  private
+    Faddress: string;
+    Fhref: string;
+    Flstate: string;
+    Fname: string;
+    Fpstate: string;
+    Ftitle: string;
+    F_type: string;
+  published
+    property href: string read Fhref write Fhref;
+    property _title: string read Ftitle write Ftitle;
+    property _type: string read F_type write F_type;
+    property title: string read Ftitle write Ftitle;
+    property Name: string read Fname write Fname;
+    property pstate: string read Fpstate write Fpstate;
+    property lstate: string read Flstate write Flstate;
+    property address: string read Faddress write Faddress;
+  end;
+
+type
+
+  { TIosNetworkItem }
+
+  TIosNetworkItem = class(TCollectionItem)
+  private
+    Fhref: string;
+    Flstate: string;
+    Fname: string;
+    Fpstate: string;
+
+    Ftitle: string;
+    Ftype: string;
+    F_type: string;
+  public
+    procedure Assign(Source: TPersistent); override;
+  published
+    property href: string read Fhref write Fhref;
+    property _title: string read Ftitle write Ftitle;
+    property _type: string read F_type write F_type;
+    property title: string read Ftitle write Ftitle;
+    property Name: string read Fname write Fname;
+    property pstate: string read Fpstate write Fpstate;
+    property lstate: string read Flstate write Flstate;
+  end;
+
 type
 
   { TCfgDtAtributeItem }
@@ -115,6 +185,9 @@ const
   CFG_DT_LI: string = 'cfg-dt-li';
   CFG_DT_ATTRIBUTE: string = 'cfg-dt-attribute';
   RAP_MODULE_INFO_LI: string = 'rap-module-info-li';
+  IOS_NETWORK_LI: string = 'ios-network-li';
+  IOS_DEVICE_LI: string = 'ios-device-li';
+  IOS_SIGNAL_LI: string = 'ios-signal-li';
 
 procedure ErrorWebService(ainfo: string);
 {
@@ -166,48 +239,46 @@ begin
     jData := GetJSON(aDatos);
     myJsonObject := jData as TJSONObject;
     DataResources := myJsonObject.GetPath('_embedded').GetPath('resources');
-
     for I := 0 to DataResources.Count - 1 do
-      Cadena := DataResources.Items[I].FindPath('_type').AsString;
-    if DataResources.Items[I].FindPath('_type').AsString = TipoLista then
-    begin
-      ItemActual := aListItems.Add;
-      for X := 0 to DataResources.Items[I].Count - 1 do
+      if DataResources.Items[I].FindPath('_type').AsString = TipoLista then
       begin
-        if DataResources.Items[I].JSONType = jtObject then
+        ItemActual := aListItems.Add;
+        for X := 0 to DataResources.Items[I].Count - 1 do
         begin
-          Cadena := DataResources.Items[I].AsJSON;
-          tipo := DataResources.Items[I].Items[X].JSONType;
-          if DataResources.Items[I].Items[X].JSONType = jtString then
+          if DataResources.Items[I].JSONType = jtObject then
           begin
-            Cadena := DataResources.Items[I].Items[X].AsString;
-            NombreClave := TJSONObject(DataResources.Items[I]).Names[X];
-            propInfo := GetPropInfo(aItemClass, NombreClave);
-            if propInfo <> nil then
+            Cadena := DataResources.Items[I].AsJSON;
+            tipo := DataResources.Items[I].Items[X].JSONType;
+            if DataResources.Items[I].Items[X].JSONType = jtString then
             begin
-              SetPropValue(ItemActual, propInfo, Cadena);
-            end;
-          end
-          else if DataResources.Items[I].Items[X].JSONType = jtObject then
-          begin
-            if DataResources.Items[I].Items[X].Count > 0 then
-            begin
-              if DataResources.Items[I].Items[X].Items[0].FindPath(
-                'href') <> nil then
+              Cadena := DataResources.Items[I].Items[X].AsString;
+              NombreClave := TJSONObject(DataResources.Items[I]).Names[X];
+              propInfo := GetPropInfo(aItemClass, NombreClave);
+              if propInfo <> nil then
               begin
-                Cadena := DataResources.Items[I].Items[X].Items[0].Items[0].AsString;
-                NombreClave := 'href';
-                propInfo := GetPropInfo(aItemClass, NombreClave);
-                if propInfo <> nil then
+                SetPropValue(ItemActual, propInfo, Cadena);
+              end;
+            end
+            else if DataResources.Items[I].Items[X].JSONType = jtObject then
+            begin
+              if DataResources.Items[I].Items[X].Count > 0 then
+              begin
+                if DataResources.Items[I].Items[X].Items[0].FindPath(
+                  'href') <> nil then
                 begin
-                  SetPropValue(ItemActual, propInfo, Cadena);
+                  Cadena := DataResources.Items[I].Items[X].Items[0].Items[0].AsString;
+                  NombreClave := 'href';
+                  propInfo := GetPropInfo(aItemClass, NombreClave);
+                  if propInfo <> nil then
+                  begin
+                    SetPropValue(ItemActual, propInfo, Cadena);
+                  end;
                 end;
               end;
             end;
           end;
         end;
       end;
-    end;
     jData.Free
   except
     on E: Exception do
@@ -251,7 +322,7 @@ begin
               Cadena := DataResources.Items[I].Items[X].AsString;
               NombreClave := TJSONObject(DataResources.Items[I]).Names[X];
               propInfo := GetPropInfo(aItemClass, NombreClave);
-              if (propInfo <> nil)  and (cadena <> '') then
+              if (propInfo <> nil) and (cadena <> '') then
               begin
                 SetPropValue(ItemActual, propInfo, Cadena);
               end;
@@ -275,6 +346,22 @@ begin
   begin
     jData.Free;
   end;
+end;
+
+{ TIosNetworkItem }
+
+procedure TIosNetworkItem.Assign(Source: TPersistent);
+begin
+  if Source is TIosNetworkItem then
+  begin
+    Fhref := TIosNetworkItem(Source).href;
+    Ftitle := TIosNetworkItem(Source)._title;
+    Ftype := TIosNetworkItem(Source)._type;
+    Ftitle := TIosNetworkItem(Source).title;
+    Fpstate := TIosNetworkItem(Source).pstate;
+    Flstate := TIosNetworkItem(Source).lstate;
+  end;
+  inherited Assign(Source);
 end;
 
 

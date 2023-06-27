@@ -5,7 +5,7 @@ program project1;
 uses
  {$IFDEF UNIX}
   cthreads,
-                 {$ENDIF}
+                  {$ENDIF}
   Classes { you can add units after this },
   SysUtils,
   AbbWebServices;
@@ -19,8 +19,8 @@ begin
   try
     try
       Lista := TStringList.Create;
-      Robot.RobotWare.GetListModules('T_ROB1',Lista);
-      Writeln ('Elementos: '+IntToStr(Lista.Count));
+      Robot.RobotWare.GetNetWorksList( Lista);
+      Writeln('Elementos: ' + IntToStr(Lista.Count));
       WriteLn(Lista.Text)
     except
       on e: Exception do

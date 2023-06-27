@@ -39,10 +39,10 @@ uses fpjson;
 
 procedure TForm1.brProbarClick(Sender: TObject);
 var
-  jData, Data, Data1, m, jorge, jj: TJSONData;
+  jData, Data, Data1, m, jorge, jj, g, hh: TJSONData;
   myJsonObject: TJSONObject;
   tipo, info: TJSONtype;
-  I, x, n, H, j, p: integer;
+  I, x, n, H, j, p, K: integer;
   cadena: TJSONStringType;
   v: TJSONVariant;
   Cadena1: string;
@@ -56,14 +56,20 @@ begin
 
   if myJsonObject.JSONType = jtObject then
   begin
-    Data := myJsonObject.GetPath('state');
+    Data := myJsonObject.GetPath('_embedded').GetPath('resources');
     Memo2.Lines.Text := IntToStr(Data.Count);
     for I := 0 to Data.Count - 1 do
     begin
       Tipo := Data.Items[I].JSONType;
+      Cadena := Data.Items[I].AsJSON;
+
+      hh := Data.Items[I].FindPath('_type');
+        tipo := hh.JSONType;
       for X := 0 to Data.Items[I].Count - 1 do
       begin
-        Cadena := Data.Items[I].Items[X].AsString;
+
+          Cadena := Data.Items[I].Items[X].AsJSON;
+
       end;
     end;
 
