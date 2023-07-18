@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, fpjson, jsonparser,
-  abbconexion, robotwareservices, ControllerServices;
+  abbconexion, robotwareservices, ControllerServices,FileServices;
 
 type
 
@@ -16,11 +16,13 @@ type
   private
     FConection: TRobotConexion;
     FController: TControllerServices;
+    FFileService: TFileService;
     FRobotWareService: TRobotWareService;
   public
     property Conection: TRobotConexion read FConection;
     property RobotWare: TRobotWareService read FRobotWareService;
     property Controller: TControllerServices read FController;
+    property FileService: TFileService read FFileService;
   public
     constructor Create(aUrlRobot: string; aUser: string = 'Default User';
       aPassword: string = 'robotics');
@@ -42,6 +44,7 @@ begin
 
   FRobotWareService := TRobotWareService.Create(FConection);
   FController := TControllerServices.Create(FConection);
+  FFileService := TFileService.Create(FConection);
 end;
 
 destructor TAbbWebServices.Destroy;
@@ -50,6 +53,7 @@ begin
   FreeAndNil(FRobotWareService);
   FreeAndNil(FController);
   FreeAndNil(FConection);
+  FreeAndNil(FFileService);
   inherited Destroy;
 end;
 

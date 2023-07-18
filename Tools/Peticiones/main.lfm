@@ -4,7 +4,7 @@ object Form1: TForm1
   Top = -8
   Width = 936
   Caption = 'Enviar peticiones'
-  ClientHeight = 746
+  ClientHeight = 769
   ClientWidth = 936
   Icon.Data = {
     BE1000000000010001002020000001002000A810000016000000280000002000
@@ -143,6 +143,7 @@ object Form1: TForm1
     0000000000000000000000000000000000000000000000000000000000000000
     0000
   }
+  LCLVersion = '3.0.0.1'
   WindowState = wsMaximized
   object Panel1: TPanel
     Left = 0

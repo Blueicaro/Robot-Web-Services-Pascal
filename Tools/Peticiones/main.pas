@@ -5,8 +5,8 @@ unit main;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls,
-  SynEdit, SynHighlighterXML;
+  Classes, SysUtils, fpjson, Forms, Controls, Graphics, Dialogs, ExtCtrls,
+  StdCtrls, SynEdit, SynHighlighterXML;
 
 type
 
@@ -42,7 +42,7 @@ implementation
 {$R *.lfm}
 
 { TForm1 }
-uses fphttpclient, opensslsockets, base64;
+uses fphttpclient, opensslsockets, base64, jsonparser, jsonscanner;
 
 procedure TForm1.btEnviarClick(Sender: TObject);
 begin
@@ -74,6 +74,8 @@ var
   PeticionHttp: TFPHTTPClient;
   usuario, password, clave, stTemp, Cadena: string;
   I: integer;
+  jpar: TJSONParser;
+  d: TJSONStringType;
 begin
 
   PeticionHttp := TFPHTTPClient.Create(nil);
@@ -115,8 +117,18 @@ begin
         synEditInfo.Lines.Add(ResponseHeaders[I]);
       end;
 
+      //      if chkJson.Checked then
+      //      begin
+      //        jpar := TJSONParser.Create(Respuesta.Text, [joUTF8]);
+      //        d := jpar.Parse.FormatJSON([], 2);
+      //        SynEditRespuesta.Text := d;
+      //        FreeAndNil(jpar);
+      //      end
+      //      else
+      //      begin
+      //        SynEditRespuesta.Lines.Text := Respuesta.Text;
+      //      end;
       SynEditRespuesta.Lines.Text := Respuesta.Text;
-
     end;
 
   finally

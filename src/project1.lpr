@@ -3,9 +3,9 @@ program project1;
 {$mode objfpc}{$H+}
 
 uses
- {$IFDEF UNIX}
+  {$IFDEF UNIX}
   cthreads,
-                  {$ENDIF}
+  {$ENDIF}
   Classes { you can add units after this },
   SysUtils,
   AbbWebServices;
@@ -15,13 +15,15 @@ var
   Lista: TStringList;
 begin
 
-  Robot := TAbbWebServices.Create('https://localhost:80');
   try
+    Robot := TAbbWebServices.Create('https://localhost:80');
     try
       Lista := TStringList.Create;
-      Robot.RobotWare.GetNetWorksList( Lista);
-      Writeln('Elementos: ' + IntToStr(Lista.Count));
-      WriteLn(Lista.Text)
+      Robot.RobotWare.GetModuleText('T_rob1', 'ModuloMain', Lista);
+      Writeln(Lista.Text);
+      Lista.Clear;
+      Robot.RobotWare.GetModuleText('T_IFM', 'ifm', Lista);
+      Writeln(Lista.Text);
     except
       on e: Exception do
         WriteLn(e.Message)

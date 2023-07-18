@@ -25,7 +25,10 @@ type
     procedure GetTasksList(aListItems: TCollection);
     procedure GetTasksList(aListTask: TStringList); overload;
   public
+    //Lista de módulos en dentro de la tarea pasada como parámetro
     procedure GetModulesList(TaksName: string; aListModule: TStringList);
+    //Devuelve el contenido del un modulo
+    procedure GetModuleText(TaskName, ModuleName: string; aListContent: TStringList);
   public //cfg domain
     procedure GetDomainList(aList: TStringList);
     procedure GetDomainDomain(aDomain: string; ListDomain: TStringList);
@@ -36,19 +39,25 @@ type
   public //rw/iosystem
     procedure GetNetWorksList(aListItems: TCollection);
     procedure GetNetWorksList(aList: TStringList);
+    //Obtiene la lista de dispositivos
     procedure GetDevicesList(aListItems: TCollection);
     procedure GetDevicesList(aList: TStringList);
     procedure GetSignalsList(aListItems: TCollection);
     procedure GetSignalsList(aList: TStringList);
-
-
+  public   //rw/system/
+    function GetSystemInfo: TSysSystemInfo;
+    function GetRobotType: string; //Obtiene el tipo de manipulador
+    function GetSystemLicence: string; //Obtiene la licencia del robot
+    procedure GetSystemProducts(aListItems: TCollection); //Obtiene la lista de productos
+    procedure GetSystemProducts(aLista: TStringList); overload;
+    procedure GetSystemOptions(aLista: TStringList); //Obtiene la lista de opciones
   public
     constructor Create(aRobotConexion: TRobotConexion);
     destructor Destroy; override;
   end;
 
 implementation
-
+ uses StrUtils;
 { TRobotWareService }
 
 procedure TRobotWareService.doMasterShip(Operation: string);
@@ -166,6 +175,52 @@ begin
 
 end;
 
+procedure TRobotWareService.GetModuleText(TaskName, ModuleName: string;
+  aListContent: TStringList);
+var
+  Lista: TCollection;
+  fichero: String;
+begin
+  //Ejemplo: https://localhost:80/rw/rapid/tasks/T_IFM/modules/IFM/text
+  try
+    FConexion.Get(FLocalUrl + '/rapid/tasks/' + TaskName + '/modules/' + ModuleName + '/text');
+  except
+    ErrorWebService('Error conexión. codigo: ' + FConexion.StatusText);
+  end;
+   try
+
+     Lista  := TCollection.Create(TModuleTextItem);
+     try
+      GetStatusClassList(FConexion.Respuesta.Text,Lista,TModuleTextItem,RAP_MODULE_TEXT);
+     finally
+        if Lista.Count = 1 then
+     begin
+       with Lista.Items[0] as TModuleTextItem do
+       begin
+         if module_text <> '' then
+         begin
+           aListContent.Text:=module_text;
+         end
+         else
+         begin
+           fichero := file_path;
+           RemovePadChars(fichero,['"']);
+           FConexion.Get('fileservice/'+fichero);
+           if FConexion.StatusCode=200 then
+           begin
+             aListContent.Text:=FConexion.Respuesta.Text;
+           end;
+         end;
+       end;
+     end;
+     end;
+
+
+   finally
+     FreeAndNil(Lista);
+   end;
+end;
+
 procedure TRobotWareService.GetDomainList(aList: TStringList);
 var
   Lista: TListItems;
@@ -243,7 +298,7 @@ procedure TRobotWareService.GetNetWorksList(aListItems: TCollection);
 var
   Lista: TCollection;
   I: integer;
-  It, Elemento: TCollectionItem;
+  It: TCollectionItem;
   jData, DataResources, TypeProperty: TJSONData;
   myJsonObject: TJSONObject;
 begin
@@ -313,9 +368,10 @@ var
 begin
   Lista := TCollection.Create(TIoDeviceItem);
   try
-    GetNetworksList(Lista);
+    GetDevicesList(Lista);
     for I := 0 to Lista.Count - 1 do
     begin
+
       with Lista.Items[I] as TIoDeviceItem do
       begin
         aList.Add(Name);
@@ -362,6 +418,165 @@ begin
     Lista.Free;
   end;
 
+end;
+
+function TRobotWareService.GetSystemInfo: TSysSystemInfo;
+var
+  Lista: TCollection;
+begin
+  try
+    FConexion.Get(FLocalUrl + '/system');
+  except
+    ErrorWebService('Error conexión. codigo: ' + FConexion.StatusText);
+  end;
+  try
+    Lista := TCollection.Create(TSysSytemItem);
+    GetStatusClassList(FConexion.Respuesta.Text, Lista, TSysSytemItem, SYS_SYSTEM);
+    if Lista.Count = 1 then
+    begin
+      with Lista.Items[0] as TSysSytemItem do
+      begin
+        Result.Build := Build;
+        Result.BuildTag := BuildTag;
+        Result.Date := Date;
+        Result.Description := Description;
+        Result.Name := Name;
+        Result.Revision := Revision;
+        Result.RobapiCompatibilityRevison := robapi_compatible;
+        Result.RwVersion := RwVersion;
+        Result.RwVersionName := RwVersionName;
+        Result.StartTm := StartTm;
+        Result.SubRevision := Sub_Revision;
+        Result.SysId := SysId;
+        Result.Title := Title;
+        Result.TypeOs := Ttype;
+      end;
+    end;
+  finally
+    FreeAndNil(Lista);
+  end;
+end;
+
+function TRobotWareService.GetRobotType: string;
+var
+  Lista: TCollection;
+begin
+  Result := '';
+  try
+    FConexion.get(FLocalUrl + '/system/robottype');
+  except
+    ErrorWebService('Error conexión. codigo: ' + FConexion.StatusText);
+  end;
+  try
+    Lista := TCollection.Create(TRobotTypeItem);
+    if FConexion.StatusCode = 200 then
+    begin
+      GetStatusClassList(FConexion.Respuesta.Text, Lista, TRobotTypeItem, SYS_ROBOTTYPE);
+
+      if Lista.Count = 1 then
+      begin
+        with Lista.Items[0] as TRobotTypeItem do
+        begin
+          Result := robot_type;
+        end;
+      end;
+    end;
+  finally
+    FreeAndNil(Lista);
+  end;
+end;
+
+function TRobotWareService.GetSystemLicence: string;
+var
+  Lista: TCollection;
+begin
+  Result := '';
+  try
+    FConexion.Get(FLocalUrl + '/system/license');
+  except
+    ErrorWebService('Error conexión. codigo: ' + FConexion.StatusText);
+  end;
+  try
+    Lista := TCollection.Create(TSysLicenceItem);
+    GetStatusClassList(FConexion.Respuesta.Text, Lista, TSysLicenceItem, SYS_LICENSE);
+    if Lista.Count = 1 then
+    begin
+      with Lista.Items[0] as TSysLicenceItem do
+      begin
+        Result := license;
+      end;
+    end;
+  finally
+    FreeAndNil(Lista);
+  end;
+end;
+
+procedure TRobotWareService.GetSystemProducts(aListItems: TCollection);
+begin
+  try
+    FConexion.Get(FLocalUrl + '/system/products');
+  except
+    ErrorWebService('Error conexión. codigo: ' + FConexion.StatusText);
+  end;
+
+  if FConexion.StatusCode = 200 then
+  begin
+    GetStatusClassList(FConexion.Respuesta.Text, aListItems, TSysProductItem,
+      SYS_PRODUCT);
+  end;
+end;
+
+procedure TRobotWareService.GetSystemProducts(aLista: TStringList);
+var
+  Lista: TCollection;
+  I: integer;
+  H: TSysProductItem;
+  cadena: string;
+begin
+  try
+    Lista := TCollection.Create(TSysProductItem);
+    GetSystemProducts(Lista);
+    for I := 0 to Lista.Count - 1 do
+    begin
+      H := Lista.Items[I] as TSysProductItem;
+      with Lista.Items[I] as TSysProductItem do
+      begin
+        cadena := _title;
+        aLista.Add(_title);
+      end;
+    end;
+  finally
+    FreeAndNil(Lista);
+  end;
+end;
+
+procedure TRobotWareService.GetSystemOptions(aLista: TStringList);
+var
+  lista: TCollection;
+  I: integer;
+begin
+  try
+    FConexion.Get(FLocalUrl + '/system/options');
+  except
+    ErrorWebService('Error conexión. codigo: ' + FConexion.StatusText);
+  end;
+  if FConexion.StatusCode = 200 then
+  begin
+    try
+      lista := TCollection.Create(TSysOptionItem);
+      GetStatusClassList(FConexion.Respuesta.Text, Lista, TSysOptionItem, SYS_OPTION);
+      for I := 0 to lista.Count - 1 do
+      begin
+        with Lista.Items[I] as TSysOptionItem do
+        begin
+          aLista.Add(option);
+        end;
+      end;
+    finally
+      FreeAndNil(Lista);
+    end;
+
+  end;
 end;
 
 

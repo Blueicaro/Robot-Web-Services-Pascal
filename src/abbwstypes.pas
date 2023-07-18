@@ -28,7 +28,7 @@ type
   end;
 
 
-//ios-signal-li
+  //ios-signal-li
 
 type
 
@@ -57,7 +57,7 @@ type
 
 
 
-//ios-device-li
+  //ios-device-li
 type
 
   { TIoDeviceItem }
@@ -134,6 +134,9 @@ type
 
   end;
 
+{
+ Información sobre una tarea (task)
+}
 type
 
   { TTaskItem }
@@ -157,6 +160,7 @@ type
     property TType: string read FTType write FTType;
   end;
 
+  {Información sobre el módulo}
 type
   TModuleInfoItem = class(TCollectionItem)
 
@@ -172,11 +176,160 @@ type
     property Ttype: string read FTtype write FTtype;
   end;
 
+  {Tipo de mecánica}
+type
+
+  { TRobotTypeItem }
+
+  TRobotTypeItem = class(TCollectionItem)
+  private
+    Frobot_type: string;
+    F_title: string;
+    F_type: string;
+  published
+    property _type: string read F_type write F_type;
+    property _title: string read F_title write F_title;
+    property robot_type: string read Frobot_type write Frobot_type;
+  end;
+
+
+  {Licencia}
+type
+
+  { TSysLicenceItem }
+
+  TSysLicenceItem = class(TCollectionItem)
+  private
+    Flicense: string;
+    F_title: string;
+    F_type: string;
+  published
+    property _type: string read F_type write F_type;
+    property _title: string read F_title write F_title;
+    property license: string read Flicense write Flicense;
+  end;
+
+{
+ Información sobre productos instalados
+}
+type
+
+  { TSysProductItem }
+
+  TSysProductItem = class(TCollectionItem)
+  private
+    Fversion: string;
+    Fversion_name: string;
+    F_title: string;
+    F_type: string;
+  published
+    property _type: string read F_type write F_type;
+    property _title: string read F_title write F_title;
+    property version: string read Fversion write Fversion;
+    property version_name: string read Fversion_name write Fversion_name;
+  end;
+
+
+{
+ Lista de opciones instaladas en el controlador
+}
+type
+
+  { TSysOptionItem }
+
+  TSysOptionItem = class(TCollectionItem)
+  private
+    Foption: string;
+    F_title: string;
+    F_type: string;
+  published
+    property _type: string read F_type write F_type;
+    property _title: string read F_title write F_title;
+    property option: string read Foption write Foption;
+  end;
+
+
+{
+ Descripción del sistema. Esta clase se usa como apoyo para generar luego
+ un estructura Record. El motivo de usar una clase, es para rehusar el código que
+ analiza el json
+}
+
+type
+
+  { TSysSytemItem }
+
+  TSysSytemItem = class(TCollectionItem)
+  private
+    Fbuild: string;
+    FBuilTag: string;
+    Fdate: string;
+    Fdescription: string;
+    Fmajor: string;
+    Fminor: string;
+    Fname: string;
+    Frevision: string;
+    Frobapi_compatible: string;
+    Frwversion: string;
+    Frwversionname: string;
+    Fstarttm: string;
+    Fsub_revision: string;
+    Fsub_version: string;
+    Fsysid: string;
+    Ftitle: string;
+    FTtype: string;
+    F_title: string;
+    F_type: string;
+  published
+    property _type: string read F_type write F_type;
+    property _title: string read F_title write F_title;
+    property major: string read Fmajor write Fmajor;
+    property minor: string read Fminor write Fminor;
+    property build: string read Fbuild write Fbuild;
+    property revision: string read Frevision write Frevision;
+    property sub_revision: string read Fsub_version write Fsub_revision;
+    property buildtag: string read FBuilTag write FBuilTag;
+    property robapi_compatible: string read Frobapi_compatible write Frobapi_compatible;
+    property title: string read Ftitle write Ftitle;
+    property Ttype: string read FTtype write FTtype;
+    property description: string read Fdescription write Fdescription;
+    property date: string read Fdate write Fdate;
+    property Name: string read Fname write Fname;
+    property rwversion: string read Frwversion write Frwversion;
+    property sysid: string read Fsysid write Fsysid;
+    property starttm: string read Fstarttm write Fstarttm;
+    property rwversionname: string read Frwversionname write Frwversionname;
+  end;
+
+{
+  Contenido de una modulo. En el caso que  el modulo no sea muy grande, se
+  devuelve su contenido en la propiedad module_text.
+  En el caso que sea muy grande, devuelve la ruta a un archivo que contiene
+  el módulo, en la propiedad file_path
+}
+type
+
+  { TModuleTextItem }
+
+  TModuleTextItem = class(TCollectionItem)
+  private
+    Ffile_path: string;
+    Fmodule_length: string;
+    Fmodule_text: string;
+    F_title: string;
+    F_type: string;
+  published
+    property _type: string read F_type write F_type;
+    property _title: string read F_title write F_title;
+    property module_text: string read Fmodule_text write Fmodule_text;
+    property file_path: string read Ffile_path write Ffile_path;
+    property module_length: string read Fmodule_length write Fmodule_length;
+  end;
+
 
 
 type
   TListItems = class(TCollection)
-
   end;
 
 const
@@ -188,6 +341,53 @@ const
   IOS_NETWORK_LI: string = 'ios-network-li';
   IOS_DEVICE_LI: string = 'ios-device-li';
   IOS_SIGNAL_LI: string = 'ios-signal-li';
+  SYS_ROBOTTYPE: string = 'sys-robottype';
+  SYS_LICENSE: string = 'sys-license';
+  SYS_PRODUCT: string = 'sys-product-li';
+  SYS_OPTION: string = 'sys-option-li';
+  SYS_SYSTEM: string = 'sys-system';
+  RAP_MODULE_TEXT: string = 'rap-module-text';
+
+{
+ Estructura que contiene la información del sistema o controlador
+ Por ejemplo:
+
+              "major": "7",
+              "minor": "10",
+              "build": "1816",
+              "revision": "0",
+              "sub-revision": "0",
+              "buildtag": "",
+              "robapi-compatibility-revision": "3",
+              "title": "RobotControl",
+              "type": "RobotWare",
+              "description": "Controller Software",
+              "date": "2023-06-19",
+              "name": "RestApi",
+              "rwversion": "7.10.0+329",
+              "sysid": "{5E442FF3-37AB-4238-9DE7-F5624B735DC3}",
+              "starttm": "2023-07-17 T 15:53:14",
+              "rwversionname": "7.10.0"
+}
+type
+  TSysSystemInfo = record
+    Major: string;
+    Minor: string;
+    Build: string;
+    Revision: string;
+    SubRevision: string;
+    BuildTag: string;
+    RobapiCompatibilityRevison: string;
+    Title: string;
+    TypeOs: string;
+    Description: string;
+    Date: string;
+    Name: string;
+    RwVersion: string;
+    SysId: string;
+    StartTm: string;
+    RwVersionName: string;
+  end;
 
 procedure ErrorWebService(ainfo: string);
 {
@@ -218,7 +418,9 @@ begin
   if aKeyName in (palabras) then
   begin
     Result := 'T' + aKeyName;
+    Exit;
   end;
+  Result := StringReplace(aKeyName, '-', '_', [rfReplaceAll]);
 
 end;
 
@@ -321,9 +523,11 @@ begin
             begin
               Cadena := DataResources.Items[I].Items[X].AsString;
               NombreClave := TJSONObject(DataResources.Items[I]).Names[X];
+              NombreClave := Formatjsonkey(NombreClave);
               propInfo := GetPropInfo(aItemClass, NombreClave);
               if (propInfo <> nil) and (cadena <> '') then
               begin
+
                 SetPropValue(ItemActual, propInfo, Cadena);
               end;
             end;
