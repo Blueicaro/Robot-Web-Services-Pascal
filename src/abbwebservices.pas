@@ -19,6 +19,8 @@ type
     FFileService: TFileService;
     FRobotWareService: TRobotWareService;
   public
+    procedure SetRobotUrl(aUrl: string);
+    procedure  SetUserPassword(aUser: string;aPassword: string);
     property Conection: TRobotConexion read FConection;
     property RobotWare: TRobotWareService read FRobotWareService;
     property Controller: TControllerServices read FController;
@@ -26,7 +28,7 @@ type
   public
     constructor Create;
     constructor Create(aUrlRobot: string; aUser: string = 'Default User';
-      aPassword: string = 'robotics');
+      aPassword: string = 'robotics'); overload;
     destructor Destroy; override;
   end;
 
@@ -37,20 +39,31 @@ uses TypInfo;
 
   { TAbbWebServices }
 
+procedure TAbbWebServices.SetRobotUrl(aUrl: string);
+begin
+  FConection.SetRobotUrl(aUrl);
+end;
+
+procedure TAbbWebServices.SetUserPassword(aUser: string; aPassword: string);
+begin
+  FConection.SetUserPassword(aUser,aPassword);
+end;
+
 constructor TAbbWebServices.Create;
 begin
+  FConection := TRobotConexion.Create;
   FRobotWareService := TRobotWareService.Create(FConection);
   FController := TControllerServices.Create(FConection);
   FFileService := TFileService.Create(FConection);
+
 end;
 
 constructor TAbbWebServices.Create(aUrlRobot: string; aUser: string; aPassword: string);
 begin
-
-  FConection := TRobotConexion.Create;
+  Create;
   FConection.SetRobotUrl(aUrlRobot);
   FConection.SetUserPassword(aUser, aPassword);
-    Create;
+
 end;
 
 destructor TAbbWebServices.Destroy;

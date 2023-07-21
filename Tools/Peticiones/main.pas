@@ -14,10 +14,13 @@ type
 
   TForm1 = class(TForm)
     btEnviar: TButton;
-    chkJson: TCheckBox;
     cbTextoToSend: TComboBox;
     edBody: TEdit;
     Panel1: TPanel;
+    rbXml: TRadioButton;
+    rbJsonV20: TRadioButton;
+    rbJsonV21: TRadioButton;
+    RadioGroup1: TRadioGroup;
     rbPost: TRadioButton;
     rbGet: TRadioButton;
     SynEditRespuesta: TSynEdit;
@@ -25,7 +28,15 @@ type
     SynXMLSyn1: TSynXMLSyn;
     procedure btEnviarClick(Sender: TObject);
     procedure cbTextoToSendKeyPress(Sender: TObject; var Key: char);
+    procedure chkJson21Click(Sender: TObject);
+    procedure chkJsonv2Click(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure rbJsonV20Click(Sender: TObject);
+    procedure rbJsonV21Click(Sender: TObject);
+    procedure rbXmlClick(Sender: TObject);
   private
+    Content_type: string;
+    Accept: string;
     procedure EnviarGet(aUrl: string);
     procedure EnviarPost(aUrl: string; Params: string);
     procedure Enviar;
@@ -68,6 +79,41 @@ begin
   end;
 end;
 
+procedure TForm1.chkJson21Click(Sender: TObject);
+begin
+
+end;
+
+procedure TForm1.chkJsonv2Click(Sender: TObject);
+begin
+
+end;
+
+procedure TForm1.FormCreate(Sender: TObject);
+begin
+  Content_type := 'application/xhtml+xml;v=2.0';
+  Accept := 'application/xhtml+xml;v=2.0';
+end;
+
+procedure TForm1.rbJsonV20Click(Sender: TObject);
+begin
+    Content_type := 'application/hal+json;v=2.0';
+  Accept := 'application/hal+json;v=2.0';
+
+end;
+
+procedure TForm1.rbJsonV21Click(Sender: TObject);
+begin
+  Content_type := 'application/hal+json;v=2.1';
+  Accept := 'application/hal+json;v=2.1';
+end;
+
+procedure TForm1.rbXmlClick(Sender: TObject);
+begin
+  Content_type := 'application/xhtml+xml;v=2.0';
+  Accept := 'application/xhtml+xml;v=2.0';
+end;
+
 procedure TForm1.EnviarGet(aUrl: string);
 var
   Respuesta: TStringList;
@@ -92,18 +138,9 @@ begin
     begin
 
       AddHeader('Authorization', 'Basic ' + clave);
-     //https://localhost:80/rw/rapid/tasks/t_ifm/modules/ifm/text
-      if chkJson.Checked = False then
-      begin
-        AddHeader('Content-Type', 'application/xhtml+xml;v=2.0');
-        AddHeader('Accept', 'application/xhtml+xml;v=2.0');
-      end
-      else
-      begin
-        AddHeader('Content-Type', 'application/hal+json;v=2.0');
-        AddHeader('Accept', 'application/hal+json;v=2.0');
-      end;
-      //Dirección IP del robot. Localhost, puerto 80 si el controlador es virtual
+      AddHeader('Content-Type', Content_type);
+      AddHeader('Accept', Accept);
+
       try
         get(aUrl, Respuesta);
       except
@@ -119,18 +156,6 @@ begin
       begin
         synEditInfo.Lines.Add(ResponseHeaders[I]);
       end;
-
-      //      if chkJson.Checked then
-      //      begin
-      //        jpar := TJSONParser.Create(Respuesta.Text, [joUTF8]);
-      //        d := jpar.Parse.FormatJSON([], 2);
-      //        SynEditRespuesta.Text := d;
-      //        FreeAndNil(jpar);
-      //      end
-      //      else
-      //      begin
-      //        SynEditRespuesta.Lines.Text := Respuesta.Text;
-      //      end;
       Respuesta.SaveToFile('temp.txt');
       SynEditRespuesta.Lines.Text := Respuesta.Text;
     end;
@@ -164,15 +189,7 @@ begin
     begin
       AddHeader('Authorization', 'Basic ' + clave);
       AddHeader('Content-Type', 'application/x-www-form-urlencoded;v=2.0');
-      if chkJson.Checked = False then
-      begin
-        AddHeader('Accept', 'application/xhtml+xml;v=2.0');
-      end
-      else
-      begin
-        AddHeader('Accept', 'application/hal+json;v=2.0');
-
-      end;
+      AddHeader('Accept', Accept);
       RequestBody := TRawByteStringStream.Create(Params);
       //Dirección IP del robot. Localhost, puerto 80 si el controlador es virtual
       try

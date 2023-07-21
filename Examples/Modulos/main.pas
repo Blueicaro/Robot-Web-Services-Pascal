@@ -51,8 +51,8 @@ var
   root, TaskNode: TTreeNode;
 begin
   TreeView1.Items.Clear;
-  //Robot.Conection.SetRobotUrl(edRobotAddress.Text);
-  //Robot.Conection.SetUserPassword(edUser.Text, edPassword.Text);
+  Robot.SetRobotUrl(edRobotAddress.Text);
+  Robot.SetUserPassword(edUser.Text, edPassword.Text);
   root := TreeView1.Items.Add(nil, edRobotAddress.Text);
   try
     TaskList := TStringList.Create;
@@ -85,7 +85,7 @@ end;
 
 procedure Tmainfrm.FormCreate(Sender: TObject);
 begin
-  Robot := TAbbWebServices.Create('https://localhost:80');
+  Robot := TAbbWebServices.Create;
 end;
 
 procedure Tmainfrm.FormDestroy(Sender: TObject);
