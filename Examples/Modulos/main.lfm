@@ -1,0 +1,102 @@
+object mainfrm: Tmainfrm
+  Left = 368
+  Height = 599
+  Top = 31
+  Width = 883
+  Caption = 'Get Modules'
+  ClientHeight = 599
+  ClientWidth = 883
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  object Panel1: TPanel
+    Left = 0
+    Height = 88
+    Top = 0
+    Width = 883
+    Align = alTop
+    ClientHeight = 88
+    ClientWidth = 883
+    TabOrder = 0
+    object edRobotAddress: TEdit
+      Left = 32
+      Height = 23
+      Top = 40
+      Width = 248
+      TabOrder = 0
+      Text = 'https://localhost:80'
+    end
+    object btConnect: TButton
+      Left = 688
+      Height = 25
+      Top = 40
+      Width = 75
+      Caption = 'Connect'
+      OnClick = btConnectClick
+      TabOrder = 1
+    end
+    object edUser: TEdit
+      Left = 344
+      Height = 23
+      Top = 40
+      Width = 112
+      TabOrder = 2
+      Text = 'Default User'
+    end
+    object edPassword: TEdit
+      Left = 504
+      Height = 23
+      Top = 40
+      Width = 120
+      TabOrder = 3
+      Text = 'robotics'
+    end
+    object Label1: TLabel
+      Left = 36
+      Height = 15
+      Top = 24
+      Width = 114
+      Caption = 'Robot ip o host name'
+    end
+    object Label2: TLabel
+      Left = 344
+      Height = 15
+      Top = 24
+      Width = 23
+      Caption = 'User'
+    end
+    object Label3: TLabel
+      Left = 504
+      Height = 15
+      Top = 24
+      Width = 50
+      Caption = 'Password'
+    end
+  end
+  object TreeView1: TTreeView
+    Left = 0
+    Height = 511
+    Top = 88
+    Width = 195
+    Align = alLeft
+    Enabled = False
+    ShowSeparators = False
+    TabOrder = 1
+    OnClick = TreeView1Click
+  end
+  object Splitter1: TSplitter
+    Left = 195
+    Height = 511
+    Top = 88
+    Width = 5
+  end
+  object mmContent: TMemo
+    Left = 200
+    Height = 511
+    Top = 88
+    Width = 683
+    Align = alClient
+    ReadOnly = True
+    ScrollBars = ssAutoBoth
+    TabOrder = 3
+  end
+end

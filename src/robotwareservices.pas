@@ -57,8 +57,10 @@ type
   end;
 
 implementation
- uses StrUtils;
-{ TRobotWareService }
+
+uses StrUtils;
+
+  { TRobotWareService }
 
 procedure TRobotWareService.doMasterShip(Operation: string);
 begin
@@ -179,46 +181,56 @@ procedure TRobotWareService.GetModuleText(TaskName, ModuleName: string;
   aListContent: TStringList);
 var
   Lista: TCollection;
-  fichero: String;
+  fichero: string;
 begin
   //Ejemplo: https://localhost:80/rw/rapid/tasks/T_IFM/modules/IFM/text
   try
-    FConexion.Get(FLocalUrl + '/rapid/tasks/' + TaskName + '/modules/' + ModuleName + '/text');
+    FConexion.Get(FLocalUrl + '/rapid/tasks/' + TaskName + '/modules/' +
+      ModuleName + '/text');
   except
     ErrorWebService('Error conexión. codigo: ' + FConexion.StatusText);
   end;
-   try
+  try
+     {
+     Por algún motivo desconocido, el controlador, hay veces
+     que el campo "file-path" lo devuelve con un formato incorrecto. Por ejemplo
+     "file-path": ""/TEMP/pusres.711130""
+     Por hay que comprobarlo y modificaro
+     }
+    FConexion.Respuesta.Text :=
+      StringReplace(FConexion.Respuesta.Text, '""', '"', [rfIgnoreCase, rfReplaceAll]);
 
-     Lista  := TCollection.Create(TModuleTextItem);
-     try
-      GetStatusClassList(FConexion.Respuesta.Text,Lista,TModuleTextItem,RAP_MODULE_TEXT);
-     finally
-        if Lista.Count = 1 then
-     begin
-       with Lista.Items[0] as TModuleTextItem do
-       begin
-         if module_text <> '' then
-         begin
-           aListContent.Text:=module_text;
-         end
-         else
-         begin
-           fichero := file_path;
-           RemovePadChars(fichero,['"']);
-           FConexion.Get('fileservice/'+fichero);
-           if FConexion.StatusCode=200 then
-           begin
-             aListContent.Text:=FConexion.Respuesta.Text;
-           end;
-         end;
-       end;
-     end;
-     end;
+    Lista := TCollection.Create(TModuleTextItem);
+    try
+      GetStatusClassList(FConexion.Respuesta.Text, Lista, TModuleTextItem,
+        RAP_MODULE_TEXT);
+    finally
+      if Lista.Count = 1 then
+      begin
+        with Lista.Items[0] as TModuleTextItem do
+        begin
+          if module_text <> '' then
+          begin
+            aListContent.Text := module_text;
+          end
+          else
+          begin
+            fichero := file_path;
+            RemovePadChars(fichero, ['"']);
+            FConexion.Get('fileservice/' + fichero);
+            if FConexion.StatusCode = 200 then
+            begin
+              aListContent.Text := FConexion.Respuesta.Text;
+            end;
+          end;
+        end;
+      end;
+    end;
 
 
-   finally
-     FreeAndNil(Lista);
-   end;
+  finally
+    FreeAndNil(Lista);
+  end;
 end;
 
 procedure TRobotWareService.GetDomainList(aList: TStringList);

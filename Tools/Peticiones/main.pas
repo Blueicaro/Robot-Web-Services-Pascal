@@ -90,14 +90,17 @@ begin
     SynEditRespuesta.Clear;
     with PeticionHttp do
     begin
+
       AddHeader('Authorization', 'Basic ' + clave);
-      AddHeader('Content-Type', 'application/xhtml+xml;v=2.0');
+     //https://localhost:80/rw/rapid/tasks/t_ifm/modules/ifm/text
       if chkJson.Checked = False then
       begin
+        AddHeader('Content-Type', 'application/xhtml+xml;v=2.0');
         AddHeader('Accept', 'application/xhtml+xml;v=2.0');
       end
       else
       begin
+        AddHeader('Content-Type', 'application/hal+json;v=2.0');
         AddHeader('Accept', 'application/hal+json;v=2.0');
       end;
       //Dirección IP del robot. Localhost, puerto 80 si el controlador es virtual
@@ -128,6 +131,7 @@ begin
       //      begin
       //        SynEditRespuesta.Lines.Text := Respuesta.Text;
       //      end;
+      Respuesta.SaveToFile('temp.txt');
       SynEditRespuesta.Lines.Text := Respuesta.Text;
     end;
 

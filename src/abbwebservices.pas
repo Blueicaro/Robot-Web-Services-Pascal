@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, fpjson, jsonparser,
-  abbconexion, robotwareservices, ControllerServices,FileServices;
+  abbconexion, robotwareservices, ControllerServices, FileServices;
 
 type
 
@@ -24,6 +24,7 @@ type
     property Controller: TControllerServices read FController;
     property FileService: TFileService read FFileService;
   public
+    constructor Create;
     constructor Create(aUrlRobot: string; aUser: string = 'Default User';
       aPassword: string = 'robotics');
     destructor Destroy; override;
@@ -34,17 +35,22 @@ implementation
 
 uses TypInfo;
 
-{ TAbbWebServices }
+  { TAbbWebServices }
 
-constructor TAbbWebServices.Create(aUrlRobot: string; aUser: string; aPassword: string);
+constructor TAbbWebServices.Create;
 begin
-  FConection := TRobotConexion.Create;
-  FConection.SetRobotUrl(aUrlRobot);
-  FConection.SetUserPassword(aUser, aPassword);
-
   FRobotWareService := TRobotWareService.Create(FConection);
   FController := TControllerServices.Create(FConection);
   FFileService := TFileService.Create(FConection);
+end;
+
+constructor TAbbWebServices.Create(aUrlRobot: string; aUser: string; aPassword: string);
+begin
+
+  FConection := TRobotConexion.Create;
+  FConection.SetRobotUrl(aUrlRobot);
+  FConection.SetUserPassword(aUser, aPassword);
+    Create;
 end;
 
 destructor TAbbWebServices.Destroy;
