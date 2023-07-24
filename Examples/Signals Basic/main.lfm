@@ -1,0 +1,111 @@
+object mainfrm: Tmainfrm
+  Left = 368
+  Height = 599
+  Top = 31
+  Width = 883
+  Caption = 'Get Signals'
+  ClientHeight = 599
+  ClientWidth = 883
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  object Panel1: TPanel
+    Left = 0
+    Height = 88
+    Top = 0
+    Width = 883
+    Align = alTop
+    ClientHeight = 88
+    ClientWidth = 883
+    TabOrder = 0
+    object edRobotAddress: TEdit
+      Left = 32
+      Height = 23
+      Top = 40
+      Width = 248
+      TabOrder = 0
+      Text = 'https://localhost:80'
+    end
+    object btConnect: TButton
+      Left = 688
+      Height = 25
+      Top = 40
+      Width = 75
+      Caption = 'Connect'
+      OnClick = btConnectClick
+      TabOrder = 1
+    end
+    object edUser: TEdit
+      Left = 344
+      Height = 23
+      Top = 40
+      Width = 112
+      TabOrder = 2
+      Text = 'Default User'
+    end
+    object edPassword: TEdit
+      Left = 504
+      Height = 23
+      Top = 40
+      Width = 120
+      TabOrder = 3
+      Text = 'robotics'
+    end
+    object Label1: TLabel
+      Left = 36
+      Height = 15
+      Top = 24
+      Width = 114
+      Caption = 'Robot ip o host name'
+    end
+    object Label2: TLabel
+      Left = 344
+      Height = 15
+      Top = 24
+      Width = 23
+      Caption = 'User'
+    end
+    object Label3: TLabel
+      Left = 504
+      Height = 15
+      Top = 24
+      Width = 50
+      Caption = 'Password'
+    end
+  end
+  object Splitter1: TSplitter
+    Left = 0
+    Height = 511
+    Top = 88
+    Width = 5
+  end
+  object stGridSenales: TStringGrid
+    Left = 5
+    Height = 511
+    Top = 88
+    Width = 878
+    Align = alClient
+    ColCount = 6
+    Columns = <    
+      item
+        Title.Caption = 'Name'
+      end    
+      item
+        Title.Caption = 'Device'
+      end    
+      item
+        Title.Caption = 'Type'
+      end    
+      item
+        Title.Caption = 'Category'
+      end    
+      item
+        Title.Caption = 'Value'
+      end    
+      item
+        Title.Caption = 'State'
+      end>
+    FixedCols = 0
+    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goSmoothScroll]
+    TabOrder = 2
+  end
+end

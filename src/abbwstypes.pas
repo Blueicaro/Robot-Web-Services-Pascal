@@ -28,7 +28,7 @@ type
   end;
 
 
-  //ios-signal-li
+
 
 type
 
@@ -44,6 +44,9 @@ type
     Ftitle: string;
     FTType: string;
     F_type: string;
+  public
+    procedure Assign(Source: TPersistent); override;
+    function Device: string;
   published
     property href: string read Fhref write Fhref;
     property _title: string read Ftitle write Ftitle;
@@ -56,8 +59,20 @@ type
   end;
 
 
+type
 
-  //ios-device-li
+  { TIoSignalList }
+
+  TIoSignalList = class(TCollection)
+  private
+    procedure SetItems(Index: integer; AValue: TIoSignalItem);
+    function GetItems(Index: integer): TIoSignalItem;
+  public
+    constructor Create;
+    function Add: TIoSignalItem;
+    property Items[Index: integer]: TIoSignalItem read GetItems write SetItems; default;
+  end;
+
 type
 
   { TIoDeviceItem }
@@ -92,7 +107,6 @@ type
     Flstate: string;
     Fname: string;
     Fpstate: string;
-
     Ftitle: string;
     Ftype: string;
     F_type: string;
@@ -455,6 +469,7 @@ begin
             begin
               Cadena := DataResources.Items[I].Items[X].AsString;
               NombreClave := TJSONObject(DataResources.Items[I]).Names[X];
+              NombreClave:=Formatjsonkey(NombreClave);
               propInfo := GetPropInfo(aItemClass, NombreClave);
               if propInfo <> nil then
               begin
@@ -552,6 +567,69 @@ begin
   end;
 end;
 
+{ TIoSignalItem }
+
+procedure TIoSignalItem.Assign(Source: TPersistent);
+begin
+  if Source is TIoSignalItem then
+  begin
+    Fcategory := TIoSignalItem(Source).category;
+    Fhref := TIoSignalItem(Source).href;
+    Flstate := TIoSignalItem(Source).lstate;
+    Flvalue := TIoSignalItem(Source).lvalue;
+    Fname := TIoSignalItem(Source).Name;
+    Ftitle := TIoSignalItem(Source)._title;
+    FTType := TIoSignalItem(Source).TType;
+    F_type := TIoSignalItem(Source)._type;
+  end
+  else
+  begin
+    inherited Assign(Source);
+  end;
+end;
+
+function TIoSignalItem.Device: string;
+var
+  Partes: SizeInt;
+begin
+  if Fhref = '' then
+  begin
+    Result := '';
+    exit;
+  end;
+  Partes := WordCount(Fhref, ['/']);
+  if Partes = 2 then
+  begin
+    Result := '';
+    Exit;
+  end;
+  Result := ExtractWord(Partes - 1, Fhref, ['/']);
+end;
+
+{ TIoSignalList }
+
+procedure TIoSignalList.SetItems(Index: integer; AValue: TIoSignalItem);
+begin
+  Items[Index].Assign(AValue);
+end;
+
+function TIoSignalList.GetItems(Index: integer): TIoSignalItem;
+begin
+  Result := TIoSignalItem(inherited items[index]);
+end;
+
+constructor TIoSignalList.Create;
+begin
+  inherited Create(TIoSignalItem);
+end;
+
+function TIoSignalList.Add: TIoSignalItem;
+begin
+  Result := inherited Add as TIoSignalItem;
+end;
+
+
+
 { TIosNetworkItem }
 
 procedure TIosNetworkItem.Assign(Source: TPersistent);
@@ -564,8 +642,11 @@ begin
     Ftitle := TIosNetworkItem(Source).title;
     Fpstate := TIosNetworkItem(Source).pstate;
     Flstate := TIosNetworkItem(Source).lstate;
+  end
+  else
+  begin
+    inherited Assign(Source);
   end;
-  inherited Assign(Source);
 end;
 
 

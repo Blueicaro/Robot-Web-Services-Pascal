@@ -5,7 +5,7 @@
     <PathDelim Value="\"/>
     <General>
       <SessionStorage Value="InProjectDir"/>
-      <Title Value="modulos"/>
+      <Title Value="signal"/>
       <Scaled Value="True"/>
       <ResourceType Value="res"/>
       <UseXPManifest Value="True"/>
@@ -21,7 +21,7 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="modulos"/>
+            <Filename Value="signal"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
@@ -62,7 +62,7 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="modulos"/>
+            <Filename Value="signal"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
@@ -106,9 +106,9 @@
     </RequiredPackages>
     <Units>
       <Unit>
-        <Filename Value="modulos.lpr"/>
+        <Filename Value="signal.lpr"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="Modulos"/>
+        <UnitName Value="Signal"/>
       </Unit>
       <Unit>
         <Filename Value="main.pas"/>
@@ -123,7 +123,7 @@
     <Version Value="11"/>
     <PathDelim Value="\"/>
     <Target>
-      <Filename Value="modulos"/>
+      <Filename Value="signal"/>
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
@@ -141,17 +141,4 @@
       </Options>
     </Linking>
   </CompilerOptions>
-  <Debugging>
-    <Exceptions>
-      <Item>
-        <Name Value="EAbort"/>
-      </Item>
-      <Item>
-        <Name Value="ECodetoolError"/>
-      </Item>
-      <Item>
-        <Name Value="EFOpenError"/>
-      </Item>
-    </Exceptions>
-  </Debugging>
 </CONFIG>

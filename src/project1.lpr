@@ -19,10 +19,15 @@ begin
     Robot := TAbbWebServices.Create('https://localhost:80');
     try
       Lista := TStringList.Create;
-      Robot.RobotWare.GetModuleText('T_rob1', 'ModuloMain', Lista);
-      Writeln(Lista.Text);
-      Lista.Clear;
-      Robot.RobotWare.GetModuleText('T_IFM', 'ifm', Lista);
+
+      Robot.RobotWare.GetNetWorksList(Lista);
+      WriteLn(Lista.text);
+      Lista.clear;
+
+      Robot.RobotWare.GetDevicesList(Lista);
+      Writeln(Lista.text);
+      Lista.Clear         ;
+      Robot.RobotWare.GetSignalsList(Lista);
       Writeln(Lista.Text);
     except
       on e: Exception do

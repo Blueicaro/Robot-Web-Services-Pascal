@@ -42,8 +42,9 @@ type
     //Obtiene la lista de dispositivos
     procedure GetDevicesList(aListItems: TCollection);
     procedure GetDevicesList(aList: TStringList);
-    procedure GetSignalsList(aListItems: TCollection);
+
     procedure GetSignalsList(aList: TStringList);
+    procedure GetSignalsList(aListItems: TIoSignalList);
   public   //rw/system/
     function GetSystemInfo: TSysSystemInfo;
     function GetRobotType: string; //Obtiene el tipo de manipulador
@@ -309,10 +310,6 @@ end;
 procedure TRobotWareService.GetNetWorksList(aListItems: TCollection);
 var
   Lista: TCollection;
-  I: integer;
-  It: TCollectionItem;
-  jData, DataResources, TypeProperty: TJSONData;
-  myJsonObject: TJSONObject;
 begin
   try
     FConexion.Get(FLocalUrl + '/iosystem/networks');
@@ -395,8 +392,11 @@ begin
 
 end;
 
-procedure TRobotWareService.GetSignalsList(aListItems: TCollection);
+procedure TRobotWareService.GetSignalsList(aListItems: TIoSignalList);
+var
+  Lista: TCollection;
 begin
+
   try
     FConexion.Get(FLocalUrl + '/iosystem/signals');
   except
@@ -405,20 +405,27 @@ begin
 
   if FConexion.StatusCode = 200 then
   begin
-    GetEmbeddedClassList(FConexion.Respuesta.Text, aListItems,
-      TIoSignalItem, IOS_SIGNAL_LI);
+    try
+      Lista := TCollection.Create(TIoSignalItem);
+      GetEmbeddedClassList(FConexion.Respuesta.Text, Lista,
+        TIoSignalItem, IOS_SIGNAL_LI);
+      aListItems.Assign(Lista);
+    finally
+      FreeAndNil(Lista);
+    end;
   end;
 
 end;
 
 procedure TRobotWareService.GetSignalsList(aList: TStringList);
 var
-  Lista: TCollection;
   I: integer;
+  Lista: TIoSignalList;
 begin
-  Lista := TCollection.Create(TIoSignalItem);
+
   try
-    GetNetworksList(Lista);
+    Lista := TIoSignalList.Create;
+    GetSignalsList(Lista);
     for I := 0 to Lista.Count - 1 do
     begin
       with Lista.Items[I] as TIoSignalItem do
@@ -542,18 +549,14 @@ procedure TRobotWareService.GetSystemProducts(aLista: TStringList);
 var
   Lista: TCollection;
   I: integer;
-  H: TSysProductItem;
-  cadena: string;
 begin
   try
     Lista := TCollection.Create(TSysProductItem);
     GetSystemProducts(Lista);
     for I := 0 to Lista.Count - 1 do
     begin
-      H := Lista.Items[I] as TSysProductItem;
       with Lista.Items[I] as TSysProductItem do
       begin
-        cadena := _title;
         aLista.Add(_title);
       end;
     end;
