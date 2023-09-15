@@ -1,1 +1,0 @@
-{ "_links" : { "base" : { "href" : "https://localhost:80/rw/iosystem/" }, "self" : { "href" : "networks/SC_Feedback_Net" } }  , "_embedded" : { "resources" : [ { "_links" : { "self" : { "href" : "devices?networks=SC_Feedback_Net" } }, "_type" : "ios-network-li", "_title" : "SC_Feedback_Net", "name" : "SC_Feedback_Net", "pstate" : "running", "lstate" : "started" } ] }}
