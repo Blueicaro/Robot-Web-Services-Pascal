@@ -12,15 +12,15 @@ type
 
   { TControllerServices }
 
-  TControllerServices = class(TRobotConexion)
+  TControllerServices = class(TRobotConnection)
   private
     FLocalUrl: string;
-    FConection: TRobotConexion;
+    FConection: TRobotConnection;
   public
     function GetVariableEnviroment(aVar: string): string;
     procedure GetListOfServices(aList: TStringList);
   public
-    constructor Create(aRobotConexion: TRobotConexion);
+    constructor Create(aRobotConexion: TRobotConnection);
     destructor Destroy; override;
   end;
 
@@ -72,7 +72,7 @@ begin
 
 end;
 
-constructor TControllerServices.Create(aRobotConexion: TRobotConexion);
+constructor TControllerServices.Create(aRobotConexion: TRobotConnection);
 begin
   inherited Create;
   FLocalUrl := 'ctrl';

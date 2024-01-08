@@ -9,11 +9,11 @@ uses
 
 type
 
-  { TRobotConexion }
+  { TRobotConnection }
 
-  TRobotConexion = class
+  TRobotConnection = class
   private
-    FCookie: string;
+    FCookie: TStringList;
     FPassword: string;
     FRespuesta: TStringList;
     FReturnHeader: TStringList;
@@ -27,7 +27,7 @@ type
     procedure GenerarClave;
   public
     procedure SetRobotUrl(Url: string);
-    property Cookie: string read FCookie;
+    property Cookie: TStringList read FCookie;
     property StatusCode: integer read FStatusCode;
     property StatusText: string read FStatusText;
     property Respuesta: TStringList read FRespuesta;
@@ -36,7 +36,6 @@ type
     procedure SetUserPassword(aUser, aPassword: string);
     procedure Get(UrlRelative: string);
     procedure Post(UrlRelative: string; BodyText: string = '');
-
   public
     procedure GetListResources(aJson: TStringList; Lista: TStringList);
     procedure GetListStates(aJson: TStringList; ListaStates: TStringList);
@@ -48,11 +47,11 @@ type
 
 implementation
 
-uses base64;
+uses base64, StrUtils;
 
 //{ TRobotConexionCustom }
 //{ #todo : Añadir más verificaciones al parámetro URL }
-procedure TRobotConexion.SetRobotUrl(Url: string);
+procedure TRobotConnection.SetRobotUrl(Url: string);
 begin
   if Url[Length(Url)] <> '/' then
   begin
@@ -63,31 +62,51 @@ begin
     FRobotUrl := Url;
   end;
 end;
-
-procedure TRobotConexion.SetUserPassword(aUser, aPassword: string);
+{ #note -oJorge : Cambiando. FHTpSend ahora lleva el usuario y la clave }
+procedure TRobotConnection.SetUserPassword(aUser, aPassword: string);
 begin
   FUser := aUser;
   FPassword := aPassword;
   GenerarClave;
+  FHttpSend.UserName := aUser;
+  FHttpSend.Password := aPassword;
 end;
 
 
-procedure TRobotConexion.Get(UrlRelative: string);
+procedure TRobotConnection.Get(UrlRelative: string);
 var
-  RutaAbsoluta: string;
+  RutaAbsoluta, Cadena: string;
+  I: Integer;
 begin
   RutaAbsoluta := FRobotUrl + UrlRelative;
   FRespuesta.Clear;
 
   GenerarCabeceras;
-  FHttpSend.Get(RutaAbsoluta, FRespuesta);
-  FStatusText := FHttpSend.ResponseStatusText;
-  FStatusCode := FHttpSend.ResponseStatusCode;
-  FCookie := FHttpSend.ResponseHeaders.Values['Set-Cookie'];
+
+
+
+
+  try
+    FHttpSend.Get(RutaAbsoluta, FRespuesta);
+
+    FHttpSend.Cookies.Clear;
+    For I := 0 To FHttpSend.ResponseHeaders.Count-1 do
+    begin
+       if StartsStr('Set-Cookie:',FHttpSend.ResponseHeaders[I]) then
+       begin
+         Cadena := ExtractDelimited(1,FHttpSend.ResponseHeaders[I],[';']);
+         Cadena:= trim(ExtractDelimited(2,Cadena,[#32]));
+       end;
+    end;
+    FStatusText := FHttpSend.ResponseStatusText;
+  finally
+
+    FStatusCode := FHttpSend.ResponseStatusCode;
+  end;
 
 end;
 
-procedure TRobotConexion.Post(UrlRelative: string; BodyText: string);
+procedure TRobotConnection.Post(UrlRelative: string; BodyText: string);
 var
   RutaAbsoluta: string;
   Response: TStringStream;
@@ -101,7 +120,6 @@ begin
     FHttpSend.Post(RutaAbsoluta, Response);
     FStatusText := FHttpSend.ResponseStatusText;
     FStatusCode := FHttpSend.ResponseStatusCode;
-    FCookie := FHttpSend.ResponseHeaders.Values['Set-Cookie'];
     FRespuesta.Append(Response.DataString);
   finally
     FHttpSend.RequestBody.Free;
@@ -112,9 +130,12 @@ end;
 
 
 
-procedure TRobotConexion.GenerarCabeceras(Get: boolean);
+procedure TRobotConnection.GenerarCabeceras(Get: boolean);
 begin
+
+  FHttpSend.RequestHeaders.Clear;
   FHttpSend.AddHeader('Authorization', 'Basic ' + FClave);
+
   FHttpSend.AddHeader('Accept', 'application/hal+json;v=2.0');
   if get then
   begin
@@ -126,17 +147,18 @@ begin
   end;
 end;
 
-procedure TRobotConexion.GenerarClave;
+procedure TRobotConnection.GenerarClave;
 begin
   FClave := EncodeStringBase64(FUser + ':' + FPassword);
 end;
 
 
 
-{ TRobotConexion }
+
+{ TRobotConnection }
 
 
-procedure TRobotConexion.GetListResources(aJson: TStringList; Lista: TStringList);
+procedure TRobotConnection.GetListResources(aJson: TStringList; Lista: TStringList);
 var
   jData, Data: TJSONData;
   myJsonObject: TJSONObject;
@@ -163,7 +185,7 @@ begin
 end;
 
 { #todo : Pendiente de terminar }
-procedure TRobotConexion.GetListStates(aJson: TStringList; ListaStates: TStringList);
+procedure TRobotConnection.GetListStates(aJson: TStringList; ListaStates: TStringList);
 var
   jData: TJSONData;
   myJsonObject: TJSONObject;
@@ -176,7 +198,7 @@ begin
   end;
 end;
 
-procedure TRobotConexion.GetDataResources(aJson: TStringList; aDataArray: string);
+procedure TRobotConnection.GetDataResources(aJson: TStringList; aDataArray: string);
 var
   myJsonObject: TJSONObject;
   jData: TJSONData;
@@ -193,14 +215,15 @@ begin
 end;
 
 
-constructor TRobotConexion.Create;
+constructor TRobotConnection.Create;
 begin
   FRespuesta := TStringList.Create;
   FReturnHeader := TStringList.Create;
   FHttpSend := TFPHTTPClient.Create(nil);
+  FHttpSend.KeepConnection := True;
 end;
 
-destructor TRobotConexion.Destroy;
+destructor TRobotConnection.Destroy;
 begin
   FreeAndNil(FHttpSend);
   FreeAndNil(FRespuesta);

@@ -1,0 +1,8 @@
+#robotwareservices.TRobotWareService
+This class gives access to the services of the robotwareservices. 
+
+#robotwareservices.GetListServices
+
+Returns a list of strings (TstringList) with all services available in the robot.
+The content of the list depends on which services are installed.
+

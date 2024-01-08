@@ -16,6 +16,7 @@ begin
   //in this case we connect to virtual controller
   Robot := TAbbWebServices.Create('https://localhost:80');
   Licencia := Robot.RobotWare.GetSystemLicence;
+  Robot.LogOut;
   RobotType := Robot.RobotWare.GetRobotType;
   ListOptions := TStringList.Create;
   Robot.RobotWare.GetSystemOptions(ListOptions);

@@ -14,14 +14,14 @@ type
 
   { TFileService }
 
-  TFileService = class(TRobotConexion)
+  TFileService = class(TRobotConnection)
   private
     FLocalUrl: string;
-    FConection: TRobotConexion;
+    FConection: TRobotConnection;
   public
      procedure GetFile(Filename:string);
   public
-    constructor Create(aRobotConexion: TRobotConexion);
+    constructor Create(aRobotConexion: TRobotConnection);
     destructor Destroy; override;
   end;
 
@@ -38,7 +38,7 @@ begin
   end;
 end;
 
-constructor TFileService.Create(aRobotConexion: TRobotConexion);
+constructor TFileService.Create(aRobotConexion: TRobotConnection);
 begin
   FLocalUrl := 'fileservice';
   FConection := aRobotConexion;

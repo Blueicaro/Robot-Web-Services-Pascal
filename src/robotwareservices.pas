@@ -15,13 +15,11 @@ type
   TRobotWareService = class
   private
     FLocalUrl: string;
-    FConexion: TRobotConexion;
+    FConexion: TRobotConnection;
   protected
     procedure doMasterShip(Operation: string);
   public
-    //Returns a list  RobotWare services. The content of the list depends on which services are installed
     procedure GetListServices(aList: TStringList);
-    //Returns a list of all rapid tasks.
     procedure GetTasksList(aListItems: TCollection);
     procedure GetTasksList(aListTask: TStringList); overload;
   public
@@ -29,23 +27,23 @@ type
     procedure GetModulesList(TaksName: string; aListModule: TStringList);
     //Devuelve el contenido del un modulo
     procedure GetModuleText(TaskName, ModuleName: string; aListContent: TStringList);
-  public //cfg domain
+  public
     procedure GetDomainList(aList: TStringList);
     procedure GetDomainDomain(aDomain: string; ListDomain: TStringList);
-  public //MasterShip
+  public
+
     procedure RequestMastership;
     procedure ReleaseMastership;
     procedure RemoveMastership;
-  public //rw/iosystem
+  public
     procedure GetNetWorksList(aListItems: TCollection);
     procedure GetNetWorksList(aList: TStringList);
-    //Obtiene la lista de dispositivos
     procedure GetDevicesList(aListItems: TCollection);
     procedure GetDevicesList(aList: TStringList);
 
     procedure GetSignalsList(aList: TStringList);
     procedure GetSignalsList(aListItems: TIoSignalList);
-  public   //rw/system/
+  public
     function GetSystemInfo: TSysSystemInfo;
     function GetRobotType: string; //Obtiene el tipo de manipulador
     function GetSystemLicence: string; //Obtiene la licencia del robot
@@ -53,7 +51,7 @@ type
     procedure GetSystemProducts(aLista: TStringList); overload;
     procedure GetSystemOptions(aLista: TStringList); //Obtiene la lista de opciones
   public
-    constructor Create(aRobotConexion: TRobotConexion);
+    constructor Create(aRobotConexion: TRobotConnection);
     destructor Destroy; override;
   end;
 
@@ -355,8 +353,11 @@ begin
 end;
 
 procedure TRobotWareService.GetDevicesList(aListItems: TCollection);
+var
+  cadena: string;
 begin
   try
+
     FConexion.Get(FLocalUrl + '/iosystem/devices');
   except
     ErrorWebService('Error conexión. codigo: ' + FConexion.StatusText);
@@ -395,6 +396,7 @@ end;
 procedure TRobotWareService.GetSignalsList(aListItems: TIoSignalList);
 var
   Lista: TCollection;
+  cadena: String;
 begin
 
   try
@@ -595,7 +597,7 @@ begin
 end;
 
 
-constructor TRobotWareService.Create(aRobotConexion: TRobotConexion);
+constructor TRobotWareService.Create(aRobotConexion: TRobotConnection);
 begin
   FConexion := aRobotConexion;
   FLocalUrl := 'rw';

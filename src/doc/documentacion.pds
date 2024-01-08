@@ -1,6 +1,6 @@
 [Main]
 StoreRelativePaths=1
-Language=es
+Language=en
 OutputDir=..\doc
 GenerateFormat=0
 ProjectName=

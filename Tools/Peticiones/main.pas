@@ -97,7 +97,7 @@ end;
 
 procedure TForm1.rbJsonV20Click(Sender: TObject);
 begin
-    Content_type := 'application/hal+json;v=2.0';
+  Content_type := 'application/hal+json;v=2.0';
   Accept := 'application/hal+json;v=2.0';
 
 end;

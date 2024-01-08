@@ -159,8 +159,8 @@ object Form1: TForm1
       Top = 22
       Width = 75
       Caption = 'Enviar'
-      OnClick = btEnviarClick
       TabOrder = 0
+      OnClick = btEnviarClick
     end
     object cbTextoToSend: TComboBox
       Left = 136
@@ -168,9 +168,9 @@ object Form1: TForm1
       Top = 18
       Width = 632
       ItemHeight = 15
-      OnKeyPress = cbTextoToSendKeyPress
       TabOrder = 1
       Text = 'https://localhost:80'
+      OnKeyPress = cbTextoToSendKeyPress
     end
     object rbGet: TRadioButton
       Left = 16
@@ -221,9 +221,9 @@ object Form1: TForm1
         Width = 233
         Caption = 'Xml'
         Checked = True
-        OnClick = rbXmlClick
         TabOrder = 2
         TabStop = True
+        OnClick = rbXmlClick
       end
       object rbJsonV20: TRadioButton
         Left = 6
@@ -231,8 +231,8 @@ object Form1: TForm1
         Top = 19
         Width = 233
         Caption = 'Json V2.0'
-        OnClick = rbJsonV20Click
         TabOrder = 0
+        OnClick = rbJsonV20Click
       end
       object rbJsonV21: TRadioButton
         Left = 6
@@ -240,8 +240,8 @@ object Form1: TForm1
         Top = 38
         Width = 233
         Caption = 'Json V2.1'
-        OnClick = rbJsonV21Click
         TabOrder = 1
+        OnClick = rbJsonV21Click
       end
     end
   end
