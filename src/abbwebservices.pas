@@ -6,7 +6,8 @@ interface
 
 uses
   Classes, SysUtils, fpjson, jsonparser,
-  abbconexion, robotwareservices, ControllerServices, FileServices;
+  abbconexion, robotwareservices, ControllerServices, FileServices,
+  elogservices;
 
 type
 
@@ -16,17 +17,19 @@ type
   private
     FConection: TRobotConnection;
     FController: TControllerServices;
+    FElogService: TElogService;
     FFileService: TFileService;
     FRobotWareService: TRobotWareService;
   public
     // URL or ip of the robot
     procedure SetRobotUrl(aUrl: string);
-    procedure SetUserPassword(aUser: string;aPassword: string);
+    procedure SetUserPassword(aUser: string; aPassword: string);
     procedure LogOut;
     property Connection: TRobotConnection read FConection;
     property RobotWare: TRobotWareService read FRobotWareService;
     property Controller: TControllerServices read FController;
     property FileService: TFileService read FFileService;
+    property ElogService: TElogService read FElogService write FElogService;
 
   public
     constructor Create;
@@ -49,7 +52,7 @@ end;
 
 procedure TAbbWebServices.SetUserPassword(aUser: string; aPassword: string);
 begin
-  FConection.SetUserPassword(aUser,aPassword);
+  FConection.SetUserPassword(aUser, aPassword);
 end;
 
 procedure TAbbWebServices.LogOut;
@@ -66,7 +69,7 @@ begin
   FRobotWareService := TRobotWareService.Create(FConection);
   FController := TControllerServices.Create(FConection);
   FFileService := TFileService.Create(FConection);
-
+  FElogService := TElogService.Create(FConection);
 end;
 
 constructor TAbbWebServices.Create(aUrlRobot: string; aUser: string; aPassword: string);
@@ -84,6 +87,7 @@ begin
   FreeAndNil(FController);
   FreeAndNil(FConection);
   FreeAndNil(FFileService);
+  FreeAndNil(FElogService);
   inherited Destroy;
 end;
 

@@ -8,6 +8,7 @@ object mainfrm: Tmainfrm
   ClientWidth = 883
   OnCreate = FormCreate
   OnDestroy = FormDestroy
+  LCLVersion = '3.0.0.3'
   object Panel1: TPanel
     Left = 0
     Height = 88
@@ -31,8 +32,8 @@ object mainfrm: Tmainfrm
       Top = 40
       Width = 75
       Caption = 'Connect'
-      OnClick = btConnectClick
       TabOrder = 1
+      OnClick = btConnectClick
     end
     object edUser: TEdit
       Left = 344

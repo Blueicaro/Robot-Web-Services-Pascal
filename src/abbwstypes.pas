@@ -5,7 +5,7 @@ unit abbwstypes;
 interface
 
 uses
-  Classes, SysUtils;
+  Classes, SysUtils, fgl;
 
 type
   TAbbWebServicesError = class(Exception);
@@ -343,6 +343,43 @@ type
 
 
 type
+
+  { TElogDomainItem }
+
+  TElogDomainItem = class(TCollectionItem)
+  private
+    Fbuffsize: string;
+    Fdomain_name: string;
+    Fhref: string;
+    Fnumevts: string;
+    F_title: string;
+    F_type: string;
+  public
+    procedure Assign(Source: TPersistent); override;
+  published
+    property href: string read Fhref write Fhref;
+    property _type: string read F_type write F_type;
+    property _title: string read F_title write F_title;
+    property domain_name: string read Fdomain_name write Fdomain_name;
+    property numevts: string read Fnumevts write Fnumevts;
+    property buffsize: string read Fbuffsize write Fbuffsize;
+  end;
+
+type
+
+  { TElogDomainList }
+
+  TElogDomainList = class(TCollection)
+    procedure SetItems(Index: integer; AValue: TElogDomainItem);
+    function GetItems(Index: integer): TElogDomainItem;
+  public
+    constructor Create;
+    function Add: TElogDomainItem;
+    property Items[Index: integer]: TElogDomainItem read GetItems write SetItems;
+      default;
+  end;
+
+type
   TListItems = class(TCollection)
   end;
 
@@ -361,6 +398,7 @@ const
   SYS_OPTION: string = 'sys-option-li';
   SYS_SYSTEM: string = 'sys-system';
   RAP_MODULE_TEXT: string = 'rap-module-text';
+  ELOG_DOMAIN_LI: string = 'elog-domain-li';
 
 {
  Estructura que contiene la información del sistema o controlador
@@ -469,7 +507,7 @@ begin
             begin
               Cadena := DataResources.Items[I].Items[X].AsString;
               NombreClave := TJSONObject(DataResources.Items[I]).Names[X];
-              NombreClave:=Formatjsonkey(NombreClave);
+              NombreClave := Formatjsonkey(NombreClave);
               propInfo := GetPropInfo(aItemClass, NombreClave);
               if propInfo <> nil then
               begin
@@ -647,6 +685,46 @@ begin
   begin
     inherited Assign(Source);
   end;
+end;
+
+{ TElogDomainItem }
+
+procedure TElogDomainItem.Assign(Source: TPersistent);
+begin
+
+  if Source is TElogDomainItem then
+  begin
+    Fbuffsize := TElogDomainItem(Source).Fbuffsize;
+    Fdomain_name := TElogDomainItem(Source).Fdomain_name;
+    Fhref := TElogDomainItem(Source).Fhref;
+    Fnumevts := TElogDomainItem(Source).Fnumevts;
+    F_title := TElogDomainItem(Source).F_title;
+    F_type := TElogDomainItem(Source).F_type;
+    //inherited Assign(Source);
+  end;
+
+end;
+
+{ TElogDomainList }
+
+procedure TElogDomainList.SetItems(Index: integer; AValue: TElogDomainItem);
+begin
+  Items[Index].Assign(AValue);
+end;
+
+function TElogDomainList.GetItems(Index: integer): TElogDomainItem;
+begin
+  Result := TElogDomainItem(inherited items[Index]);
+end;
+
+constructor TElogDomainList.Create;
+begin
+  inherited Create(TElogDomainItem);
+end;
+
+function TElogDomainList.Add: TElogDomainItem;
+begin
+  Result := inherited Add as TElogDomainItem;
 end;
 
 

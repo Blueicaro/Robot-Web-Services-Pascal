@@ -45,7 +45,7 @@ procedure Tmainfrm.btConnectClick(Sender: TObject);
 var
   I: integer;
   SenalesList: TIoSignalList;
-  data:  Array [1..6] of string;
+  Data: array [1..6] of string;
   It: TIoSignalItem;
 begin
   Robot.SetRobotUrl(edRobotAddress.Text);
@@ -59,14 +59,14 @@ begin
         It := SenalesList[i];
         with SenalesList[I] do
         begin
-        Data[1]:= Name;
-        Data[2]:=Device;
-        Data[3] := TType;
-        data[4]:=category;
-        Data[5] := lvalue;
-        Data[6] := lstate;
+          Data[1] := Name;
+          Data[2] := Device;
+          Data[3] := TType;
+          Data[4] := category;
+          Data[5] := lvalue;
+          Data[6] := lstate;
         end;
-        stGridSenales.InsertRowWithValues(1,Data);
+        stGridSenales.InsertRowWithValues(1, Data);
       end;
     except
       on E: Exception do

@@ -27,7 +27,7 @@ type
     procedure GenerarClave;
   public
     procedure SetRobotUrl(Url: string);
-    property Cookie: TStringList read FCookie;
+    property Cookie: TStringList read FCookie write FCookie;
     property StatusCode: integer read FStatusCode;
     property StatusText: string read FStatusText;
     property Respuesta: TStringList read FRespuesta;
@@ -76,7 +76,7 @@ end;
 procedure TRobotConnection.Get(UrlRelative: string);
 var
   RutaAbsoluta, Cadena: string;
-  I: Integer;
+  I: integer;
 begin
   RutaAbsoluta := FRobotUrl + UrlRelative;
   FRespuesta.Clear;
@@ -87,16 +87,22 @@ begin
 
 
   try
+    FHttpSend.Cookies.Clear;
+    For I := 0 To FCookie.Count-1 do
+    begin
+      FHttpSend.Cookies.Add(FCookie[I]);
+    end;
     FHttpSend.Get(RutaAbsoluta, FRespuesta);
 
     FHttpSend.Cookies.Clear;
-    For I := 0 To FHttpSend.ResponseHeaders.Count-1 do
+    for I := 0 to FHttpSend.ResponseHeaders.Count - 1 do
     begin
-       if StartsStr('Set-Cookie:',FHttpSend.ResponseHeaders[I]) then
-       begin
-         Cadena := ExtractDelimited(1,FHttpSend.ResponseHeaders[I],[';']);
-         Cadena:= trim(ExtractDelimited(2,Cadena,[#32]));
-       end;
+      if StartsStr('Set-Cookie:', FHttpSend.ResponseHeaders[I]) then
+      begin
+        Cadena := ExtractDelimited(1, FHttpSend.ResponseHeaders[I], [';']);
+        Cadena := trim(ExtractDelimited(2, Cadena, [#32]));
+        FCookie.Add(Cadena);
+      end;
     end;
     FStatusText := FHttpSend.ResponseStatusText;
   finally
@@ -116,7 +122,12 @@ begin
   GenerarCabeceras(False);
   try
     Response := TStringStream.Create('');
+    if BodyText <> '' then;
+    begin
+
     FHttpSend.RequestBody := TRawByteStringStream(BodyText);
+    end;
+
     FHttpSend.Post(RutaAbsoluta, Response);
     FStatusText := FHttpSend.ResponseStatusText;
     FStatusCode := FHttpSend.ResponseStatusCode;
@@ -134,12 +145,13 @@ procedure TRobotConnection.GenerarCabeceras(Get: boolean);
 begin
 
   FHttpSend.RequestHeaders.Clear;
+  FHttpSend.ResponseHeaders.Clear;
   FHttpSend.AddHeader('Authorization', 'Basic ' + FClave);
-
   FHttpSend.AddHeader('Accept', 'application/hal+json;v=2.0');
+
   if get then
   begin
-    FHttpSend.AddHeader('Content-Type', 'application/xhtml+xml;v=2.0');
+    FHttpSend.AddHeader('Content-Type', 'application/hal+json;v=2.0');
   end
   else
   begin
@@ -221,6 +233,7 @@ begin
   FReturnHeader := TStringList.Create;
   FHttpSend := TFPHTTPClient.Create(nil);
   FHttpSend.KeepConnection := True;
+  FCookie := TStringList.Create;
 end;
 
 destructor TRobotConnection.Destroy;
@@ -228,6 +241,7 @@ begin
   FreeAndNil(FHttpSend);
   FreeAndNil(FRespuesta);
   FreeAndNil(FReturnHeader);
+  FreeAndNil(FCookie);
   inherited Destroy;
 end;
 

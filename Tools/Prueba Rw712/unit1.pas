@@ -104,6 +104,14 @@ begin
         end;
 
       end;
+
+      DebugLn('Cookies stored at TFPHTTPClient');
+      For I := 0 To PeticionHttp.Cookies.Count-1 do
+      begin
+      DebugLn(PeticionHttp.Cookies[I]);
+       // DebugLn(PeticionHttp.Cookies.Names[I]+','+PeticionHttp.Cookies.ValueFromIndex[I]);
+      end;
+
     end;
   finally
     FreeAndNil(Respuesta);

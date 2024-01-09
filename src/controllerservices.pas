@@ -56,7 +56,7 @@ begin
     FConection.Get(FLocalUrl);
     if FConection.StatusCode = 200 then
     begin
-      WriteLn(FConection.Respuesta.Text);
+      //debugln(FConection.Respuesta.Text);
       GetListResources(FConection.Respuesta, aList);
     end
     else
