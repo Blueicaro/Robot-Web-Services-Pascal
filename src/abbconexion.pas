@@ -25,6 +25,8 @@ type
     FClave: string;
     procedure GenerarCabeceras(Get: boolean = True);
     procedure GenerarClave;
+    procedure GenerarCookie;
+    procedure CargarCookie;
   public
     procedure SetRobotUrl(Url: string);
     property Cookie: TStringList read FCookie write FCookie;
@@ -47,7 +49,12 @@ type
 
 implementation
 
+{$IFDEF abbdebug}
+   uses base64, StrUtils,laz_looger;
+{$ELSE}
+
 uses base64, StrUtils;
+  {$ENDIF}
 
 //{ TRobotConexionCustom }
 //{ #todo : Añadir más verificaciones al parámetro URL }
@@ -87,23 +94,9 @@ begin
 
 
   try
-    FHttpSend.Cookies.Clear;
-    For I := 0 To FCookie.Count-1 do
-    begin
-      FHttpSend.Cookies.Add(FCookie[I]);
-    end;
+    CargarCookie;
     FHttpSend.Get(RutaAbsoluta, FRespuesta);
-
-    FHttpSend.Cookies.Clear;
-    for I := 0 to FHttpSend.ResponseHeaders.Count - 1 do
-    begin
-      if StartsStr('Set-Cookie:', FHttpSend.ResponseHeaders[I]) then
-      begin
-        Cadena := ExtractDelimited(1, FHttpSend.ResponseHeaders[I], [';']);
-        Cadena := trim(ExtractDelimited(2, Cadena, [#32]));
-        FCookie.Add(Cadena);
-      end;
-    end;
+    GenerarCookie;
     FStatusText := FHttpSend.ResponseStatusText;
   finally
 
@@ -120,18 +113,18 @@ begin
   RutaAbsoluta := FRobotUrl + UrlRelative;
   FRespuesta.Clear;
   GenerarCabeceras(False);
+  CargarCookie;
   try
     Response := TStringStream.Create('');
     if BodyText <> '' then;
     begin
-
-    FHttpSend.RequestBody := TRawByteStringStream(BodyText);
+      FHttpSend.RequestBody := TRawByteStringStream(BodyText);
     end;
-
     FHttpSend.Post(RutaAbsoluta, Response);
     FStatusText := FHttpSend.ResponseStatusText;
     FStatusCode := FHttpSend.ResponseStatusCode;
     FRespuesta.Append(Response.DataString);
+    GenerarCookie;
   finally
     FHttpSend.RequestBody.Free;
     FreeAndNil(Response);
@@ -143,9 +136,7 @@ end;
 
 procedure TRobotConnection.GenerarCabeceras(Get: boolean);
 begin
-
   FHttpSend.RequestHeaders.Clear;
-  FHttpSend.ResponseHeaders.Clear;
   FHttpSend.AddHeader('Authorization', 'Basic ' + FClave);
   FHttpSend.AddHeader('Accept', 'application/hal+json;v=2.0');
 
@@ -162,6 +153,46 @@ end;
 procedure TRobotConnection.GenerarClave;
 begin
   FClave := EncodeStringBase64(FUser + ':' + FPassword);
+end;
+
+procedure TRobotConnection.GenerarCookie;
+var
+  I: integer;
+  Cadena: string;
+begin
+
+  {$IFDEF abbdebug}
+   debugln ('GenerarCookie:')
+   debugln('FHttpSend.ResponseHeaders.Text: 'FHttpSend.ResponseHeaders.Text);}
+  {$ENDIF}
+
+
+  if AnsiContainsText(FHttpSend.ResponseHeaders.Text, 'Set-Cookie') = False then
+  begin
+    Exit;
+  end;
+
+  for I := 0 to FHttpSend.ResponseHeaders.Count - 1 do
+  begin
+    if StartsStr('Set-Cookie:', FHttpSend.ResponseHeaders[I]) then
+    begin
+      Cadena := ExtractDelimited(1, FHttpSend.ResponseHeaders[I], [';']);
+      Cadena := trim(ExtractDelimited(2, Cadena, [#32]));
+      FCookie.Add(Cadena);
+    end;
+  end;
+
+end;
+
+procedure TRobotConnection.CargarCookie;
+var
+  I: integer;
+begin
+  FHttpSend.Cookies.Clear;
+  for I := 0 to FCookie.Count - 1 do
+  begin
+    FHttpSend.Cookies.Add(FCookie[I]);
+  end;
 end;
 
 

@@ -31,6 +31,7 @@ type
     property FileService: TFileService read FFileService;
     property ElogService: TElogService read FElogService write FElogService;
 
+
   public
     constructor Create;
     constructor Create(aUrlRobot: string; aUser: string = 'Default User';

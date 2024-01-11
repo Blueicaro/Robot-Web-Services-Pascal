@@ -15,6 +15,7 @@ type
   TForm1 = class(TForm)
     Button1: TButton;
     Button2: TButton;
+    Button3: TButton;
     Edit1: TEdit;
     Edit2: TEdit;
     Memo1: TMemo;
@@ -22,6 +23,7 @@ type
     Panel1: TPanel;
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
+    procedure Button3Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
   private
@@ -106,10 +108,10 @@ begin
       end;
 
       DebugLn('Cookies stored at TFPHTTPClient');
-      For I := 0 To PeticionHttp.Cookies.Count-1 do
+      for I := 0 to PeticionHttp.Cookies.Count - 1 do
       begin
-      DebugLn(PeticionHttp.Cookies[I]);
-       // DebugLn(PeticionHttp.Cookies.Names[I]+','+PeticionHttp.Cookies.ValueFromIndex[I]);
+        DebugLn(PeticionHttp.Cookies[I]);
+        // DebugLn(PeticionHttp.Cookies.Names[I]+','+PeticionHttp.Cookies.ValueFromIndex[I]);
       end;
 
     end;
@@ -121,13 +123,13 @@ end;
 procedure TForm1.Button2Click(Sender: TObject);
 var
   Respuesta: TStringList;
-  Content_type, Accept, Cadena: string;
+  Cadena: string;
   I, n: integer;
 begin
 
   Respuesta := TStringList.Create;
-  Content_type := 'application/hal+json;v=2.0';
-  Accept := 'application/hal+json;v=2.0';
+  //Content_type := 'application/hal+json;v=2.0';
+  //Accept := 'application/hal+json;v=2.0';
   memo1.Lines.Clear;
   try
 
@@ -140,7 +142,7 @@ begin
       Cookies.Add(edit2.Text);
 
       try
-        get('https://localhost:80/rw/iosystem/signals', Respuesta);
+        get('https://localhost:80/rw/', Respuesta);
       except
         on E: Exception do
           Memo1.Lines.Add(E.Message);
@@ -156,6 +158,11 @@ begin
   finally
     FreeAndNil(Respuesta);
   end;
+
+end;
+
+procedure TForm1.Button3Click(Sender: TObject);
+begin
 
 end;
 

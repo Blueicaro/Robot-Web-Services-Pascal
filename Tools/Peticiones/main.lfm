@@ -143,7 +143,10 @@ object Form1: TForm1
     0000000000000000000000000000000000000000000000000000000000000000
     0000
   }
+  OnClose = FormClose
   OnCreate = FormCreate
+  Position = poDesktopCenter
+  LCLVersion = '3.0.0.3'
   object Panel1: TPanel
     Left = 0
     Height = 88
@@ -1246,5 +1249,21 @@ object Form1: TForm1
     WantBracesParsed = False
     Left = 414
     Top = 225
+  end
+  object AsyncProcess1: TAsyncProcess
+    Active = False
+    Options = []
+    Priority = ppNormal
+    StartupOptions = []
+    ShowWindow = swoNone
+    WindowColumns = 0
+    WindowHeight = 0
+    WindowLeft = 0
+    WindowRows = 0
+    WindowTop = 0
+    WindowWidth = 0
+    FillAttribute = 0
+    Left = 528
+    Top = 358
   end
 end

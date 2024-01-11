@@ -33,19 +33,17 @@ implementation
 
 uses fpjson;
 
-{$R *.lfm}
+  {$R *.lfm}
 
-{ TForm1 }
+  { TForm1 }
 
 procedure TForm1.brProbarClick(Sender: TObject);
 var
-  jData, Data, Data1, m, jorge, jj, g, hh: TJSONData;
+  jData, Info: TJSONData;
   myJsonObject: TJSONObject;
-  tipo, info: TJSONtype;
-  I, x, n, H, j, p, K: integer;
-  cadena: TJSONStringType;
-  v: TJSONVariant;
-  Cadena1: string;
+  tipo: TJSONtype;
+  Cadena: TJSONStringType;
+  I: integer;
 begin
   Memo2.Clear;
 
@@ -53,26 +51,27 @@ begin
 
   myJsonObject := jData as TJSONObject;
 
+  Info := myJsonObject.FindPath('status');
 
-  if myJsonObject.JSONType = jtObject then
+  Cadena := Info.Items[0].AsString;
+
+  memo2.Lines.Add('Status: ' + Cadena);
+
+  info := myJsonObject.FindPath('state');
+  //for I := 0 to info.Count - 1 do
+  //begin
+  //   cadena := TJSONObject(info.Items[I]).Names[0] ;
+  //   Cadena:= info.Items[I].Items[0].value;
+  //end;
+  cadena := TJSONObject(info.items[0]).Names[0];
+  Cadena := info.Items[0].items[0].Value;
+
+  cadena := TJSONObject(info.Items[0]).Names[1];
+  Cadena := info.Items[0].Items[1].Value;
+  for I := 0 to info.Items[0].Count - 1 do
   begin
-    Data := myJsonObject.GetPath('_embedded').GetPath('resources');
-    Memo2.Lines.Text := IntToStr(Data.Count);
-    for I := 0 to Data.Count - 1 do
-    begin
-      Tipo := Data.Items[I].JSONType;
-      Cadena := Data.Items[I].AsJSON;
-
-      hh := Data.Items[I].FindPath('_type');
-        tipo := hh.JSONType;
-      for X := 0 to Data.Items[I].Count - 1 do
-      begin
-
-          Cadena := Data.Items[I].Items[X].AsJSON;
-
-      end;
-    end;
-
+    memo2.Lines.add(TJSONObject(info.Items[0]).Names[I]);
+    memo2.Lines.add(info.Items[0].Items[I].Value);
   end;
   jData.Free;
 end;

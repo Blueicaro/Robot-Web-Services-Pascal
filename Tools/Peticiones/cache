@@ -1,0 +1,6 @@
+https://localhost:80/ctrl
+https://localhost:80/rw
+https://localhost:80/rw/elog/1/clear
+https://localhost:80/rw/rapid
+https://localhost:80/rapid
+https://localhost:80/rw/rapid/symbols

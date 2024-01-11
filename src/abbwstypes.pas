@@ -341,6 +341,54 @@ type
   end;
 
 
+type
+
+  { TElogMessageItem }
+
+  TElogMessageItem = class(TCollectionItem)
+  private
+    Fargc: string;
+    Fcauses: string;
+    Fcode: string;
+    Fconseqs: string;
+    Fdesc: string;
+    Fhref: string;
+    Fmsgtype: string;
+    Ftitle: string;
+    Ftstamp: string;
+    F_title: string;
+    F_type: string;
+  public
+    procedure Assign(Source: TPersistent); override;
+  published
+    property _type: string read F_type write F_type;
+    property _title: string read F_title write F_title;
+    property msgtype: string read Fmsgtype write Fmsgtype;
+    property code: string read Fcode write Fcode;
+    property tstamp: string read Ftstamp write Ftstamp;
+    property title: string read Ftitle write Ftitle;
+    property desc: string read Fdesc write Fdesc;
+    property conseqs: string read Fconseqs write Fconseqs;
+    property causes: string read Fcauses write Fcauses;
+    property argc: string read Fargc write Fargc;
+    property href: string read Fhref write Fhref;
+  end;
+
+
+type
+
+  { TElogMessageList }
+
+  TElogMessageList = class(TCollection)
+
+    procedure SetItems(Index: integer; AValue: TElogMessageItem);
+    function GetItems(Index: integer): TElogMessageItem;
+  public
+    constructor Create;
+    function Add: TElogMessageItem;
+    property Items[Index: integer]: TElogMessageItem read GetItems write SetItems;
+      default;
+  end;
 
 type
 
@@ -399,6 +447,7 @@ const
   SYS_SYSTEM: string = 'sys-system';
   RAP_MODULE_TEXT: string = 'rap-module-text';
   ELOG_DOMAIN_LI: string = 'elog-domain-li';
+  ELOG_MESSAGE_LI: string = 'elog-message-li';
 
 {
  Estructura que contiene la información del sistema o controlador
@@ -439,6 +488,21 @@ type
     SysId: string;
     StartTm: string;
     RwVersionName: string;
+  end;
+{
+  Estructura que contiene información sobre un mensaje
+}
+type
+  TElogMessageInfo = record
+    msgtype: string;
+    code: string;
+    tstamp: string;
+    title: string;
+    description: string;
+    consequences: string;
+    causes: string;
+    actions: string;
+    argc: string;
   end;
 
 procedure ErrorWebService(ainfo: string);
@@ -687,6 +751,52 @@ begin
   end;
 end;
 
+{ TElogMessageItem }
+
+procedure TElogMessageItem.Assign(Source: TPersistent);
+begin
+  if Source is TElogMessageItem then
+  begin
+    Fargc := TElogMessageItem(Source).Fargc;
+    Fcauses := TElogMessageItem(Source).Fcauses;
+    Fcode := TElogMessageItem(Source).Fcode;
+    Fconseqs := TElogMessageItem(Source).Fconseqs;
+    Fdesc := TElogMessageItem(Source).Fdesc;
+    Fmsgtype := TElogMessageItem(Source).Fmsgtype;
+    Ftitle := TElogMessageItem(Source).Ftitle;
+    Ftstamp := TElogMessageItem(Source).Ftstamp;
+    F_title := TElogMessageItem(Source).F_title;
+    F_type := TElogMessageItem(Source).F_type;
+    Fhref := TElogMessageItem(Source).Fhref;
+  end
+  else
+  begin
+    inherited Assign(Source);
+  end;
+end;
+
+{ TElogMessageList }
+
+procedure TElogMessageList.SetItems(Index: integer; AValue: TElogMessageItem);
+begin
+  Items[Index].Assign(AValue);
+end;
+
+function TElogMessageList.GetItems(Index: integer): TElogMessageItem;
+begin
+  Result := TElogMessageItem(inherited items[Index]);
+end;
+
+constructor TElogMessageList.Create;
+begin
+  inherited Create(TElogMessageItem);
+end;
+
+function TElogMessageList.Add: TElogMessageItem;
+begin
+  Result := inherited Add as TElogMessageItem;
+end;
+
 { TElogDomainItem }
 
 procedure TElogDomainItem.Assign(Source: TPersistent);
@@ -700,7 +810,10 @@ begin
     Fnumevts := TElogDomainItem(Source).Fnumevts;
     F_title := TElogDomainItem(Source).F_title;
     F_type := TElogDomainItem(Source).F_type;
-    //inherited Assign(Source);
+  end
+  else
+  begin
+    inherited Assign(Source);
   end;
 
 end;

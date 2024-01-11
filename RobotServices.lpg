@@ -2,16 +2,28 @@
 <CONFIG>
   <ProjectGroup FileVersion="2">
     <Targets>
-      <Target FileName="Tools\Peticiones\TestPeticiones.lpi">
+      <Target FileName="src\project1.lpi">
         <BuildModes>
           <Mode Name="Default" Compile="True"/>
           <Mode Name="Debug"/>
           <Mode Name="Release"/>
         </BuildModes>
       </Target>
-      <Target FileName="src\project1.lpi">
+      <Target FileName="Tools\Json\TestJson.lpi">
+        <BuildModes>
+          <Mode Name="Default" Compile="True"/>
+          <Mode Name="Debug"/>
+          <Mode Name="Release"/>
+        </BuildModes>
+      </Target>
+      <Target FileName="Tools\Prueba Rw712\TestRw712.lpi">
         <BuildModes>
           <Mode Name="Default"/>
+        </BuildModes>
+      </Target>
+      <Target FileName="Tools\Peticiones\TestPeticiones.lpi">
+        <BuildModes>
+          <Mode Name="Default" Compile="True"/>
           <Mode Name="Debug"/>
           <Mode Name="Release"/>
         </BuildModes>

@@ -16,8 +16,12 @@ type
     FLocalUrl: string;
     FConection: TRobotConnection;
   public
-    procedure GetListDomains(aDomainList: TElogDomainList; aLenguage: string = 'en');
     procedure ClearAll;
+    procedure ClearElogDomain(aDomain: TElogDomainItem);
+    procedure GetListDomains(aDomainList: TElogDomainList; aLenguage: string = 'en');
+    procedure GetElogDomain(aElogMessageList: TElogMessageList;
+      aDomainItem: TElogDomainItem; aLenguage: string = 'en');
+    function GetElogMessageInfo(aElogMessageItem: TElogMessageItem): TElogMessageInfo;
   public
     constructor Create(aRobotConexion: TRobotConnection);
     destructor Destroy; override;
@@ -25,7 +29,8 @@ type
 
 implementation
 
-{ TElogService }
+uses jsonparser, fpjson;
+  { TElogService }
 
 procedure TElogService.GetListDomains(aDomainList: TElogDomainList; aLenguage: string);
 var
@@ -49,6 +54,89 @@ begin
   end;
 end;
 
+procedure TElogService.GetElogDomain(aElogMessageList: TElogMessageList;
+  aDomainItem: TElogDomainItem; aLenguage: string);
+var
+  Lista: TCollection;
+begin
+  try
+    FConection.Get(FLocalUrl + aDomainItem._title + '?lang=' + aLenguage);
+  except
+    ErrorWebService('Error conexión. codigo: ' + FConection.StatusText);
+  end;
+  if FConection.StatusCode = 200 then
+  begin
+    try
+      Lista := TCollection.Create(TElogMessageItem);
+      GetEmbeddedClassList(FConection.Respuesta.Text, Lista, TElogMessageItem,
+        ELOG_MESSAGE_LI);
+      aElogMessageList.Assign(Lista);
+    finally
+      FreeAndNil(Lista);
+    end;
+  end;
+end;
+{ #todo -oJorge : Gestionar cuando el Campo Json es un array }
+function TElogService.GetElogMessageInfo(aElogMessageItem: TElogMessageItem):
+TElogMessageInfo;
+var
+  jData, info: TJSONData;
+  myJsonObject: TJSONObject;
+  I: integer;
+  Campo: string;
+  valor: TJSONVariant;
+begin
+  try
+    FConection.Get(FLocalUrl + aElogMessageItem.href);
+  except
+    ErrorWebService('Error conexión. codigo: ' + FConection.StatusText);
+  end;
+  if FConection.StatusCode = 200 then
+  begin
+    try
+      jData := GetJSON(FConection.Respuesta.Text);
+      myJsonObject := jData as TJSONObject;
+      info := myJsonObject.FindPath('status');
+      if info <> nil then
+      begin
+        Result.code := info.Items[0].AsJSON;
+      end;
+      info := myJsonObject.FindPath('state');
+      if info <> nil then
+      begin
+        for I := 0 to info.items[0].Count - 1 do
+        begin
+          Campo := TJSONObject(info.Items[0]).Names[I];
+          begin
+            if info.Items[0].Items[I].JSONType = jtString then
+              valor := info.Items[0].Items[I].Value;
+            case Campo of
+              'title':
+                Result.title := Valor;
+              'code':
+                Result.code := Valor;
+              'tstamp':
+                Result.tstamp := valor;
+              'desc':
+                Result.description := Valor;
+              'conseqs':
+                Result.consequences := Valor;
+              'causes':
+                Result.causes := Valor;
+              'actions':
+                Result.actions := Valor;
+              'args':
+                Result.argc := Valor;
+            end;
+          end;
+        end;
+      end;
+    finally
+      FreeAndNil(jData);
+    end;
+  end;
+end;
+
 procedure TElogService.ClearAll;
 begin
   try
@@ -58,7 +146,20 @@ begin
   end;
   if FConection.StatusCode <> 204 then
   begin
-     ErrorWebService('Error conexión. codigo: ' + IntToStr(FConection.StatusCode));
+    ErrorWebService('Error conexión. codigo: ' + IntToStr(FConection.StatusCode));
+  end;
+end;
+
+procedure TElogService.ClearElogDomain(aDomain: TElogDomainItem);
+begin
+  try
+    FConection.Post(FLocalUrl +aDomain._title+'/clear');
+  except
+    ErrorWebService('Error conexión. codigo: ' + FConection.StatusText);
+  end;
+  if FConection.StatusCode <> 204 then
+  begin
+    ErrorWebService('Error conexión. codigo: ' + IntToStr(FConection.StatusCode));
   end;
 end;
 
