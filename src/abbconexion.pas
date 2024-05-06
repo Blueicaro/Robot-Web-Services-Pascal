@@ -23,11 +23,13 @@ type
     FUser: string;
     FHttpSend: TFPHTTPClient;
     FClave: string;
+    FDigestAuthentication: boolean;
     procedure GenerarCabeceras(Get: boolean = True);
     procedure GenerarClave;
     procedure GenerarCookie;
     procedure CargarCookie;
   public
+    procedure PrimeraConexion;
     procedure SetRobotUrl(Url: string);
     property Cookie: TStringList read FCookie write FCookie;
     property StatusCode: integer read FStatusCode;
@@ -87,19 +89,13 @@ var
 begin
   RutaAbsoluta := FRobotUrl + UrlRelative;
   FRespuesta.Clear;
-
   GenerarCabeceras;
-
-
-
-
   try
     CargarCookie;
     FHttpSend.Get(RutaAbsoluta, FRespuesta);
     GenerarCookie;
     FStatusText := FHttpSend.ResponseStatusText;
   finally
-
     FStatusCode := FHttpSend.ResponseStatusCode;
   end;
 
@@ -193,6 +189,33 @@ begin
   begin
     FHttpSend.Cookies.Add(FCookie[I]);
   end;
+end;
+ { #todo -oJorge : Modificaciónes para loggin Rw6. Trabajando aqui }
+procedure TRobotConnection.PrimeraConexion;
+var
+  Codigo, Posicion: integer;
+  Cadena: string;
+begin
+  // ??
+  FDigestAuthentication := False;
+  try
+    FHttpSend.Get(FRobotUrl + '/rw/retcode');
+  finally
+    Codigo := FHttpSend.ResponseStatusCode;
+    if Codigo = 401 then
+    begin
+      {$IFDEF abbdebug}
+          WriteLn(FHttpSend.ResponseHeaders.Text);
+      {$ENDIF}
+      Posicion := FHttpSend.ResponseHeaders.IndexOfName('WWW-Authenticate');
+      Cadena := FHttpSend.ResponseHeaders[Posicion];
+      {$IFDEF abbdebug}
+          WriteLn(Cadena);
+      {$ENDIF}
+
+    end;
+  end;
+
 end;
 
 

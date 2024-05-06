@@ -49,6 +49,12 @@
               <UseExternalDbgSyms Value="True"/>
             </Debugging>
           </Linking>
+          <Other>
+            <CustomOptions Value="-dabbdebug"/>
+            <OtherDefines Count="1">
+              <Define0 Value="abbdebug"/>
+            </OtherDefines>
+          </Other>
         </CompilerOptions>
       </Item>
       <Item Name="Release">

@@ -22,23 +22,13 @@ var
 begin
 
   try
-    Robot := TAbbWebServices.Create('https://localhost:80');
+    //Robot := TAbbWebServices.Create('https://localhost:80');
+    Robot := TAbbWebServices.Create('http://localhost');
     try
       begin
-        p := TElogDomainList.Create;
-        Lista := TStringList.Create;
-        Robot.ElogService.GetListDomains(P);
-        Lista.Clear;
-        ListaMensajes := TElogMessageList.Create;
-        robot.ElogService.GetElogDomain(ListaMensajes, p[0]);
-        For I := 0 to ListaMensajes.Count-1 do
-        begin
-          Writeln (ListaMensajes[i].code+'.'+ListaMensajes[i].desc+' '+ListaMensajes[i].href);
-        end;
-        r := robot.ElogService.GetElogMessageInfo(ListaMensajes[0]);
-        WriteLn('Pulsa enter para continuar');
+        Robot.Connection.PrimeraConexion;
+
       end;
-      Robot.ElogService.ClearElogDomain(P[0]);
     except
       on e: Exception do
         WriteLn(e.Message)
