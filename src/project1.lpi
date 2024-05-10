@@ -92,6 +92,9 @@
     </RunParams>
     <RequiredPackages>
       <Item>
+        <PackageName Value="idelazlogger"/>
+      </Item>
+      <Item>
         <PackageName Value="laz_synapse"/>
       </Item>
     </RequiredPackages>

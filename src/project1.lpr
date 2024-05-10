@@ -24,10 +24,15 @@ begin
   try
     //Robot := TAbbWebServices.Create('https://localhost:80');
     Robot := TAbbWebServices.Create('http://localhost');
+    Lista := TStringList.Create;
     try
       begin
         Robot.Connection.PrimeraConexion;
-
+        Robot.RobotWare.GetDomainList(Lista);
+        For I:= 0 To Lista.Count-1 do
+        begin
+          WriteLn(Lista[i]);
+        end;
       end;
     except
       on e: Exception do

@@ -51,13 +51,11 @@ type
 
 implementation
 
-{$IFDEF abbdebug}
-   uses base64, StrUtils,laz_looger;
-{$ELSE}
-
-uses base64, StrUtils;
+uses
+  {$IFDEF abbdebug}
+    LazLogger,
   {$ENDIF}
-
+  base64, StrUtils, md5, dateutils, URIParser;
 //{ TRobotConexionCustom }
 //{ #todo : Añadir más verificaciones al parámetro URL }
 procedure TRobotConnection.SetRobotUrl(Url: string);
@@ -88,6 +86,10 @@ var
   I: integer;
 begin
   RutaAbsoluta := FRobotUrl + UrlRelative;
+  if FDigestAuthentication then
+  begin
+    RutaAbsoluta:=RutaAbsoluta+'?json=1';
+  end;
   FRespuesta.Clear;
   GenerarCabeceras;
   try
@@ -158,8 +160,8 @@ var
 begin
 
   {$IFDEF abbdebug}
-   debugln ('GenerarCookie:')
-   debugln('FHttpSend.ResponseHeaders.Text: 'FHttpSend.ResponseHeaders.Text);}
+   debugln ('GenerarCookie:') ;
+   debugln('FHttpSend.ResponseHeaders.Text: '+FHttpSend.ResponseHeaders.Text);
   {$ENDIF}
 
 
@@ -190,29 +192,128 @@ begin
     FHttpSend.Cookies.Add(FCookie[I]);
   end;
 end;
- { #todo -oJorge : Modificaciónes para loggin Rw6. Trabajando aqui }
+{ #todo -oJorge : Modificaciónes para loggin Rw6. Trabajando aqui }
 procedure TRobotConnection.PrimeraConexion;
 var
-  Codigo, Posicion: integer;
-  Cadena: string;
+  Codigo, Posicion, I, J: integer;
+  Cadena, realm, nonce, qop, opaque, cnonce, aStr, h1, h2, h3, UriStr,
+  h4, login, pass, URL: string;
+  aList: TStringList;
+  URI: TURI;
+  Stream: TStringStream;
 begin
-  // ??
-  FDigestAuthentication := False;
-  try
-    FHttpSend.Get(FRobotUrl + '/rw/retcode');
-  finally
-    Codigo := FHttpSend.ResponseStatusCode;
-    if Codigo = 401 then
-    begin
-      {$IFDEF abbdebug}
-          WriteLn(FHttpSend.ResponseHeaders.Text);
-      {$ENDIF}
-      Posicion := FHttpSend.ResponseHeaders.IndexOfName('WWW-Authenticate');
-      Cadena := FHttpSend.ResponseHeaders[Posicion];
-      {$IFDEF abbdebug}
-          WriteLn(Cadena);
-      {$ENDIF}
 
+  if ExtractDelimited(1, FRobotUrl, [':']) = 'http' then
+  begin
+    FDigestAuthentication := True;
+  end
+  else
+  begin
+    FDigestAuthentication := False;
+  end;
+
+  if FDigestAuthentication = False then
+  begin
+     FHttpSend.Get(FRobotUrl);
+     GenerarCookie;
+  end
+  else
+  begin
+    try
+      login := FUser;
+      pass := FPassword;
+      URL := FRobotUrl;
+      Stream := TStringStream.Create;
+      aList := TStringList.Create;
+      URI := ParseURI(URL, False);
+      UriStr := URI.Path;
+      begin
+        if (Length(URI.Path) > 0) and ((Length(UriStr) = 0) or
+          (UriStr[Length(UriStr)] <> '/')) then
+          UriStr := UriStr + '/';
+        UriStr := UriStr + URI.Document;
+      end;
+      if Length(URI.Params) > 0 then
+        UriStr := UriStr + '?' + URI.Params;
+      {$IFDEF abbdebug}
+        DebugLn(UriStr);
+      {$ENDIF}
+      FHttpSend.KeepConnection := True;
+      FHttpSend.AllowRedirect := True;
+      FHttpSend.HTTPMethod('GET', URL, Stream, [200, 401]);
+      if FHttpSend.ResponseStatusCode = 401 then
+      begin
+
+        for I := 0 to FHttpSend.ResponseHeaders.Count - 1 do
+        begin
+          if LeftStr(uppercase(FHttpSend.ResponseHeaders.Strings[I]), 24) =
+            'WWW-AUTHENTICATE: DIGEST' then
+          begin
+            realm := '';
+            nonce := '';
+            qop := '';
+            opaque := '';
+            cnonce := md5Print(md5String(IntToStr(DateTimeToUnix(Now()))));
+
+            aList.Clear;
+            aList.StrictDelimiter := True;
+            aList.Delimiter := ',';
+            aList.DelimitedText :=
+              trim(Copy(FHttpSend.ResponseHeaders.Strings[I], 25));
+            for J := 0 to pred(aList.Count) do
+            begin
+              aStr := trim(aList.Strings[J]);
+              if LeftStr(aStr, 5) = 'realm' then
+                realm := Copy(aStr, 7, Length(aStr)).DeQuotedString(#34);
+              if LeftStr(aStr, 5) = 'nonce' then
+                nonce := Copy(aStr, 7, Length(aStr)).DeQuotedString(#34);
+              if LeftStr(aStr, 3) = 'qop' then
+                qop := Copy(aStr, 5, Length(aStr)).DeQuotedString(#34);
+              if LeftStr(aStr, 6) = 'opaque' then
+                opaque := Copy(aStr, 8, Length(aStr)).DeQuotedString(#34);
+            end;
+
+            h1 := md5Print(md5String(login + ':' + realm + ':' + pass));
+            h2 := md5Print(md5String('GET' + ':' + UriStr));
+            if (qop = 'auth') or (qop = 'auth-int') then
+              h3 := md5Print(md5String(h1 + ':' + nonce + ':00000001:' +
+                cnonce + ':' + qop + ':' + h2))
+            else
+              h3 := md5Print(md5String(h1 + ':' + nonce + ':' + h2));
+
+            h4 := 'username=' + AnsiQuotedStr(login, #34);
+            h4 := h4 + ', realm=' + AnsiQuotedStr(realm, #34);
+            h4 := h4 + ', nonce=' + AnsiQuotedStr(nonce, #34);
+            h4 := h4 + ', uri=' + AnsiQuotedStr(UriStr, #34);
+            if (qop = 'auth') or (qop = 'auth-int') then
+            begin
+              h4 := h4 + ', qop=' + qop;
+              h4 := h4 + ', nc=00000001';
+            end;
+            h4 := h4 + ', cnonce=' + AnsiQuotedStr(cnonce, #34);
+            h4 := h4 + ', response=' + AnsiQuotedStr(h3, #34);
+            if opaque <> '' then
+              h4 := h4 + ', opaque=' + AnsiQuotedStr(opaque, #34);
+
+            FHttpSend.RequestHeaders.Add('Authorization: Digest ' + h4);
+
+            Stream.Clear; // clear the previous request in the stream
+            FHttpSend.Password := '';
+            FHttpSend.UserName := '';
+            FHttpSend.HTTPMethod('GET', URL, Stream, [200]);
+            GenerarCookie;
+
+            {$IFDEF abbdebug}
+              Debugln(FHttpSend.ResponseHeaders.Text);
+              Debugln(Stream.DataString);
+            {$ENDIF}
+
+          end;
+        end;
+      end;
+    finally
+      Stream.Free;
+      aList.Free;
     end;
   end;
 
