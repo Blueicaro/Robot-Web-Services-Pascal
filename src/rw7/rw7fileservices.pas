@@ -1,4 +1,4 @@
-unit FileServices;
+unit rw7fileservices;
 
 {$mode ObjFPC}{$H+}
 
@@ -12,9 +12,9 @@ type
 
   { TControllerServices }
 
-  { TFileService }
+  { TRw7FileService }
 
-  TFileService = class(TRobotConnection)
+  TRw7FileService = class(TRobotConnection)
   private
     FLocalUrl: string;
     FConection: TRobotConnection;
@@ -27,9 +27,9 @@ type
 
 implementation
 
-{ TFileService }
+{ TRw7FileService }
 
-procedure TFileService.GetFile(Filename: string);
+procedure TRw7FileService.GetFile(Filename: string);
 begin
   try
     FConection.Get(FLocalUrl+'\'+Filename);
@@ -38,13 +38,13 @@ begin
   end;
 end;
 
-constructor TFileService.Create(aRobotConexion: TRobotConnection);
+constructor TRw7FileService.Create(aRobotConexion: TRobotConnection);
 begin
   FLocalUrl := 'fileservice';
   FConection := aRobotConexion;
 end;
 
-destructor TFileService.Destroy;
+destructor TRw7FileService.Destroy;
 begin
   inherited Destroy;
 end;

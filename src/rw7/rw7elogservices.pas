@@ -1,4 +1,4 @@
-unit elogservices;
+unit rw7elogservices;
 
 {$mode ObjFPC}{$H+}
 
@@ -9,9 +9,9 @@ uses
 
 type
 
-  { TElogService }
+  { TRw7ElogService }
 
-  TElogService = class
+  TRw7ElogService = class
   private
     FLocalUrl: string;
     FConection: TRobotConnection;
@@ -30,9 +30,9 @@ type
 implementation
 
 uses jsonparser, fpjson;
-  { TElogService }
+  { TRw7ElogService }
 
-procedure TElogService.GetListDomains(aDomainList: TElogDomainList; aLenguage: string);
+procedure TRw7ElogService.GetListDomains(aDomainList: TElogDomainList; aLenguage: string);
 var
   Lista: TCollection;
 begin
@@ -54,7 +54,7 @@ begin
   end;
 end;
 
-procedure TElogService.GetElogDomain(aElogMessageList: TElogMessageList;
+procedure TRw7ElogService.GetElogDomain(aElogMessageList: TElogMessageList;
   aDomainItem: TElogDomainItem; aLenguage: string);
 var
   Lista: TCollection;
@@ -77,7 +77,7 @@ begin
   end;
 end;
 { #todo -oJorge : Gestionar cuando el Campo Json es un array }
-function TElogService.GetElogMessageInfo(aElogMessageItem: TElogMessageItem):
+function TRw7ElogService.GetElogMessageInfo(aElogMessageItem: TElogMessageItem):
 TElogMessageInfo;
 var
   jData, info: TJSONData;
@@ -137,7 +137,7 @@ begin
   end;
 end;
 
-procedure TElogService.ClearAll;
+procedure TRw7ElogService.ClearAll;
 begin
   try
     FConection.Post(FLocalUrl + 'clearall');
@@ -150,7 +150,7 @@ begin
   end;
 end;
 
-procedure TElogService.ClearElogDomain(aDomain: TElogDomainItem);
+procedure TRw7ElogService.ClearElogDomain(aDomain: TElogDomainItem);
 begin
   try
     FConection.Post(FLocalUrl +aDomain._title+'/clear');
@@ -163,13 +163,13 @@ begin
   end;
 end;
 
-constructor TElogService.Create(aRobotConexion: TRobotConnection);
+constructor TRw7ElogService.Create(aRobotConexion: TRobotConnection);
 begin
   FLocalUrl := 'rw/elog/';
   FConection := aRobotConexion;
 end;
 
-destructor TElogService.Destroy;
+destructor TRw7ElogService.Destroy;
 begin
   FConection := nil;
   inherited Destroy;

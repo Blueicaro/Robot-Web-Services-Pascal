@@ -1,4 +1,4 @@
-unit abbwstypes;
+unit rw7abbwstypes;
 
 {$mode ObjFPC}{$H+}
 
@@ -8,15 +8,15 @@ uses
   Classes, SysUtils, fgl;
 
 type
-  TAbbWebServicesError = class(Exception);
+  TRw7AbbWebServicesError = class(Exception);
 
 
 
 type
 
-  { TResourceItem }
+  { TRw7ResourceItem }
 
-  TResourceItem = class(TCollectionItem)
+  TRw7ResourceItem = class(TCollectionItem)
   private
     Fhref: string;
     Ftitle: string;
@@ -32,9 +32,9 @@ type
 
 type
 
-  { TIoSignalItem }
+  { TRw7IoSignalItem }
 
-  TIoSignalItem = class(TCollectionItem)
+  TRw7IoSignalItem = class(TCollectionItem)
   private
     Fcategory: string;
     Fhref: string;
@@ -61,23 +61,24 @@ type
 
 type
 
-  { TIoSignalList }
+  { TRw7IoSignalList }
 
-  TIoSignalList = class(TCollection)
+  TRw7IoSignalList = class(TCollection)
   private
-    procedure SetItems(Index: integer; AValue: TIoSignalItem);
-    function GetItems(Index: integer): TIoSignalItem;
+    procedure SetItems(Index: integer; AValue: TRw7IoSignalItem);
+    function GetItems(Index: integer): TRw7IoSignalItem;
   public
     constructor Create;
-    function Add: TIoSignalItem;
-    property Items[Index: integer]: TIoSignalItem read GetItems write SetItems; default;
+    function Add: TRw7IoSignalItem;
+    property Items[Index: integer]: TRw7IoSignalItem read GetItems write SetItems;
+      default;
   end;
 
 type
 
-  { TIoDeviceItem }
+  { TRw7IoDeviceItem }
 
-  TIoDeviceItem = class(TCollectionItem)
+  TRw7IoDeviceItem = class(TCollectionItem)
   private
     Faddress: string;
     Fhref: string;
@@ -99,9 +100,9 @@ type
 
 type
 
-  { TIosNetworkItem }
+  { TRw7IosNetworkItem }
 
-  TIosNetworkItem = class(TCollectionItem)
+  TRw7IosNetworkItem = class(TCollectionItem)
   private
     Fhref: string;
     Flstate: string;
@@ -124,9 +125,9 @@ type
 
 type
 
-  { TCfgDtAtributeItem }
+  { TRw7CfgDtAtributeItem }
 
-  TCfgDtAtributeItem = class(TCollectionItem)
+  TRw7CfgDtAtributeItem = class(TCollectionItem)
   private
     Finit: string;
     Fmandatory: string;
@@ -153,9 +154,9 @@ type
 }
 type
 
-  { TTaskItem }
+  { TRw7TaskItem }
 
-  TTaskItem = class(TCollectionItem)
+  TRw7TaskItem = class(TCollectionItem)
   private
     Factive: string;
     Fexcstate: string;
@@ -176,7 +177,7 @@ type
 
   {Información sobre el módulo}
 type
-  TModuleInfoItem = class(TCollectionItem)
+  TRw7ModuleInfoItem = class(TCollectionItem)
 
   private
     fname: string;
@@ -193,9 +194,9 @@ type
   {Tipo de mecánica}
 type
 
-  { TRobotTypeItem }
+  { TRw7RobotTypeItem }
 
-  TRobotTypeItem = class(TCollectionItem)
+  TRw7RobotTypeItem = class(TCollectionItem)
   private
     Frobot_type: string;
     F_title: string;
@@ -210,9 +211,9 @@ type
   {Licencia}
 type
 
-  { TSysLicenceItem }
+  { TRw7SysLicenceItem }
 
-  TSysLicenceItem = class(TCollectionItem)
+  TRw7SysLicenceItem = class(TCollectionItem)
   private
     Flicense: string;
     F_title: string;
@@ -228,9 +229,9 @@ type
 }
 type
 
-  { TSysProductItem }
+  { TRw7SysProductItem }
 
-  TSysProductItem = class(TCollectionItem)
+  TRw7SysProductItem = class(TCollectionItem)
   private
     Fversion: string;
     Fversion_name: string;
@@ -249,9 +250,9 @@ type
 }
 type
 
-  { TSysOptionItem }
+  { TRw7SysOptionItem }
 
-  TSysOptionItem = class(TCollectionItem)
+  TRw7SysOptionItem = class(TCollectionItem)
   private
     Foption: string;
     F_title: string;
@@ -271,9 +272,9 @@ type
 
 type
 
-  { TSysSytemItem }
+  { TRw7SysSytemItem }
 
-  TSysSytemItem = class(TCollectionItem)
+  TRw7SysSytemItem = class(TCollectionItem)
   private
     Fbuild: string;
     FBuilTag: string;
@@ -323,9 +324,9 @@ type
 }
 type
 
-  { TModuleTextItem }
+  { TRw7ModuleTextItem }
 
-  TModuleTextItem = class(TCollectionItem)
+  TRw7ModuleTextItem = class(TCollectionItem)
   private
     Ffile_path: string;
     Fmodule_length: string;
@@ -343,9 +344,9 @@ type
 
 type
 
-  { TElogMessageItem }
+  { TRw7ElogMessageItem }
 
-  TElogMessageItem = class(TCollectionItem)
+  TRw7ElogMessageItem = class(TCollectionItem)
   private
     Fargc: string;
     Fcauses: string;
@@ -377,24 +378,24 @@ type
 
 type
 
-  { TElogMessageList }
+  { TRw7ElogMessageList }
 
-  TElogMessageList = class(TCollection)
+  TRw7ElogMessageList = class(TCollection)
 
-    procedure SetItems(Index: integer; AValue: TElogMessageItem);
-    function GetItems(Index: integer): TElogMessageItem;
+    procedure SetItems(Index: integer; AValue: TRw7ElogMessageItem);
+    function GetItems(Index: integer): TRw7ElogMessageItem;
   public
     constructor Create;
-    function Add: TElogMessageItem;
-    property Items[Index: integer]: TElogMessageItem read GetItems write SetItems;
+    function Add: TRw7ElogMessageItem;
+    property Items[Index: integer]: TRw7ElogMessageItem read GetItems write SetItems;
       default;
   end;
 
 type
 
-  { TElogDomainItem }
+  { TRw7ElogDomainItem }
 
-  TElogDomainItem = class(TCollectionItem)
+  TRw7ElogDomainItem = class(TCollectionItem)
   private
     Fbuffsize: string;
     Fdomain_name: string;
@@ -415,15 +416,15 @@ type
 
 type
 
-  { TElogDomainList }
+  { TRw7ElogDomainList }
 
-  TElogDomainList = class(TCollection)
-    procedure SetItems(Index: integer; AValue: TElogDomainItem);
-    function GetItems(Index: integer): TElogDomainItem;
+  TRw7ElogDomainList = class(TCollection)
+    procedure SetItems(Index: integer; AValue: TRw7ElogDomainItem);
+    function GetItems(Index: integer): TRw7ElogDomainItem;
   public
     constructor Create;
-    function Add: TElogDomainItem;
-    property Items[Index: integer]: TElogDomainItem read GetItems write SetItems;
+    function Add: TRw7ElogDomainItem;
+    property Items[Index: integer]: TRw7ElogDomainItem read GetItems write SetItems;
       default;
   end;
 
@@ -471,7 +472,7 @@ const
               "rwversionname": "7.10.0"
 }
 type
-  TSysSystemInfo = record
+  TRw7SysSystemInfo = record
     Major: string;
     Minor: string;
     Build: string;
@@ -493,7 +494,7 @@ type
   Estructura que contiene información sobre un mensaje
 }
 type
-  TElogMessageInfo = record
+  TRw7ElogMessageInfo = record
     msgtype: string;
     code: string;
     tstamp: string;
@@ -523,7 +524,7 @@ uses StrUtils, jsonparser, fpjson, TypInfo;
 
 procedure ErrorWebService(ainfo: string);
 begin
-  raise TAbbWebServicesError.Create(ainfo);
+  raise TRw7AbbWebServicesError.Create(ainfo);
 end;
 
 function Formatjsonkey(aKeyName: string): string;
@@ -669,20 +670,20 @@ begin
   end;
 end;
 
-{ TIoSignalItem }
+{ TRw7IoSignalItem }
 
-procedure TIoSignalItem.Assign(Source: TPersistent);
+procedure TRw7IoSignalItem.Assign(Source: TPersistent);
 begin
-  if Source is TIoSignalItem then
+  if Source is TRw7IoSignalItem then
   begin
-    Fcategory := TIoSignalItem(Source).category;
-    Fhref := TIoSignalItem(Source).href;
-    Flstate := TIoSignalItem(Source).lstate;
-    Flvalue := TIoSignalItem(Source).lvalue;
-    Fname := TIoSignalItem(Source).Name;
-    Ftitle := TIoSignalItem(Source)._title;
-    FTType := TIoSignalItem(Source).TType;
-    F_type := TIoSignalItem(Source)._type;
+    Fcategory := TRw7IoSignalItem(Source).category;
+    Fhref := TRw7IoSignalItem(Source).href;
+    Flstate := TRw7IoSignalItem(Source).lstate;
+    Flvalue := TRw7IoSignalItem(Source).lvalue;
+    Fname := TRw7IoSignalItem(Source).Name;
+    Ftitle := TRw7IoSignalItem(Source)._title;
+    FTType := TRw7IoSignalItem(Source).TType;
+    F_type := TRw7IoSignalItem(Source)._type;
   end
   else
   begin
@@ -690,7 +691,7 @@ begin
   end;
 end;
 
-function TIoSignalItem.Device: string;
+function TRw7IoSignalItem.Device: string;
 var
   Partes: SizeInt;
 begin
@@ -708,42 +709,42 @@ begin
   Result := ExtractWord(Partes - 1, Fhref, ['/']);
 end;
 
-{ TIoSignalList }
+{ TRw7IoSignalList }
 
-procedure TIoSignalList.SetItems(Index: integer; AValue: TIoSignalItem);
+procedure TRw7IoSignalList.SetItems(Index: integer; AValue: TRw7IoSignalItem);
 begin
   Items[Index].Assign(AValue);
 end;
 
-function TIoSignalList.GetItems(Index: integer): TIoSignalItem;
+function TRw7IoSignalList.GetItems(Index: integer): TRw7IoSignalItem;
 begin
-  Result := TIoSignalItem(inherited items[index]);
+  Result := TRw7IoSignalItem(inherited items[index]);
 end;
 
-constructor TIoSignalList.Create;
+constructor TRw7IoSignalList.Create;
 begin
-  inherited Create(TIoSignalItem);
+  inherited Create(TRw7IoSignalItem);
 end;
 
-function TIoSignalList.Add: TIoSignalItem;
+function TRw7IoSignalList.Add: TRw7IoSignalItem;
 begin
-  Result := inherited Add as TIoSignalItem;
+  Result := inherited Add as TRw7IoSignalItem;
 end;
 
 
 
-{ TIosNetworkItem }
+{ TRw7IosNetworkItem }
 
-procedure TIosNetworkItem.Assign(Source: TPersistent);
+procedure TRw7IosNetworkItem.Assign(Source: TPersistent);
 begin
-  if Source is TIosNetworkItem then
+  if Source is TRw7IosNetworkItem then
   begin
-    Fhref := TIosNetworkItem(Source).href;
-    Ftitle := TIosNetworkItem(Source)._title;
-    Ftype := TIosNetworkItem(Source)._type;
-    Ftitle := TIosNetworkItem(Source).title;
-    Fpstate := TIosNetworkItem(Source).pstate;
-    Flstate := TIosNetworkItem(Source).lstate;
+    Fhref := TRw7IosNetworkItem(Source).href;
+    Ftitle := TRw7IosNetworkItem(Source)._title;
+    Ftype := TRw7IosNetworkItem(Source)._type;
+    Ftitle := TRw7IosNetworkItem(Source).title;
+    Fpstate := TRw7IosNetworkItem(Source).pstate;
+    Flstate := TRw7IosNetworkItem(Source).lstate;
   end
   else
   begin
@@ -751,23 +752,23 @@ begin
   end;
 end;
 
-{ TElogMessageItem }
+{ TRw7ElogMessageItem }
 
-procedure TElogMessageItem.Assign(Source: TPersistent);
+procedure TRw7ElogMessageItem.Assign(Source: TPersistent);
 begin
-  if Source is TElogMessageItem then
+  if Source is TRw7ElogMessageItem then
   begin
-    Fargc := TElogMessageItem(Source).Fargc;
-    Fcauses := TElogMessageItem(Source).Fcauses;
-    Fcode := TElogMessageItem(Source).Fcode;
-    Fconseqs := TElogMessageItem(Source).Fconseqs;
-    Fdesc := TElogMessageItem(Source).Fdesc;
-    Fmsgtype := TElogMessageItem(Source).Fmsgtype;
-    Ftitle := TElogMessageItem(Source).Ftitle;
-    Ftstamp := TElogMessageItem(Source).Ftstamp;
-    F_title := TElogMessageItem(Source).F_title;
-    F_type := TElogMessageItem(Source).F_type;
-    Fhref := TElogMessageItem(Source).Fhref;
+    Fargc := TRw7ElogMessageItem(Source).Fargc;
+    Fcauses := TRw7ElogMessageItem(Source).Fcauses;
+    Fcode := TRw7ElogMessageItem(Source).Fcode;
+    Fconseqs := TRw7ElogMessageItem(Source).Fconseqs;
+    Fdesc := TRw7ElogMessageItem(Source).Fdesc;
+    Fmsgtype := TRw7ElogMessageItem(Source).Fmsgtype;
+    Ftitle := TRw7ElogMessageItem(Source).Ftitle;
+    Ftstamp := TRw7ElogMessageItem(Source).Ftstamp;
+    F_title := TRw7ElogMessageItem(Source).F_title;
+    F_type := TRw7ElogMessageItem(Source).F_type;
+    Fhref := TRw7ElogMessageItem(Source).Fhref;
   end
   else
   begin
@@ -775,41 +776,41 @@ begin
   end;
 end;
 
-{ TElogMessageList }
+{ TRw7ElogMessageList }
 
-procedure TElogMessageList.SetItems(Index: integer; AValue: TElogMessageItem);
+procedure TRw7ElogMessageList.SetItems(Index: integer; AValue: TRw7ElogMessageItem);
 begin
   Items[Index].Assign(AValue);
 end;
 
-function TElogMessageList.GetItems(Index: integer): TElogMessageItem;
+function TRw7ElogMessageList.GetItems(Index: integer): TRw7ElogMessageItem;
 begin
-  Result := TElogMessageItem(inherited items[Index]);
+  Result := TRw7ElogMessageItem(inherited items[Index]);
 end;
 
-constructor TElogMessageList.Create;
+constructor TRw7ElogMessageList.Create;
 begin
-  inherited Create(TElogMessageItem);
+  inherited Create(TRw7ElogMessageItem);
 end;
 
-function TElogMessageList.Add: TElogMessageItem;
+function TRw7ElogMessageList.Add: TRw7ElogMessageItem;
 begin
-  Result := inherited Add as TElogMessageItem;
+  Result := inherited Add as TRw7ElogMessageItem;
 end;
 
-{ TElogDomainItem }
+{ TRw7ElogDomainItem }
 
-procedure TElogDomainItem.Assign(Source: TPersistent);
+procedure TRw7ElogDomainItem.Assign(Source: TPersistent);
 begin
 
-  if Source is TElogDomainItem then
+  if Source is TRw7ElogDomainItem then
   begin
-    Fbuffsize := TElogDomainItem(Source).Fbuffsize;
-    Fdomain_name := TElogDomainItem(Source).Fdomain_name;
-    Fhref := TElogDomainItem(Source).Fhref;
-    Fnumevts := TElogDomainItem(Source).Fnumevts;
-    F_title := TElogDomainItem(Source).F_title;
-    F_type := TElogDomainItem(Source).F_type;
+    Fbuffsize := TRw7ElogDomainItem(Source).Fbuffsize;
+    Fdomain_name := TRw7ElogDomainItem(Source).Fdomain_name;
+    Fhref := TRw7ElogDomainItem(Source).Fhref;
+    Fnumevts := TRw7ElogDomainItem(Source).Fnumevts;
+    F_title := TRw7ElogDomainItem(Source).F_title;
+    F_type := TRw7ElogDomainItem(Source).F_type;
   end
   else
   begin
@@ -818,26 +819,26 @@ begin
 
 end;
 
-{ TElogDomainList }
+{ TRw7ElogDomainList }
 
-procedure TElogDomainList.SetItems(Index: integer; AValue: TElogDomainItem);
+procedure TRw7ElogDomainList.SetItems(Index: integer; AValue: TRw7ElogDomainItem);
 begin
   Items[Index].Assign(AValue);
 end;
 
-function TElogDomainList.GetItems(Index: integer): TElogDomainItem;
+function TRw7ElogDomainList.GetItems(Index: integer): TRw7ElogDomainItem;
 begin
-  Result := TElogDomainItem(inherited items[Index]);
+  Result := TRw7ElogDomainItem(inherited items[Index]);
 end;
 
-constructor TElogDomainList.Create;
+constructor TRw7ElogDomainList.Create;
 begin
-  inherited Create(TElogDomainItem);
+  inherited Create(TRw7ElogDomainItem);
 end;
 
-function TElogDomainList.Add: TElogDomainItem;
+function TRw7ElogDomainList.Add: TRw7ElogDomainItem;
 begin
-  Result := inherited Add as TElogDomainItem;
+  Result := inherited Add as TRw7ElogDomainItem;
 end;
 
 

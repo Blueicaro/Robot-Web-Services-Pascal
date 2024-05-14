@@ -2,7 +2,14 @@
 <CONFIG>
   <ProjectGroup FileVersion="2">
     <Targets>
-      <Target FileName="src\project1.lpi">
+      <Target FileName="src\TestRw7.lpi">
+        <BuildModes>
+          <Mode Name="Default" Compile="True"/>
+          <Mode Name="Debug"/>
+          <Mode Name="Release"/>
+        </BuildModes>
+      </Target>
+      <Target FileName="src\TestRw6.lpi">
         <BuildModes>
           <Mode Name="Default" Compile="True"/>
           <Mode Name="Debug"/>
@@ -22,6 +29,13 @@
         </BuildModes>
       </Target>
       <Target FileName="Tools\Peticiones\TestPeticiones.lpi">
+        <BuildModes>
+          <Mode Name="Default" Compile="True"/>
+          <Mode Name="Debug"/>
+          <Mode Name="Release"/>
+        </BuildModes>
+      </Target>
+      <Target FileName="..\Celda Pasta\CeldaPasta.lpi">
         <BuildModes>
           <Mode Name="Default" Compile="True"/>
           <Mode Name="Debug"/>

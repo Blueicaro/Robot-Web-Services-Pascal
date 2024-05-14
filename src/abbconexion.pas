@@ -86,10 +86,10 @@ var
   I: integer;
 begin
   RutaAbsoluta := FRobotUrl + UrlRelative;
-  if FDigestAuthentication then
-  begin
-    RutaAbsoluta:=RutaAbsoluta+'?json=1';
-  end;
+  //if FDigestAuthentication then
+  //begin
+  //  RutaAbsoluta:=RutaAbsoluta+'?json=1';
+  //end;
   FRespuesta.Clear;
   GenerarCabeceras;
   try

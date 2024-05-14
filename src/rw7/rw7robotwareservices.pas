@@ -1,18 +1,18 @@
-unit robotwareservices;
+unit rw7robotwareservices;
 
 {$mode ObjFPC}{$H+}
 
 interface
 
 uses
-  Classes, SysUtils, abbwstypes, TypInfo,
+  Classes, SysUtils, Rw7abbwstypes, TypInfo,
   fpjson, abbconexion;
 
 type
 
-  { TRobotWareService }
+  { TRw7RobotWareService }
 
-  TRobotWareService = class
+  TRw7RobotWareService = class
   private
     FLocalUrl: string;
     FConexion: TRobotConnection;
@@ -42,9 +42,9 @@ type
     procedure GetDevicesList(aList: TStringList);
 
     procedure GetSignalsList(aList: TStringList);
-    procedure GetSignalsList(aListItems: TIoSignalList);
+    procedure GetSignalsList(aListItems: TRw7IoSignalList);
   public
-    function GetSystemInfo: TSysSystemInfo;
+    function GetSystemInfo: TRw7SysSystemInfo;
     function GetRobotType: string; //Obtiene el tipo de manipulador
     function GetSystemLicence: string; //Obtiene la licencia del robot
     procedure GetSystemProducts(aListItems: TCollection); //Obtiene la lista de productos
@@ -59,9 +59,9 @@ implementation
 
 uses StrUtils;
 
-  { TRobotWareService }
+  { TRw7RobotWareService }
 
-procedure TRobotWareService.doMasterShip(Operation: string);
+procedure TRw7RobotWareService.doMasterShip(Operation: string);
 begin
   try
     FConexion.Post(FLocalUrl + Operation);
@@ -70,11 +70,11 @@ begin
   end;
   if FConexion.StatusCode <> 204 then
   begin
-    raise TAbbWebServicesError.Create(FConexion.StatusText);
+    raise TRw7AbbWebServicesError.Create(FConexion.StatusText);
   end;
 end;
 
-procedure TRobotWareService.GetListServices(aList: TStringList);
+procedure TRw7RobotWareService.GetListServices(aList: TStringList);
 begin
 
   try
@@ -96,7 +96,7 @@ begin
 
 end;
 
-procedure TRobotWareService.GetTasksList(aListItems: TCollection);
+procedure TRw7RobotWareService.GetTasksList(aListItems: TCollection);
 begin
 
   try
@@ -106,13 +106,13 @@ begin
   end;
   if FConexion.StatusCode = 200 then
   begin
-    GetEmbeddedClassList(FConexion.Respuesta.Text, aListItems, TTaskItem, rap_task_li);
+    GetEmbeddedClassList(FConexion.Respuesta.Text, aListItems, TRw7TaskItem, rap_task_li);
   end;
 
 end;
 
 
-procedure TRobotWareService.GetTasksList(aListTask: TStringList);
+procedure TRw7RobotWareService.GetTasksList(aListTask: TStringList);
 var
   I: integer;
   Lista: TCollection;
@@ -125,15 +125,15 @@ begin
   end;
 
 
-  Lista := TCollection.Create(TTaskItem);
+  Lista := TCollection.Create(TRw7TaskItem);
   try
     if FConexion.StatusCode = 200 then
     begin
-      GetEmbeddedClassList(FConexion.Respuesta.Text, Lista, TTaskItem, rap_task_li);
+      GetEmbeddedClassList(FConexion.Respuesta.Text, Lista, TRw7TaskItem, rap_task_li);
     end;
     for I := 0 to Lista.Count - 1 do
     begin
-      with Lista.Items[I] as TTaskItem do
+      with Lista.Items[I] as TRw7TaskItem do
       begin
         aListTask.Add(Name);
       end;
@@ -144,7 +144,7 @@ begin
 
 end;
 
-procedure TRobotWareService.GetModulesList(TaksName: string; aListModule: TStringList);
+procedure TRw7RobotWareService.GetModulesList(TaksName: string; aListModule: TStringList);
 var
   Lista: TCollection;
   I: integer;
@@ -155,16 +155,16 @@ begin
     ErrorWebService('Error conexión. codigo: ' + FConexion.StatusText);
   end;
 
-  Lista := TCollection.Create(TModuleInfoItem);
+  Lista := TCollection.Create(TRw7ModuleInfoItem);
 
   try
     if FConexion.StatusCode = 200 then
     begin
-      GetStatusClassList(FConexion.Respuesta.Text, Lista, TModuleInfoItem,
+      GetStatusClassList(FConexion.Respuesta.Text, Lista, TRw7ModuleInfoItem,
         rap_module_info_li);
       for I := 0 to Lista.Count - 1 do
       begin
-        with Lista.Items[I] as TModuleInfoItem do
+        with Lista.Items[I] as TRw7ModuleInfoItem do
         begin
           aListModule.Add(Name);
         end;
@@ -176,7 +176,7 @@ begin
 
 end;
 
-procedure TRobotWareService.GetModuleText(TaskName, ModuleName: string;
+procedure TRw7RobotWareService.GetModuleText(TaskName, ModuleName: string;
   aListContent: TStringList);
 var
   Lista: TCollection;
@@ -199,14 +199,14 @@ begin
     FConexion.Respuesta.Text :=
       StringReplace(FConexion.Respuesta.Text, '""', '"', [rfIgnoreCase, rfReplaceAll]);
 
-    Lista := TCollection.Create(TModuleTextItem);
+    Lista := TCollection.Create(TRw7ModuleTextItem);
     try
-      GetStatusClassList(FConexion.Respuesta.Text, Lista, TModuleTextItem,
+      GetStatusClassList(FConexion.Respuesta.Text, Lista, TRw7ModuleTextItem,
         RAP_MODULE_TEXT);
     finally
       if Lista.Count = 1 then
       begin
-        with Lista.Items[0] as TModuleTextItem do
+        with Lista.Items[0] as TRw7ModuleTextItem do
         begin
           if module_text <> '' then
           begin
@@ -232,7 +232,7 @@ begin
   end;
 end;
 
-procedure TRobotWareService.GetDomainList(aList: TStringList);
+procedure TRw7RobotWareService.GetDomainList(aList: TStringList);
 var
   Lista: TListItems;
   I: integer;
@@ -242,15 +242,15 @@ begin
   except
     ErrorWebService('Error conexión. codigo: ' + FConexion.StatusText);
   end;
-  Lista := TListItems.Create(TResourceItem);
+  Lista := TListItems.Create(TRw7ResourceItem);
   try
     if FConexion.StatusCode = 200 then
     begin
-      GetEmbeddedClassList(FConexion.Respuesta.Text, Lista, TResourceItem,
+      GetEmbeddedClassList(FConexion.Respuesta.Text, Lista, TRw7ResourceItem,
         cfg_domain_li);
       for I := 0 to Lista.Count - 1 do
       begin
-        with Lista.Items[I] as TResourceItem do
+        with Lista.Items[I] as TRw7ResourceItem do
         begin
           aList.Add(_title);
         end;
@@ -262,7 +262,7 @@ begin
 
 end;
 
-procedure TRobotWareService.GetDomainDomain(aDomain: string; ListDomain: TStringList);
+procedure TRw7RobotWareService.GetDomainDomain(aDomain: string; ListDomain: TStringList);
 var
   Lista: TListItems;
   I: integer;
@@ -272,14 +272,14 @@ begin
   except
     ErrorWebService('Error conexión. codigo: ' + FConexion.StatusText);
   end;
-  Lista := TListItems.Create(TResourceItem);
+  Lista := TListItems.Create(TRw7ResourceItem);
   try
     if FConexion.StatusCode = 200 then
     begin
-      GetEmbeddedClassList(FConexion.Respuesta.Text, Lista, TResourceItem, CFG_DT_LI);
+      GetEmbeddedClassList(FConexion.Respuesta.Text, Lista, TRw7ResourceItem, CFG_DT_LI);
       for I := 0 to Lista.Count - 1 do
       begin
-        with Lista.Items[I] as TResourceItem do
+        with Lista.Items[I] as TRw7ResourceItem do
         begin
           ListDomain.Add(_title);
         end;
@@ -290,22 +290,22 @@ begin
   end;
 end;
 
-procedure TRobotWareService.RequestMastership;
+procedure TRw7RobotWareService.RequestMastership;
 begin
   doMasterShip('/mastership/request');
 end;
 
-procedure TRobotWareService.ReleaseMastership;
+procedure TRw7RobotWareService.ReleaseMastership;
 begin
   doMasterShip('/mastership/release');
 end;
 
-procedure TRobotWareService.RemoveMastership;
+procedure TRw7RobotWareService.RemoveMastership;
 begin
   doMasterShip('mastership/watchdog');
 end;
 
-procedure TRobotWareService.GetNetWorksList(aListItems: TCollection);
+procedure TRw7RobotWareService.GetNetWorksList(aListItems: TCollection);
 var
   Lista: TCollection;
 begin
@@ -315,14 +315,14 @@ begin
     ErrorWebService('Error conexión. codigo: ' + FConexion.StatusText);
   end;
 
-  Lista := TCollection.Create(TIosNetworkItem);
+  Lista := TCollection.Create(TRw7IosNetworkItem);
 
   try
     if FConexion.StatusCode = 200 then
     begin
 
       GetEmbeddedClassList(FConexion.Respuesta.Text, aListItems,
-        TIosNetworkItem, IOS_NETWORK_LI);
+        TRw7IosNetworkItem, IOS_NETWORK_LI);
 
     end;
   finally
@@ -331,17 +331,17 @@ begin
 
 end;
 
-procedure TRobotWareService.GetNetWorksList(aList: TStringList);
+procedure TRw7RobotWareService.GetNetWorksList(aList: TStringList);
 var
   Lista: TCollection;
   I: integer;
 begin
-  Lista := TCollection.Create(TIosNetworkItem);
+  Lista := TCollection.Create(TRw7IosNetworkItem);
   try
     GetNetworksList(Lista);
     for I := 0 to Lista.Count - 1 do
     begin
-      with Lista.Items[I] as TIosNetworkItem do
+      with Lista.Items[I] as TRw7IosNetworkItem do
       begin
         aList.Add(Name);
       end;
@@ -352,7 +352,7 @@ begin
 
 end;
 
-procedure TRobotWareService.GetDevicesList(aListItems: TCollection);
+procedure TRw7RobotWareService.GetDevicesList(aListItems: TCollection);
 var
   cadena: string;
 begin
@@ -366,23 +366,23 @@ begin
   if FConexion.StatusCode = 200 then
   begin
     GetEmbeddedClassList(FConexion.Respuesta.Text, aListItems,
-      TIoDeviceItem, IOS_DEVICE_LI);
+      TRw7IoDeviceItem, IOS_DEVICE_LI);
   end;
 
 end;
 
-procedure TRobotWareService.GetDevicesList(aList: TStringList);
+procedure TRw7RobotWareService.GetDevicesList(aList: TStringList);
 var
   Lista: TCollection;
   I: integer;
 begin
-  Lista := TCollection.Create(TIoDeviceItem);
+  Lista := TCollection.Create(TRw7IoDeviceItem);
   try
     GetDevicesList(Lista);
     for I := 0 to Lista.Count - 1 do
     begin
 
-      with Lista.Items[I] as TIoDeviceItem do
+      with Lista.Items[I] as TRw7IoDeviceItem do
       begin
         aList.Add(Name);
       end;
@@ -393,7 +393,7 @@ begin
 
 end;
 
-procedure TRobotWareService.GetSignalsList(aListItems: TIoSignalList);
+procedure TRw7RobotWareService.GetSignalsList(aListItems: TRw7IoSignalList);
 var
   Lista: TCollection;
   cadena: String;
@@ -408,9 +408,9 @@ begin
   if FConexion.StatusCode = 200 then
   begin
     try
-      Lista := TCollection.Create(TIoSignalItem);
+      Lista := TCollection.Create(TRw7IoSignalItem);
       GetEmbeddedClassList(FConexion.Respuesta.Text, Lista,
-        TIoSignalItem, IOS_SIGNAL_LI);
+        TRw7IoSignalItem, IOS_SIGNAL_LI);
       aListItems.Assign(Lista);
     finally
       FreeAndNil(Lista);
@@ -419,18 +419,18 @@ begin
 
 end;
 
-procedure TRobotWareService.GetSignalsList(aList: TStringList);
+procedure TRw7RobotWareService.GetSignalsList(aList: TStringList);
 var
   I: integer;
-  Lista: TIoSignalList;
+  Lista: TRw7IoSignalList;
 begin
 
   try
-    Lista := TIoSignalList.Create;
+    Lista := TRw7IoSignalList.Create;
     GetSignalsList(Lista);
     for I := 0 to Lista.Count - 1 do
     begin
-      with Lista.Items[I] as TIoSignalItem do
+      with Lista.Items[I] as TRw7IoSignalItem do
       begin
         aList.Add(Name);
       end;
@@ -441,7 +441,7 @@ begin
 
 end;
 
-function TRobotWareService.GetSystemInfo: TSysSystemInfo;
+function TRw7RobotWareService.GetSystemInfo: TRw7SysSystemInfo;
 var
   Lista: TCollection;
 begin
@@ -451,11 +451,11 @@ begin
     ErrorWebService('Error conexión. codigo: ' + FConexion.StatusText);
   end;
   try
-    Lista := TCollection.Create(TSysSytemItem);
-    GetStatusClassList(FConexion.Respuesta.Text, Lista, TSysSytemItem, SYS_SYSTEM);
+    Lista := TCollection.Create(TRw7SysSytemItem);
+    GetStatusClassList(FConexion.Respuesta.Text, Lista, TRw7SysSytemItem, SYS_SYSTEM);
     if Lista.Count = 1 then
     begin
-      with Lista.Items[0] as TSysSytemItem do
+      with Lista.Items[0] as TRw7SysSytemItem do
       begin
         Result.Build := Build;
         Result.BuildTag := BuildTag;
@@ -478,7 +478,7 @@ begin
   end;
 end;
 
-function TRobotWareService.GetRobotType: string;
+function TRw7RobotWareService.GetRobotType: string;
 var
   Lista: TCollection;
 begin
@@ -489,14 +489,14 @@ begin
     ErrorWebService('Error conexión. codigo: ' + FConexion.StatusText);
   end;
   try
-    Lista := TCollection.Create(TRobotTypeItem);
+    Lista := TCollection.Create(TRw7RobotTypeItem);
     if FConexion.StatusCode = 200 then
     begin
-      GetStatusClassList(FConexion.Respuesta.Text, Lista, TRobotTypeItem, SYS_ROBOTTYPE);
+      GetStatusClassList(FConexion.Respuesta.Text, Lista, TRw7RobotTypeItem, SYS_ROBOTTYPE);
 
       if Lista.Count = 1 then
       begin
-        with Lista.Items[0] as TRobotTypeItem do
+        with Lista.Items[0] as TRw7RobotTypeItem do
         begin
           Result := robot_type;
         end;
@@ -507,7 +507,7 @@ begin
   end;
 end;
 
-function TRobotWareService.GetSystemLicence: string;
+function TRw7RobotWareService.GetSystemLicence: string;
 var
   Lista: TCollection;
 begin
@@ -518,11 +518,11 @@ begin
     ErrorWebService('Error conexión. codigo: ' + FConexion.StatusText);
   end;
   try
-    Lista := TCollection.Create(TSysLicenceItem);
-    GetStatusClassList(FConexion.Respuesta.Text, Lista, TSysLicenceItem, SYS_LICENSE);
+    Lista := TCollection.Create(TRw7SysLicenceItem);
+    GetStatusClassList(FConexion.Respuesta.Text, Lista, TRw7SysLicenceItem, SYS_LICENSE);
     if Lista.Count = 1 then
     begin
-      with Lista.Items[0] as TSysLicenceItem do
+      with Lista.Items[0] as TRw7SysLicenceItem do
       begin
         Result := license;
       end;
@@ -532,7 +532,7 @@ begin
   end;
 end;
 
-procedure TRobotWareService.GetSystemProducts(aListItems: TCollection);
+procedure TRw7RobotWareService.GetSystemProducts(aListItems: TCollection);
 begin
   try
     FConexion.Get(FLocalUrl + '/system/products');
@@ -542,22 +542,22 @@ begin
 
   if FConexion.StatusCode = 200 then
   begin
-    GetStatusClassList(FConexion.Respuesta.Text, aListItems, TSysProductItem,
+    GetStatusClassList(FConexion.Respuesta.Text, aListItems, TRw7SysProductItem,
       SYS_PRODUCT);
   end;
 end;
 
-procedure TRobotWareService.GetSystemProducts(aLista: TStringList);
+procedure TRw7RobotWareService.GetSystemProducts(aLista: TStringList);
 var
   Lista: TCollection;
   I: integer;
 begin
   try
-    Lista := TCollection.Create(TSysProductItem);
+    Lista := TCollection.Create(TRw7SysProductItem);
     GetSystemProducts(Lista);
     for I := 0 to Lista.Count - 1 do
     begin
-      with Lista.Items[I] as TSysProductItem do
+      with Lista.Items[I] as TRw7SysProductItem do
       begin
         aLista.Add(_title);
       end;
@@ -567,7 +567,7 @@ begin
   end;
 end;
 
-procedure TRobotWareService.GetSystemOptions(aLista: TStringList);
+procedure TRw7RobotWareService.GetSystemOptions(aLista: TStringList);
 var
   lista: TCollection;
   I: integer;
@@ -580,11 +580,11 @@ begin
   if FConexion.StatusCode = 200 then
   begin
     try
-      lista := TCollection.Create(TSysOptionItem);
-      GetStatusClassList(FConexion.Respuesta.Text, Lista, TSysOptionItem, SYS_OPTION);
+      lista := TCollection.Create(TRw7SysOptionItem);
+      GetStatusClassList(FConexion.Respuesta.Text, Lista, TRw7SysOptionItem, SYS_OPTION);
       for I := 0 to lista.Count - 1 do
       begin
-        with Lista.Items[I] as TSysOptionItem do
+        with Lista.Items[I] as TRw7SysOptionItem do
         begin
           aLista.Add(option);
         end;
@@ -597,14 +597,14 @@ begin
 end;
 
 
-constructor TRobotWareService.Create(aRobotConexion: TRobotConnection);
+constructor TRw7RobotWareService.Create(aRobotConexion: TRobotConnection);
 begin
   FConexion := aRobotConexion;
   FLocalUrl := 'rw';
 
 end;
 
-destructor TRobotWareService.Destroy;
+destructor TRw7RobotWareService.Destroy;
 begin
   FConexion := nil;
   inherited Destroy;

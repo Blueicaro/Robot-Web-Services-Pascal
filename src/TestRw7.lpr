@@ -1,4 +1,4 @@
-program project1;
+program TestRw7;
 
 {$mode objfpc}{$H+}
 
@@ -8,28 +8,27 @@ uses
   {$ENDIF}
   Classes { you can add units after this },
   SysUtils,
-  AbbWebServices,
-  elogservices,
-  abbwstypes;
+  rw7webservices,
+  rw7elogservices,
+  rw7abbwstypes;
 
 var
-  Robot: TAbbWebServices;
+  Robot: TRw7WebServices;
   Lista: TStringList;
-  P: TElogDomainList;
+  P: TRw7ElogDomainList;
   I: integer;
-  ListaMensajes: TElogMessageList;
-  r: TElogMessageInfo;
+  ListaMensajes: TRw7ElogMessageList;
+  r: TRw7ElogMessageInfo;
 begin
 
   try
-    //Robot := TAbbWebServices.Create('https://localhost:80');
-    Robot := TAbbWebServices.Create('http://localhost');
+    Robot := TRw7WebServices.Create('https://localhost:80');
     Lista := TStringList.Create;
     try
       begin
         Robot.Connection.PrimeraConexion;
         Robot.RobotWare.GetDomainList(Lista);
-        For I:= 0 To Lista.Count-1 do
+        for I := 0 to Lista.Count - 1 do
         begin
           WriteLn(Lista[i]);
         end;
