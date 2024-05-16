@@ -116,7 +116,7 @@ begin
     Response := TStringStream.Create('');
     if BodyText <> '' then;
     begin
-      FHttpSend.RequestBody := TRawByteStringStream(BodyText);
+      FHttpSend.RequestBody:= TRawByteStringStream.Create(BodyText)
     end;
     FHttpSend.Post(RutaAbsoluta, Response);
     FStatusText := FHttpSend.ResponseStatusText;
@@ -135,17 +135,34 @@ end;
 procedure TRobotConnection.GenerarCabeceras(Get: boolean);
 begin
   FHttpSend.RequestHeaders.Clear;
-  FHttpSend.AddHeader('Authorization', 'Basic ' + FClave);
-  FHttpSend.AddHeader('Accept', 'application/hal+json;v=2.0');
 
-  if get then
+  FHttpSend.AddHeader('Connection','Keep-Alive');
+  if FDigestAuthentication = False then  //RobotWare 7
   begin
-    FHttpSend.AddHeader('Content-Type', 'application/hal+json;v=2.0');
+    FHttpSend.AddHeader('Authorization', 'Basic ' + FClave);
+    FHttpSend.AddHeader('Accept', 'application/hal+json;v=2.0');
+    if get then
+    begin
+      FHttpSend.AddHeader('Content-Type', 'application/hal+json;v=2.0');
+    end
+    else
+    begin
+      FHttpSend.AddHeader('Content-Type', 'application/x-www-form-urlencoded;v=2.0');
+    end;
   end
   else
   begin
-    FHttpSend.AddHeader('Content-Type', 'application/x-www-form-urlencoded;v=2.0');
+    FHttpSend.AddHeader('Accept', 'application/hal+json');
+    if get then
+    begin
+      FHttpSend.AddHeader('Content-Type', 'application/hal+json');
+    end
+    else
+    begin
+      FHttpSend.AddHeader('Content-Type', 'application/x-www-form-urlencoded');
+    end;
   end;
+
 end;
 
 procedure TRobotConnection.GenerarClave;
@@ -214,8 +231,8 @@ begin
 
   if FDigestAuthentication = False then
   begin
-     FHttpSend.Get(FRobotUrl);
-     GenerarCookie;
+    FHttpSend.Get(FRobotUrl);
+    GenerarCookie;
   end
   else
   begin

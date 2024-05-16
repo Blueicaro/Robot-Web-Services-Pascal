@@ -21,6 +21,11 @@ type
     procedure GetRapidModules(aModulesList: TRw6ModuleInfoList; aTaskName: string);
     procedure GetModuleText(aModuleName: string; aTaskName: string;
       var ModuleContent: TRw6ModuleTextItem);
+    procedure UpdateRapidVariable;
+  public
+    function GetOperationMode: TOpMode;
+    function MastershipRequest: boolean;
+    function MastershipRelease: boolean;
   public
     constructor Create(aRobotConexion: TRobotConnection);
     destructor Destroy; override;
@@ -100,6 +105,61 @@ begin
 
   finally
     FreeAndNil(ModuleInfo);
+  end;
+end;
+
+procedure TRw6RobotWareServices.UpdateRapidVariable;
+var
+  Parametros: String;
+begin
+  Parametros:= '[0,0,60,200,"Cordón 40",3,TRUE,0.01,200,0,0,0,TRUE]'  ;
+  FConexion.Post('/rw/rapid/symbol/data/RAPID/T_ROB1/Datos/M1_C03?action=set','value='+Parametros);
+  //FConexion.Post('/rw/rapid/symbol/data/RAPID/T_ROB1/user/reg1?action=set');
+end;
+
+function TRw6RobotWareServices.GetOperationMode: TOpMode;
+begin
+  try
+    FConexion.Get(FLocalUrl + '/panel/opmode?json=1');
+  except
+    ErrorWebService('Error conexión. codigo: ' + FConexion.StatusText);
+  end;
+  if FConexion.StatusCode = 200 then
+  begin
+    try
+     Result := LeerModoFuncionamiento(FConexion.Respuesta.Text);
+    finally
+
+    end;
+  end;
+end;
+
+function TRw6RobotWareServices.MastershipRequest: boolean;
+begin
+  Result := False;
+  try
+    FConexion.Post(FLocalUrl + '/mastership?action=request');
+  except
+    ErrorWebService('Error conexión. codigo: ' + FConexion.StatusText);
+  end;
+  if FConexion.StatusCode = 204 then
+  begin
+    Result := True;
+  end;
+end;
+
+function TRw6RobotWareServices.MastershipRelease: boolean;
+begin
+  //mastership?action=release
+  Result := False;
+  try
+    FConexion.Post(FLocalUrl + '/mastership?action=release');
+  except
+    ErrorWebService('Error conexión. codigo: ' + FConexion.StatusText);
+  end;
+  if FConexion.StatusCode = 204 then
+  begin
+    Result := True;
   end;
 end;
 

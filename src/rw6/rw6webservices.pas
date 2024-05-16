@@ -9,7 +9,7 @@ interface
 
 uses
   Classes, SysUtils, abbconexion, rw6robotwareservices,
-  rw6fileservices, rw6controllerservice;
+  rw6fileservices, rw6controllerservice, rw6userservices;
 
 type
 
@@ -21,6 +21,7 @@ type
     FControllerService: Trw6controllerservice;
     FFileService: TRw6FileServices;
     FRobotWareServices: TRw6RobotWareServices;
+    FUserServices: TRw6UserServices;
   public
     procedure SetRobotUrl(aUrl: string);
     procedure SetUserPassword(aUser: string; aPassword: string);
@@ -59,6 +60,10 @@ end;
 constructor TRw6WebServices.Create;
 begin
   FConection := TRobotConnection.Create;
+  FRobotWareServices := TRw6RobotWareServices.Create(FConection);
+  FControllerService := Trw6controllerservice.Create(FConection);
+  FFileService := TRw6FileServices.Create(FConection);
+  FUserServices := TRw6UserServices.Create(FConection);
 end;
 
 constructor TRw6WebServices.Create(aUrlRobot: string; aUser: string; aPassword: string);
@@ -66,13 +71,11 @@ begin
   Create;
   FConection.SetRobotUrl(aUrlRobot);
   FConection.SetUserPassword(aUser, aPassword);
-  FRobotWareServices := TRw6RobotWareServices.Create(FConection);
-  FControllerService := Trw6controllerservice.Create(FConection);
-  FFileService := TRw6FileServices.Create(FConection);
 end;
 
 destructor TRw6WebServices.Destroy;
 begin
+  FreeAndNil(FUserServices);
   FreeAndNil(FControllerService);
   FreeAndNil(FFileService);
   FreeAndNil(FRobotWareServices);

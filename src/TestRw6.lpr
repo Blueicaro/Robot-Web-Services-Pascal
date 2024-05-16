@@ -16,26 +16,24 @@ uses
   rw6abbwstypes,
   URIParser,
   rw6fileservices,
-  rw6controllerservice;
+  rw6controllerservice, rw6userservices;
 
 var
   R: TRw6WebServices;
-  I: integer;
-  Lista: TCtrlIdentifyItem;
-
-
+  Modo: TOpMode;
 
 
 begin
   R := TRw6WebServices.Create('http://localhost');
   R.Connect;
   try
-    Lista := TCtrlIdentifyItem.Create(nil);
-    R.ControllerService.GetIdentityResource(Lista)   ;
-    WriteLn(Lista.ctrl_name);
+     Modo :=R.RobotWareServices.GetOperationMode;
+     if Modo.opmode =opAUTO Then
+      WriteLn('auto') ;
+      R.RobotWareServices.UpdateRapidVariable;
   finally
 
-    FreeAndNil(Lista);
+
     FreeAndNil(R);
     Readln();
   end;

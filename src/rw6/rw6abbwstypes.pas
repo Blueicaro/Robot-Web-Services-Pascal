@@ -13,6 +13,25 @@ uses
 
 type
   TRw6AbbWebServicesError = class(Exception);
+  {
+    INIT : State init
+    AUTO_CH : State change request for automatic mode
+    MANF_CH : State change request for manual mode & full speed
+    MANR : State manual mode & reduced speed
+    MANF : State manual mode & full speed
+    AUTO : State automatic mode
+    UNDEF : Undefined
+}
+type
+  opModes = (opINIT, opAUTO_CH, opMANF_CH, opMANR, opMANF, opAUTO, opUNDEF);
+
+type
+  TOpMode = record
+
+    _type: string;
+    _title: string;
+    opmode: opmodes;
+  end;
 
 type
 
@@ -204,6 +223,7 @@ const
 
 
 function Formatjsonkey(aKeyName: string): string;
+function LeerModoFuncionamiento(aDatos: string): TOpMode;
 procedure ErrorWebService(ainfo: string);
 procedure GetEmbeddedStateList(aDatos: string; aListItems: TCollection;
   aItemClass: TCollectionItemClass; TipoLista: string);
@@ -211,6 +231,45 @@ procedure GetEmbeddedStateList(aDatos: string; aListItems: TCollection;
 implementation
 
 uses StrUtils, jsonparser, fpjson, TypInfo, URIParser;
+
+function LeerModoFuncionamiento(aDatos: string): TOpMode;
+var
+  jData, DataResources: TJSONData;
+  myJsonObject: TJSONObject;
+  Cadena: TJSONStringType;
+  Valor: integer;
+  temp: opModes;
+begin
+  Result.opmode := opUNDEF;
+  Result._title := '';
+  Result._type := '';
+
+  try
+   jData := GetJSON(aDatos);
+   myJsonObject := jData as TJSONObject;
+   DataResources := myJsonObject.GetPath('_embedded').GetPath('_state');
+   if DataResources <> nil then
+   begin
+     Result._type := DataResources.Items[0].FindPath('_type').AsString;
+     Result._title := DataResources.Items[0].FindPath('_title').AsString;
+     Cadena := DataResources.Items[0].FindPath('opmode').AsString;
+     Cadena := 'op'+Cadena;
+     for temp in opModes do
+     begin
+       if GetEnumName(TypeInfo(opModes), integer(temp)) = Cadena then
+       begin
+         Result.opmode := temp;
+       end;
+     end;
+   end;
+  finally
+     FreeAndNil(jData);
+  end;
+
+
+
+
+end;
 
 procedure ErrorWebService(ainfo: string);
 begin
