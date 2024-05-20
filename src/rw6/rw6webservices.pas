@@ -16,8 +16,9 @@ type
   { TRw6WebServices }
 
   TRw6WebServices = class
-    FConection: TRobotConnection;
+
   private
+     FConection: TRobotConnection;
     FControllerService: Trw6controllerservice;
     FFileService: TRw6FileServices;
     FRobotWareServices: TRw6RobotWareServices;

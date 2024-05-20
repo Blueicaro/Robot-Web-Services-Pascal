@@ -221,6 +221,9 @@ const
   RAP_MODULE_TEXT = 'rap-module-text';
   CTRL_IDENTITY_INFO = 'ctrl-identity-info';
 
+Const
+  PostOk : integer= 204;
+
 
 function Formatjsonkey(aKeyName: string): string;
 function LeerModoFuncionamiento(aDatos: string): TOpMode;

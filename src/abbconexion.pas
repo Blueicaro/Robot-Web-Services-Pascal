@@ -90,15 +90,30 @@ begin
   //begin
   //  RutaAbsoluta:=RutaAbsoluta+'?json=1';
   //end;
-  FRespuesta.Clear;
+  // FRespuesta.Clear;
   GenerarCabeceras;
   try
     CargarCookie;
-    FHttpSend.Get(RutaAbsoluta, FRespuesta);
+    {$IFDEF abbdebug}
+       DebugLn('Procesando get');
+       Debugln (FHttpSend.RequestHeaders.Text);
+       DebugLn('Ruta absoluta:' +RutaAbsoluta);
+    {$ENDIF}
+    try
+      FHttpSend.Get(RutaAbsoluta, FRespuesta);
+    except
+      on E: Exception do
+        DebugLn(E.Message);
+    end;
     GenerarCookie;
     FStatusText := FHttpSend.ResponseStatusText;
   finally
     FStatusCode := FHttpSend.ResponseStatusCode;
+    {$IFDEF abbdebug}
+       DebugLn('ResponseStatusText: '+FHttpSend.ResponseStatusText);
+       DebugLn('Fin Get');
+    {$ENDIF}
+
   end;
 
 end;
@@ -116,16 +131,25 @@ begin
     Response := TStringStream.Create('');
     if BodyText <> '' then;
     begin
-      FHttpSend.RequestBody:= TRawByteStringStream.Create(BodyText)
+      FHttpSend.RequestBody := TRawByteStringStream.Create(BodyText);
     end;
+    {$IFDEF abbdebug}
+       DebugLn('Inicio post');
+       DebugLn('Ruta: '+RutaAbsoluta);
+    {$ENDIF}
     FHttpSend.Post(RutaAbsoluta, Response);
     FStatusText := FHttpSend.ResponseStatusText;
     FStatusCode := FHttpSend.ResponseStatusCode;
-    FRespuesta.Append(Response.DataString);
+   // FRespuesta.Append(Response.DataString);
+    FRespuesta.Text:=(Response.DataString);
+    {$IFDEF abbdebug}
+      DebugLn('Respuesta: '+FRespuesta.Text);
+      DebugLn('Fin Post');
+    {$ENDIF}
     GenerarCookie;
   finally
-    FHttpSend.RequestBody.Free;
     FreeAndNil(Response);
+    FHttpSend.RequestBody := nil;
   end;
 
 end;
@@ -136,7 +160,7 @@ procedure TRobotConnection.GenerarCabeceras(Get: boolean);
 begin
   FHttpSend.RequestHeaders.Clear;
 
-  FHttpSend.AddHeader('Connection','Keep-Alive');
+  FHttpSend.AddHeader('Connection', 'Keep-Alive');
   if FDigestAuthentication = False then  //RobotWare 7
   begin
     FHttpSend.AddHeader('Authorization', 'Basic ' + FClave);
@@ -176,11 +200,11 @@ var
   Cadena: string;
 begin
 
-  {$IFDEF abbdebug}
-   debugln ('GenerarCookie:') ;
-   debugln('FHttpSend.ResponseHeaders.Text: '+FHttpSend.ResponseHeaders.Text);
-  {$ENDIF}
-
+  //{$IFDEF abbdebug}
+  // debugln ('GenerarCookie:') ;
+  // debugln('FHttpSend.ResponseHeaders.Text: '+FHttpSend.ResponseHeaders.Text);
+  //{$ENDIF}
+  //
 
   if AnsiContainsText(FHttpSend.ResponseHeaders.Text, 'Set-Cookie') = False then
   begin

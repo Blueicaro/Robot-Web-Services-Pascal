@@ -21,7 +21,8 @@ type
     procedure GetRapidModules(aModulesList: TRw6ModuleInfoList; aTaskName: string);
     procedure GetModuleText(aModuleName: string; aTaskName: string;
       var ModuleContent: TRw6ModuleTextItem);
-    procedure UpdateRapidVariable;
+    function UpdateRapidVariable(NombreTarea: string; NombreModulo: string;
+      NombreDato: string; Valor: string): integer;
   public
     function GetOperationMode: TOpMode;
     function MastershipRequest: boolean;
@@ -35,7 +36,9 @@ implementation
 
 { TRw6RobotWareServices }
 
-
+{$IFDEF abbdebug}
+   uses LazLogger;
+{$ENDIF}
 
 procedure TRw6RobotWareServices.GetRobotWareservices(aServicesList: TRw6RwServiceList);
 begin
@@ -108,13 +111,26 @@ begin
   end;
 end;
 
-procedure TRw6RobotWareServices.UpdateRapidVariable;
+function TRw6RobotWareServices.UpdateRapidVariable(NombreTarea: string;
+  NombreModulo: string; NombreDato: string; Valor: string): integer;
 var
-  Parametros: String;
+  Parametros, Ruta: string;
 begin
-  Parametros:= '[0,0,60,200,"Cordón 40",3,TRUE,0.01,200,0,0,0,TRUE]'  ;
-  FConexion.Post('/rw/rapid/symbol/data/RAPID/T_ROB1/Datos/M1_C03?action=set','value='+Parametros);
-  //FConexion.Post('/rw/rapid/symbol/data/RAPID/T_ROB1/user/reg1?action=set');
+  Result := 400;
+  Parametros := 'value=' + Valor;
+  Ruta := Format('rw/rapid/symbol/data/RAPID/%s/%s/%s?action=set',
+    [NombreTarea, NombreModulo, NombreDato]);
+  //FConexion.Post('/rw/rapid/symbol/data/RAPID/T_ROB1/Datos/M1_C03?action=set','value='+Parametros);
+  try
+    FConexion.Post(Ruta, Parametros);
+  except
+    ErrorWebService('Error conexión. codigo: ' + FConexion.StatusText);
+  end;
+
+  {$IFDEF abbdebug}
+        DebugLn(FConexion.StatusText+' '+IntToStr(FConexion.StatusCode));
+  {$ENDIF}
+  Result := FConexion.StatusCode;
 end;
 
 function TRw6RobotWareServices.GetOperationMode: TOpMode;
@@ -127,7 +143,7 @@ begin
   if FConexion.StatusCode = 200 then
   begin
     try
-     Result := LeerModoFuncionamiento(FConexion.Respuesta.Text);
+      Result := LeerModoFuncionamiento(FConexion.Respuesta.Text);
     finally
 
     end;
