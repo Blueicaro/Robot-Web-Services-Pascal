@@ -42,6 +42,13 @@
           <Mode Name="Release"/>
         </BuildModes>
       </Target>
+      <Target FileName="Examples\Get Information\getinformation.lpi">
+        <BuildModes>
+          <Mode Name="Default" Compile="True"/>
+          <Mode Name="Debug"/>
+          <Mode Name="Release"/>
+        </BuildModes>
+      </Target>
     </Targets>
   </ProjectGroup>
 </CONFIG>

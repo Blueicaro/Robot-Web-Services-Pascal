@@ -28,7 +28,8 @@ var
 
 
 begin
-  R := TRw6WebServices.Create('http://localhost');
+ // R := TRw6WebServices.Create('http://localhost');
+  R := TRw6WebServices.Create('http://192.168.125.1');
   R.Connect;
   for I := 0 to 100 do
   begin

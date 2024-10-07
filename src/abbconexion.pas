@@ -1,5 +1,7 @@
 unit abbconexion;
-
+{ This unit contains the first class that you must use to connect to any robot.
+  With Robotware 6 o 7, it's doesn't matter
+  }
 {$mode ObjFPC}{$H+}
 
 interface
@@ -28,8 +30,8 @@ type
     procedure GenerarClave;
     procedure GenerarCookie;
     procedure CargarCookie;
-  public
     procedure PrimeraConexion;
+  public
     procedure SetRobotUrl(Url: string);
     property Cookie: TStringList read FCookie write FCookie;
     property StatusCode: integer read FStatusCode;
@@ -46,6 +48,8 @@ type
     procedure GetDataResources(aJson: TStringList; aDataArray: string);
   public
     constructor Create;
+    constructor Create(RobotAddrs: string; User: string = 'Default User';
+      Password: string = 'robotics'); overload;
     destructor Destroy; override;
   end;
 
@@ -82,15 +86,9 @@ end;
 
 procedure TRobotConnection.Get(UrlRelative: string);
 var
-  RutaAbsoluta, Cadena: string;
-  I: integer;
+  RutaAbsoluta: string;
 begin
   RutaAbsoluta := FRobotUrl + UrlRelative;
-  //if FDigestAuthentication then
-  //begin
-  //  RutaAbsoluta:=RutaAbsoluta+'?json=1';
-  //end;
-  // FRespuesta.Clear;
   GenerarCabeceras;
   try
     CargarCookie;
@@ -98,13 +96,15 @@ begin
        DebugLn('Procesando get');
        Debugln (FHttpSend.RequestHeaders.Text);
        DebugLn('Ruta absoluta:' +RutaAbsoluta);
-    {$ENDIF}
-    try
+        try
       FHttpSend.Get(RutaAbsoluta, FRespuesta);
     except
       on E: Exception do
-        DebugLn(E.Message);
+      DebugLn(E.Message);
     end;
+    {$ELSE}
+    FHttpSend.Get(RutaAbsoluta, FRespuesta);
+    {$ENDIF}
     GenerarCookie;
     FStatusText := FHttpSend.ResponseStatusText;
   finally
@@ -140,8 +140,8 @@ begin
     FHttpSend.Post(RutaAbsoluta, Response);
     FStatusText := FHttpSend.ResponseStatusText;
     FStatusCode := FHttpSend.ResponseStatusCode;
-   // FRespuesta.Append(Response.DataString);
-    FRespuesta.Text:=(Response.DataString);
+    // FRespuesta.Append(Response.DataString);
+    FRespuesta.Text := (Response.DataString);
     {$IFDEF abbdebug}
       DebugLn('Respuesta: '+FRespuesta.Text);
       DebugLn('Fin Post');
@@ -204,7 +204,7 @@ begin
   // debugln ('GenerarCookie:') ;
   // debugln('FHttpSend.ResponseHeaders.Text: '+FHttpSend.ResponseHeaders.Text);
   //{$ENDIF}
-  //
+
 
   if AnsiContainsText(FHttpSend.ResponseHeaders.Text, 'Set-Cookie') = False then
   begin
@@ -236,9 +236,9 @@ end;
 { #todo -oJorge : Modificaciónes para loggin Rw6. Trabajando aqui }
 procedure TRobotConnection.PrimeraConexion;
 var
-  Codigo, Posicion, I, J: integer;
-  Cadena, realm, nonce, qop, opaque, cnonce, aStr, h1, h2, h3, UriStr,
-  h4, login, pass, URL: string;
+  I, J: integer;
+  realm, nonce, qop, opaque, cnonce, aStr, h1, h2, h3, UriStr, h4,
+  login, pass, URL: string;
   aList: TStringList;
   URI: TURI;
   Stream: TStringStream;
@@ -417,7 +417,6 @@ begin
   if myJsonObject.JSONType = jtObject then
   begin
     aDataArray := myJsonObject.GetPath('_embedded').GetPath('resources').AsJSON;
-
   end;
 
 end;
@@ -430,6 +429,15 @@ begin
   FHttpSend := TFPHTTPClient.Create(nil);
   FHttpSend.KeepConnection := True;
   FCookie := TStringList.Create;
+  PrimeraConexion;
+end;
+
+constructor TRobotConnection.Create(RobotAddrs: string; User: string; Password: string);
+begin
+  FRobotUrl := RobotAddrs;
+  FUser := User;
+  FPassword := Password;
+  Create;
 end;
 
 destructor TRobotConnection.Destroy;

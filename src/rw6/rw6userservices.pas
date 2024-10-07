@@ -25,10 +25,11 @@ type
 implementation
 
 { TRw6UserServices }
-
+  { #todo -oJorge : Pendiente }
 function TRw6UserServices.RequestRMMP: boolean;
 begin
   FConexion.Post('/rmmp?json=1');
+
 end;
 
 constructor TRw6UserServices.Create(aRobotConexion: TRobotConnection);

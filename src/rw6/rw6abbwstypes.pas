@@ -169,13 +169,6 @@ type
     property Items[Index: integer]: TRw6ModuleTextItem read GetItems write SetItems;
       default;
   end;
-     { {
-                "_type": "ctrl-identity-info",
-                "_title": "identity",
-                "ctrl-name": "UNMT-JTF-PT",
-                "ctrl-type": "Virtual Controller",
-                "ctrl-level": "System Level"
-            }}
 
 type
 
@@ -211,6 +204,38 @@ type
   end;
 
 type
+
+  { TSysOptionItem }
+
+  TSysOptionItem = class(TCollectionItem)
+  private
+    Foption: string;
+    F_title: string;
+    F_type: string;
+  published
+    property _type: string read F_type write F_type;
+    property _title: string read F_title write F_title;
+    property option: string read Foption write Foption;
+  public
+    procedure Assign(Source: TPersistent); override;
+  end;
+
+type
+
+  { TSysOptionList }
+
+  TSysOptionList = class(TCollection)
+    procedure SetItems(Index: integer; AValue: TSysOptionItem);
+    function GetItems(Index: integer): TSysOptionItem;
+  public
+    constructor Create;
+    function Add: TSysOptionItem;
+    property Items[Index: integer]: TSysOptionItem read GetItems write SetItems;
+      default;
+  end;
+
+
+type
   TListItems = class(TCollection)
   end;
 
@@ -220,9 +245,10 @@ const
   RAP_MODULE_INFO_LI = 'rap-module-info-li';
   RAP_MODULE_TEXT = 'rap-module-text';
   CTRL_IDENTITY_INFO = 'ctrl-identity-info';
+  SYS_OPTION_LI = 'sys-option-li';
 
-Const
-  PostOk : integer= 204;
+const
+  PostOk: integer = 204;
 
 
 function Formatjsonkey(aKeyName: string): string;
@@ -240,7 +266,6 @@ var
   jData, DataResources: TJSONData;
   myJsonObject: TJSONObject;
   Cadena: TJSONStringType;
-  Valor: integer;
   temp: opModes;
 begin
   Result.opmode := opUNDEF;
@@ -248,29 +273,26 @@ begin
   Result._type := '';
 
   try
-   jData := GetJSON(aDatos);
-   myJsonObject := jData as TJSONObject;
-   DataResources := myJsonObject.GetPath('_embedded').GetPath('_state');
-   if DataResources <> nil then
-   begin
-     Result._type := DataResources.Items[0].FindPath('_type').AsString;
-     Result._title := DataResources.Items[0].FindPath('_title').AsString;
-     Cadena := DataResources.Items[0].FindPath('opmode').AsString;
-     Cadena := 'op'+Cadena;
-     for temp in opModes do
-     begin
-       if GetEnumName(TypeInfo(opModes), integer(temp)) = Cadena then
-       begin
-         Result.opmode := temp;
-       end;
-     end;
-   end;
+    jData := GetJSON(aDatos);
+    myJsonObject := jData as TJSONObject;
+    DataResources := myJsonObject.GetPath('_embedded').GetPath('_state');
+    if DataResources <> nil then
+    begin
+      Result._type := DataResources.Items[0].FindPath('_type').AsString;
+      Result._title := DataResources.Items[0].FindPath('_title').AsString;
+      Cadena := DataResources.Items[0].FindPath('opmode').AsString;
+      Cadena := 'op' + Cadena;
+      for temp in opModes do
+      begin
+        if GetEnumName(TypeInfo(opModes), integer(temp)) = Cadena then
+        begin
+          Result.opmode := temp;
+        end;
+      end;
+    end;
   finally
-     FreeAndNil(jData);
+    FreeAndNil(jData);
   end;
-
-
-
 
 end;
 
@@ -544,6 +566,44 @@ end;
 function TCtrlIdentifyList.Add: TCtrlIdentifyItem;
 begin
   Result := inherited Add as TCtrlIdentifyItem;
+end;
+
+{ TSysOptionItem }
+
+procedure TSysOptionItem.Assign(Source: TPersistent);
+begin
+  if Source is TSysOptionItem then
+  begin
+    F_title := TCtrlIdentifyItem(Source).F_title;
+    F_type := TSysOptionItem(Source).F_type;
+    Foption := TSysOptionItem(Source).Foption;
+  end
+  else
+  begin
+    inherited Assign(Source);
+  end;
+end;
+
+{ TSysOptionList }
+
+procedure TSysOptionList.SetItems(Index: integer; AValue: TSysOptionItem);
+begin
+  Items[Index].Assign(AValue);
+end;
+
+function TSysOptionList.GetItems(Index: integer): TSysOptionItem;
+begin
+  Result := TSysOptionItem(inherited Items[Index]);
+end;
+
+constructor TSysOptionList.Create;
+begin
+  inherited Create(TCtrlIdentifyItem);
+end;
+
+function TSysOptionList.Add: TSysOptionItem;
+begin
+  Result := inherited Add as TSysOptionItem;
 end;
 
 end.

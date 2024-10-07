@@ -1,5 +1,5 @@
 unit rw6robotwareservices;
-
+ { This unit contains robotware services}
 {$mode ObjFPC}{$H+}
 
 interface
@@ -27,6 +27,8 @@ type
     function GetOperationMode: TOpMode;
     function MastershipRequest: boolean;
     function MastershipRelease: boolean;
+  public
+     procedure GetSystemOptions(aSystemOptionsList :TSysOptionList);
   public
     constructor Create(aRobotConexion: TRobotConnection);
     destructor Destroy; override;
@@ -176,6 +178,23 @@ begin
   if FConexion.StatusCode = 204 then
   begin
     Result := True;
+  end;
+end;
+{ #todo : Pendiente de depurar }
+procedure TRw6RobotWareServices.GetSystemOptions(
+  aSystemOptionsList: TSysOptionList);
+var
+  Opciones: TCollection;
+begin
+  Try
+    FConexion.Get(FLocalUrl+'/system/options?json=1');
+  except
+      ErrorWebService('Error conexión. codigo: ' + FConexion.StatusText);
+  end;
+  if FConexion.StatusCode = 200 then
+  begin
+    GetEmbeddedStateList(FConexion.Respuesta.Text,Opciones as TCollection,TSysOptionItem,SYS_OPTION_LI);
+    aSystemOptionsList.Assign(Opciones);
   end;
 end;
 
