@@ -3,27 +3,34 @@ program GetModules;
 uses
   SysUtils,
   Classes,
-  AbbWebServices;
+  abbconexion,
+  rw6abbwstypes,
+  rw6robotwareservices;
 
 var
-  Robot: TAbbWebServices;
-  TaskList, ListaModulos, contenido: TStringList;
   I, X: integer;
+  Robot: TRobotConnection;
+  RobotWareServices: TRw6RobotWareServices;
+  TaskList: TRw6TaskList;
+  Modules: TRw6ModuleInfoList;
 begin
   try
-    Robot := TAbbWebServices.Create('https://localhost:80');
-    TaskList := TStringList.Create;
-    Robot.RobotWare.GetTasksList(TaskList);
+    Robot := TRobotConnection.Create('http://192.168.125.1');
+
+    RobotWareServices := TRw6RobotWareServices.Create(Robot);
+    TaskList := TRw6TaskList.Create;
+    RobotWareServices.GetTaskList(TaskList);
+
     for I := 0 to TaskList.Count - 1 do
     begin
-      Writeln('Modules in task:' + TaskList[I]);
-      ListaModulos := TStringList.Create;
-      Robot.RobotWare.GetModulesList(TaskList[i], ListaModulos);
-      for X := 0 to ListaModulos.Count - 1 do
+      Writeln('Modules in task:' + TaskList[I].Name);
+      Modules:=TRw6ModuleInfoList.Create;
+      RobotWareServices.GetRapidModules(Modules,TaskList[I].Name);
+      For X := 0 To Modules.Count-1 do
       begin
-        WriteLn(#09 + ListaModulos[x]);
+        Writeln (#09+Modules[x].Name);
       end;
-      FreeAndNil(ListaModulos);
+      FreeAndNil(Modules);
     end;
   finally
     FreeAndNil(TaskList);

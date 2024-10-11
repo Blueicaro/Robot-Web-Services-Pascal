@@ -33,6 +33,8 @@ type
     opmode: opmodes;
   end;
 
+  {%REGION  RobotWareServices}
+
 type
 
   { TRw6RwServiceItem }
@@ -62,7 +64,13 @@ type
       default;
   end;
 
+  {%ENDREGION}
+
+  {%REGION  Tasks}
 type
+
+  { TRw6TaskItem }
+
   TRw6TaskItem = class(TCollectionItem)
   private
     Factive: string;
@@ -72,6 +80,8 @@ type
     Ftaskstate: string;
     Ftitle: string;
     FTType: string;
+  public
+    procedure Assign(Source: TPersistent); override;
   published
     property Name: string read fname write fname;
     property _title: string read Ftitle write Ftitle;
@@ -84,7 +94,7 @@ type
 
 type
 
-  { TRw6TaskList }
+  {%REGION TRw6TaskList }
 
   TRw6TaskList = class(TCollection)
     procedure SetItems(Index: integer; AValue: TRw6TaskItem);
@@ -95,6 +105,7 @@ type
     property Items[Index: integer]: TRw6TaskItem read GetItems write SetItems; default;
   end;
 
+  {%ENDREGION}
 type
 
   { TRw6ModuleInfoItem }
@@ -234,6 +245,118 @@ type
       default;
   end;
 
+type
+
+  { TRobotTypeItem }
+
+  TRobotTypeItem = class(TCollectionItem)
+  private
+    Frobot_type: string;
+    F_title: string;
+    F_type: string;
+  published
+    property _type: string read F_type write F_type;
+    property _title: string read F_title write F_title;
+    property robot_type: string read Frobot_type write Frobot_type;
+    procedure Assign(Source: TPersistent); override;
+  end;
+
+type
+
+  { TRobotTypeList }
+
+  TRobotTypeList = class(TCollection)
+  private
+    function GetItems(Index: integer): TRobotTypeItem;
+    procedure SetItems(Index: integer; AValue: TRobotTypeItem);
+  public
+    constructor Create;
+    function Add: TRobotTypeItem;
+    property Items[Index: integer]: TRobotTypeItem read GetItems write SetItems;
+      default;
+  end;
+
+type
+
+  { TIoNetWorkItem }
+
+  TIoNetWorkItem = class(TCollectionItem)
+  private
+    Fname: string;
+    Fpstate: string;
+    F_Title: string;
+    F_type: string;
+    procedure Setname(AValue: string);
+    procedure Setpstate(AValue: string);
+    procedure Set_Title(AValue: string);
+    procedure Set_type(AValue: string);
+  public
+    procedure Assign(Source: TPersistent); override;
+  published
+    property _title: string read F_Title write Set_Title;
+    property Name: string read Fname write Setname;
+    property pstate: string read Fpstate write Setpstate;
+    property _type: string read F_type write Set_type;
+  end;
+
+type
+
+  { TIoNetWorkList }
+
+  TIoNetWorkList = class(TCollection)
+  private
+    function GetItems(Index: integer): TIoNetWorkItem;
+    procedure SetItems(Index: integer; AValue: TIoNetWorkItem);
+  public
+    constructor Create;
+    function Add: TIoNetWorkItem;
+    property Items[Index: integer]: TIoNetWorkItem read GetItems write SetItems;
+      default;
+  end;
+
+type
+
+  { TIoSignalItem }
+
+  TIoSignalItem = class(TCollectionItem)
+  private
+    Fcategory: string;
+    Fhref: string;
+    Flstate: string;
+    Flvalue: string;
+    Fname: string;
+    Ftitle: string;
+    FTType: string;
+    F_type: string;
+  public
+    procedure Assign(Source: TPersistent); override;
+    function Device: string;
+  published
+    property href: string read Fhref write Fhref;
+    property _title: string read Ftitle write Ftitle;
+    property _type: string read F_type write F_type;
+    property Name: string read Fname write Fname;
+    property TType: string read FTType write FTType;
+    property category: string read Fcategory write Fcategory;
+    property lvalue: string read Flvalue write Flvalue;
+    property lstate: string read Flstate write Flstate;
+  end;
+
+
+type
+
+  { TIoSignalList }
+
+  TIoSignalList = class(TCollection)
+  private
+    procedure SetItems(Index: integer; AValue: TIoSignalItem);
+    function GetItems(Index: integer): TIoSignalItem;
+  public
+    constructor Create;
+    function Add: TIoSignalItem;
+    property Items[Index: integer]: TIoSignalItem read GetItems write SetItems; default;
+  end;
+
 
 type
   TListItems = class(TCollection)
@@ -246,6 +369,9 @@ const
   RAP_MODULE_TEXT = 'rap-module-text';
   CTRL_IDENTITY_INFO = 'ctrl-identity-info';
   SYS_OPTION_LI = 'sys-option-li';
+  SYS_ROBOTTYPE = 'sys-robottype';
+  IOS_NETWORK_LI = 'ios-network-li';
+  IOS_SIGNAL_LI = 'ios-signal-li';
 
 const
   PostOk: integer = 204;
@@ -325,7 +451,7 @@ var
   NombreClave: string;
   propInfo: PPropInfo;
   ItemActual: TCollectionItem;
-  tipo: TJSONtype;
+  //tipo: TJSONtype;
 begin
   try
     jData := GetJSON(aDatos);
@@ -340,7 +466,7 @@ begin
           if DataResources.Items[I].JSONType = jtObject then
           begin
             Cadena := DataResources.Items[I].AsJSON;
-            tipo := DataResources.Items[I].Items[X].JSONType;
+            //tipo := DataResources.Items[I].Items[X].JSONType;
             if DataResources.Items[I].Items[X].JSONType = jtString then
             begin
               Cadena := DataResources.Items[I].Items[X].AsString;
@@ -419,6 +545,26 @@ function TRw6RwServiceList.Add: TRw6RwServiceItem;
 begin
   Result := inherited Add as TRw6RwServiceItem;
   ;
+end;
+
+{ TRw6TaskItem }
+
+procedure TRw6TaskItem.Assign(Source: TPersistent);
+begin
+  if Source is TRw6TaskItem then
+  begin
+    FTType := TRw6TaskItem(Source).FTType;
+    Ftitle := TRw6TaskItem(Source).Ftitle;
+    Fname := TRw6TaskItem(Source).fname;
+    Factive := TRw6TaskItem(Source).Factive;
+    Fexcstate := TRw6TaskItem(Source).Fexcstate;
+    Fmotiontask := TRw6TaskItem(Source).Fmotiontask;
+    Ftaskstate := TRw6TaskItem(Source).Ftaskstate;
+  end
+  else
+  begin
+    inherited Assign(Source);
+  end;
 end;
 
 { TRw6TaskList }
@@ -574,7 +720,7 @@ procedure TSysOptionItem.Assign(Source: TPersistent);
 begin
   if Source is TSysOptionItem then
   begin
-    F_title := TCtrlIdentifyItem(Source).F_title;
+    F_title := TSysOptionItem(Source).F_title;
     F_type := TSysOptionItem(Source).F_type;
     Foption := TSysOptionItem(Source).Foption;
   end
@@ -598,12 +744,174 @@ end;
 
 constructor TSysOptionList.Create;
 begin
-  inherited Create(TCtrlIdentifyItem);
+  inherited Create(TSysOptionItem);
 end;
 
 function TSysOptionList.Add: TSysOptionItem;
 begin
   Result := inherited Add as TSysOptionItem;
+end;
+
+{ TRobotTypeItem }
+
+procedure TRobotTypeItem.Assign(Source: TPersistent);
+begin
+  if Source is TRobotTypeItem then
+  begin
+    F_title := TRobotTypeItem(Source).F_title;
+    F_type := TRobotTypeItem(Source).F_type;
+    Frobot_type := TRobotTypeItem(Source).Frobot_type;
+  end
+  else
+  begin
+    inherited Assign(Source);
+  end;
+end;
+
+{ TRobotTypeList }
+
+function TRobotTypeList.GetItems(Index: integer): TRobotTypeItem;
+begin
+  Result := TRobotTypeItem(inherited Items[Index]);
+end;
+
+procedure TRobotTypeList.SetItems(Index: integer; AValue: TRobotTypeItem);
+begin
+  Items[Index].Assign(AValue);
+end;
+
+constructor TRobotTypeList.Create;
+begin
+  inherited Create(TRobotTypeItem);
+end;
+
+function TRobotTypeList.Add: TRobotTypeItem;
+begin
+  Result := inherited Add as TRobotTypeItem;
+end;
+
+{%REGION TIoNetWorkItem }
+
+procedure TIoNetWorkItem.Set_Title(AValue: string);
+begin
+  if F_Title = AValue then Exit;
+  F_Title := AValue;
+end;
+
+procedure TIoNetWorkItem.Set_type(AValue: string);
+begin
+  if F_type = AValue then Exit;
+  F_type := AValue;
+end;
+
+procedure TIoNetWorkItem.Assign(Source: TPersistent);
+begin
+  if Source is TIoNetWorkItem then
+  begin
+    Fname := TIoNetWorkItem(Source).Fname;
+    F_Title := TIoNetWorkItem(Source).F_Title;
+    F_type := TIoNetWorkItem(Source).F_type;
+    Fpstate := TIoNetWorkItem(Source).Fpstate;
+  end
+  else
+  begin
+    inherited Assign(Source);
+  end;
+end;
+
+procedure TIoNetWorkItem.Setname(AValue: string);
+begin
+  if Fname = AValue then Exit;
+  Fname := AValue;
+end;
+
+procedure TIoNetWorkItem.Setpstate(AValue: string);
+begin
+  if Fpstate = AValue then Exit;
+  Fpstate := AValue;
+end;
+{%ENDREGION}
+
+{ TIoNetWorkList }
+
+function TIoNetWorkList.GetItems(Index: integer): TIoNetWorkItem;
+begin
+  Result := TIoNetWorkItem(inherited items[Index]);
+end;
+
+procedure TIoNetWorkList.SetItems(Index: integer; AValue: TIoNetWorkItem);
+begin
+  Items[Index].Assign(aValue);
+end;
+
+constructor TIoNetWorkList.Create;
+begin
+  inherited Create(TIoNetWorkItem);
+end;
+
+function TIoNetWorkList.Add: TIoNetWorkItem;
+begin
+  Result := inherited Add as TIoNetWorkItem;
+end;
+
+{ TIoSignalItem }
+procedure TIoSignalItem.Assign(Source: TPersistent);
+begin
+  if Source is TIoSignalItem then
+  begin
+    Fcategory := TIoSignalItem(Source).Fcategory;
+    Fhref := TIoSignalItem(Source).Fhref;
+    Flstate := TIoSignalItem(Source).Flstate;
+    Flvalue := TIoSignalItem(Source).Flvalue;
+    Fname := TIoSignalItem(Source).Fname;
+    Ftitle := TIoSignalItem(Source).Ftitle;
+    FTType := TIoSignalItem(Source).FTType;
+    F_type := TIoSignalItem(Source).F_type;
+  end
+  else
+  begin
+    inherited Assign(Source);
+  end;
+end;
+
+function TIoSignalItem.Device: string;
+var
+  Partes: SizeInt;
+begin
+  if Fhref = '' then
+  begin
+    Result := '';
+    exit;
+  end;
+  Partes := WordCount(Fhref, ['/']);
+  if Partes = 2 then
+  begin
+    Result := '';
+    Exit;
+  end;
+  Result := ExtractWord(Partes - 1, Fhref, ['/']);
+end;
+
+{ TIoSignalList }
+
+procedure TIoSignalList.SetItems(Index: integer; AValue: TIoSignalItem);
+begin
+  Items[Index].Assign(aValue);
+end;
+
+function TIoSignalList.GetItems(Index: integer): TIoSignalItem;
+begin
+  Result := TIoSignalItem(inherited items[Index]);
+end;
+
+constructor TIoSignalList.Create;
+begin
+  inherited Create(TIoSignalItem);
+end;
+
+function TIoSignalList.Add: TIoSignalItem;
+begin
+  Result := inherited Add as TIoSignalItem;
 end;
 
 end.

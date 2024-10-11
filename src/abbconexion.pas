@@ -31,14 +31,16 @@ type
     procedure GenerarCookie;
     procedure CargarCookie;
     procedure PrimeraConexion;
-  public
     procedure SetRobotUrl(Url: string);
+  public
+    property RobotUrl: string read FRobotUrl write SetRobotUrl;
     property Cookie: TStringList read FCookie write FCookie;
     property StatusCode: integer read FStatusCode;
     property StatusText: string read FStatusText;
     property Respuesta: TStringList read FRespuesta;
     property ReturnHeader: TStringList read FReturnHeader;
   public
+    procedure Conectar;
     procedure SetUserPassword(aUser, aPassword: string);
     procedure Get(UrlRelative: string);
     procedure Post(UrlRelative: string; BodyText: string = '');
@@ -48,8 +50,9 @@ type
     procedure GetDataResources(aJson: TStringList; aDataArray: string);
   public
     constructor Create;
-    constructor Create(RobotAddrs: string; User: string = 'Default User';
-      Password: string = 'robotics'); overload;
+    //Creates a Robot conexion.
+    constructor Create(RobotAddrs: string; User: string='Default User'; Password: string='robotics';
+      Connect: boolean = True); overload;
     destructor Destroy; override;
   end;
 
@@ -73,6 +76,12 @@ begin
     FRobotUrl := Url;
   end;
 end;
+
+procedure TRobotConnection.Conectar;
+begin
+  PrimeraConexion;
+end;
+
 { #note -oJorge : Cambiando. FHTpSend ahora lleva el usuario y la clave }
 procedure TRobotConnection.SetUserPassword(aUser, aPassword: string);
 begin
@@ -429,15 +438,20 @@ begin
   FHttpSend := TFPHTTPClient.Create(nil);
   FHttpSend.KeepConnection := True;
   FCookie := TStringList.Create;
-  PrimeraConexion;
+
 end;
 
-constructor TRobotConnection.Create(RobotAddrs: string; User: string; Password: string);
+constructor TRobotConnection.Create(RobotAddrs: string; User: string;
+  Password: string; Connect: boolean);
 begin
-  FRobotUrl := RobotAddrs;
+  RobotUrl := RobotAddrs;
   FUser := User;
   FPassword := Password;
   Create;
+  if Connect then
+  begin
+    PrimeraConexion;
+  end;
 end;
 
 destructor TRobotConnection.Destroy;

@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls,
-  ComCtrls, AbbWebServices;
+  ComCtrls, abbconexion, rw6abbwstypes, rw6robotwareservices, rw6fileservices;
 
 type
 
@@ -25,12 +25,14 @@ type
     Splitter1: TSplitter;
     TreeView1: TTreeView;
     procedure btConnectClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure TreeView1Click(Sender: TObject);
   private
-    Robot: TAbbWebServices;
-    procedure GetModule(aTaskName, aModuleName: string);
+    Robot: TRobotConnection;
+    RobotwareServices: TRw6RobotWareServices;
+    procedure GetModule(aTaskName: string; aModuleName: string);
   public
 
   end;
@@ -40,34 +42,52 @@ var
 
 implementation
 
-{$R *.lfm}
+uses StrUtils;
+  {$R *.lfm}
 
-{ Tmainfrm }
+  { Tmainfrm }
 
 procedure Tmainfrm.btConnectClick(Sender: TObject);
 var
-  TaskList, ModulesList: TStringList;
-  I, J: integer;
   root, TaskNode: TTreeNode;
+
+  TaskList: TRw6TaskList;
+  ModuleList: TRw6ModuleInfoList;
+  I, J: integer;
 begin
+
   TreeView1.Items.Clear;
-  Robot.SetRobotUrl(edRobotAddress.Text);
-  Robot.SetUserPassword(edUser.Text, edPassword.Text);
-  root := TreeView1.Items.Add(nil, edRobotAddress.Text);
+
   try
-    TaskList := TStringList.Create;
-    ModulesList := TStringList.Create;
+    if not assigned(robot) then
+    begin
+      Robot := TRobotConnection.Create(edRobotAddress.Text, edUser.Text,
+        edPassword.Text);
+    end
+    else
+    begin
+      Robot.RobotUrl := edRobotAddress.Text;
+      Robot.SetUserPassword(edUser.Text, edPassword.Text);
+      Robot.Conectar;
+    end;
+    if not Assigned(RobotwareServices) then
+    begin
+      RobotwareServices := TRw6RobotWareServices.Create(Robot);
+    end;
+    root := TreeView1.Items.Add(nil, edRobotAddress.Text);
     try
-      Robot.RobotWare.GetTasksList(TaskList);
+      TaskList := TRw6TaskList.Create;
+      RobotwareServices.GetTaskList(TaskList);
       for I := 0 to TaskList.Count - 1 do
       begin
-        TaskNode := TreeView1.Items.AddChild(root, TaskList[i]);
-        ModulesList.Clear;
-        Robot.RobotWare.GetModulesList(TaskList[i], ModulesList);
-        for J := 0 to ModulesList.Count - 1 do
+        TaskNode := TreeView1.Items.AddChild(root, TaskList[I].Name);
+        ModuleList := TRw6ModuleInfoList.Create;
+        RobotwareServices.GetRapidModules(ModuleList, TaskList[I].Name);
+        for J := 0 to ModuleList.Count - 1 do
         begin
-          TreeView1.Items.AddChild(TaskNode, ModulesList[J]);
+          TreeView1.Items.AddChild(TaskNode, ModuleList[J]._title);
         end;
+        FreeAndNil(ModuleList);
       end;
       TreeView1.Enabled := True;
     except
@@ -79,52 +99,78 @@ begin
     end;
   finally
     FreeAndNil(TaskList);
-    FreeAndNil(ModulesList);
+    FreeAndNil(ModuleList);
   end;
+end;
+
+procedure Tmainfrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
+begin
+  FreeAndNil(RobotwareServices);
+  FreeAndNil(Robot);
 end;
 
 procedure Tmainfrm.FormCreate(Sender: TObject);
 begin
-  Robot := TAbbWebServices.Create;
+
 end;
 
 procedure Tmainfrm.FormDestroy(Sender: TObject);
 begin
-  FreeAndNil(Robot);
+
 end;
 
 procedure Tmainfrm.TreeView1Click(Sender: TObject);
 var
-  Selected: TTreeNode;
-  ModuleName, TaskName: string;
+  Nodo: TTreeNode;
+  Nombre, TaskName: string;
+  L: integer;
 begin
   if TreeView1.Selected = nil then Exit;
-  Selected := TreeView1.Selected;
-  if Selected.HasChildren = False then
+  Nodo := TreeView1.Selected;
+  L := nodo.Level;
+  if Nodo.HasChildren = False then
   begin
-    ModuleName := Selected.Text;
-    TaskName := Selected.Parent.Text;
-    GetModule(TaskName, ModuleName);
+
+    Nombre := Nodo.Text;
+    Nombre := ExtractDelimited(2, Nombre, ['/']);
+    TaskName := Nodo.Parent.Text;
+    GetModule(TaskName, Nombre);
   end;
 end;
 
-procedure Tmainfrm.GetModule(aTaskName, aModuleName: string);
+procedure Tmainfrm.GetModule(aTaskName: string; aModuleName: string);
 var
-  content: TStringList;
+  ModuleContent: TRw6ModuleTextItem;
+  Cadena: string;
+  FileService: TRw6FileServices;
+  Contenido: TStringList;
 begin
+
   try
+    ModuleContent := TRw6ModuleTextItem.Create(nil);
+    RobotwareServices.GetModuleText(aModuleName, aTaskName, ModuleContent);
     mmContent.Clear;
-    content := TStringList.Create;
-    try
-      Robot.RobotWare.GetModuleText(aTaskName, aModuleName, content);
-      mmContent.Lines.Text := content.Text;
-    except
-      on E: Exception do
-        ShowMessage(E.Message);
+    Cadena := ModuleContent.file_path;
+    if Cadena = '' then
+    begin
+      mmContent.Text := ModuleContent.module_text;
+    end
+    else
+    begin
+     try
+       Contenido := TStringList.Create;
+       FileService := TRw6FileServices.create(Robot);
+       FileService.Getfile(Cadena,Contenido);
+       mmContent.text := Contenido.text;
+     finally
+       FreeAndNil(Contenido);
+       FreeAndNil(FileService);
+     end;
     end;
   finally
-    FreeAndNil(content)
+    FreeAndNil(ModuleContent);
   end;
+
 end;
 
 end.

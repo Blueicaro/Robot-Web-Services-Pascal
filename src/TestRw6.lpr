@@ -12,49 +12,30 @@ uses
   {$IFDEF abbdebug}
     LazLogger,
   {$ENDIF}
-  Rw6WebServices,
-  rw6abbwstypes,
-  URIParser,
-  rw6fileservices,
-  rw6controllerservice,
-  rw6userservices;
+  abbconexion,
+  rw6robotwareservices,
+  rw6abbwstypes;
 
 var
-  R: TRw6WebServices;
   Modo: TOpMode;
   Tarea, Modulo, NombreVariable, Valor: string;
   Re, I: integer;
+  R: TRobotConnection;
+  RobotWareService: TRw6RobotWareServices;
 
 
 
 begin
- // R := TRw6WebServices.Create('http://localhost');
-  R := TRw6WebServices.Create('http://192.168.125.1');
-  R.Connect;
-  for I := 0 to 100 do
+  R := TRobotConnection.Create('http://192.168.125.1');
+  RobotWareService := TRw6RobotWareServices.Create(R);
+  Modo := RobotWareService.GetOperationMode;
+  if Modo.opmode = opAUTO then
   begin
-    Modo := R.RobotWareServices.GetOperationMode;
-    if Modo.opmode = opAUTO then
-      WriteLn('auto');
-    Tarea := 'T_ROB1';
-    Modulo := 'Datos';
-    NombreVariable := 'M1_C03';
-    //Valor := '[0,0,60,200,"Cordón 3",3,TRUE,0.01,200,0,0,0,FALSE]';
-    Valor := '[6,0,0,0,"Cordón 3",3,TRUE,0.01,200,0,0,0,FALSE]';
-
-    Re := R.RobotWareServices.UpdateRapidVariable(Tarea, Modulo, NombreVariable, Valor);
-    //if Re <> PostOk then
-    writeln(IntToStr(Re));
-    //  Modo := R.RobotWareServices.GetOperationMode;
-    // WriteLn(Modo.opmode);
-
-    Sleep(1000);
+    WriteLn('auto');
   end;
 
-
-
-
   Readln();
+  FreeAndNil(RobotWareService);
   FreeAndNil(R);
 
 end.

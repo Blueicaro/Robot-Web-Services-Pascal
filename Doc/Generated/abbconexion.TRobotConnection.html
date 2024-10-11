@@ -29,41 +29,37 @@ TRobotConnection</p>
 <table class="summary wide_list">
 <tr class="list">
 <td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
-<td class="itemcode"><code>procedure <strong><a href="abbconexion.TRobotConnection.html#SetRobotUrl">SetRobotUrl</a></strong>(Url: string);</code></td>
-</tr>
-<tr class="list2">
-<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
 <td class="itemcode"><code>procedure <strong><a href="abbconexion.TRobotConnection.html#SetUserPassword">SetUserPassword</a></strong>(aUser, aPassword: string);</code></td>
 </tr>
-<tr class="list">
+<tr class="list2">
 <td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
 <td class="itemcode"><code>procedure <strong><a href="abbconexion.TRobotConnection.html#Get">Get</a></strong>(UrlRelative: string);</code></td>
 </tr>
-<tr class="list2">
+<tr class="list">
 <td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
 <td class="itemcode"><code>procedure <strong><a href="abbconexion.TRobotConnection.html#Post">Post</a></strong>(UrlRelative: string; BodyText: string = '');</code></td>
 </tr>
-<tr class="list">
+<tr class="list2">
 <td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
 <td class="itemcode"><code>procedure <strong><a href="abbconexion.TRobotConnection.html#GetListResources">GetListResources</a></strong>(aJson: TStringList; Lista: TStringList);</code></td>
 </tr>
-<tr class="list2">
+<tr class="list">
 <td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
 <td class="itemcode"><code>procedure <strong><a href="abbconexion.TRobotConnection.html#GetListStates">GetListStates</a></strong>(aJson: TStringList; ListaStates: TStringList);</code></td>
 </tr>
-<tr class="list">
+<tr class="list2">
 <td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
 <td class="itemcode"><code>procedure <strong><a href="abbconexion.TRobotConnection.html#GetDataResources">GetDataResources</a></strong>(aJson: TStringList; aDataArray: string);</code></td>
 </tr>
-<tr class="list2">
+<tr class="list">
 <td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
 <td class="itemcode"><code>constructor <strong><a href="abbconexion.TRobotConnection.html#Create">Create</a></strong>;</code></td>
 </tr>
-<tr class="list">
+<tr class="list2">
 <td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
 <td class="itemcode"><code>constructor <strong><a href="abbconexion.TRobotConnection.html#Create">Create</a></strong>(RobotAddrs: string; User: string = 'Default User'; Password: string = 'robotics'); overload;</code></td>
 </tr>
-<tr class="list2">
+<tr class="list">
 <td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
 <td class="itemcode"><code>destructor <strong><a href="abbconexion.TRobotConnection.html#Destroy">Destroy</a></strong>; override;</code></td>
 </tr>
@@ -72,35 +68,31 @@ TRobotConnection</p>
 <table class="summary wide_list">
 <tr class="list">
 <td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
-<td class="itemcode"><code>property <strong><a href="abbconexion.TRobotConnection.html#Cookie">Cookie</a></strong>: TStringList read FCookie write FCookie;</code></td>
+<td class="itemcode"><code>property <strong><a href="abbconexion.TRobotConnection.html#RobotUrl">RobotUrl</a></strong>: string read FRobotUrl write SetRobotUrl;</code></td>
 </tr>
 <tr class="list2">
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><code>property <strong><a href="abbconexion.TRobotConnection.html#Cookie">Cookie</a></strong>: TStringList read FCookie write FCookie;</code></td>
+</tr>
+<tr class="list">
 <td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
 <td class="itemcode"><code>property <strong><a href="abbconexion.TRobotConnection.html#StatusCode">StatusCode</a></strong>: integer read FStatusCode;</code></td>
 </tr>
-<tr class="list">
+<tr class="list2">
 <td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
 <td class="itemcode"><code>property <strong><a href="abbconexion.TRobotConnection.html#StatusText">StatusText</a></strong>: string read FStatusText;</code></td>
 </tr>
-<tr class="list2">
+<tr class="list">
 <td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
 <td class="itemcode"><code>property <strong><a href="abbconexion.TRobotConnection.html#Respuesta">Respuesta</a></strong>: TStringList read FRespuesta;</code></td>
 </tr>
-<tr class="list">
+<tr class="list2">
 <td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
 <td class="itemcode"><code>property <strong><a href="abbconexion.TRobotConnection.html#ReturnHeader">ReturnHeader</a></strong>: TStringList read FReturnHeader;</code></td>
 </tr>
 </table>
 <h2 class="description">Description</h2>
 <h3 class="detail">Methods</h3>
-<table class="detail wide_list">
-<tr class="list">
-<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
-<td class="itemcode"><span id="SetRobotUrl"></span><code>procedure <strong>SetRobotUrl</strong>(Url: string);</code></td>
-</tr>
-<tr><td colspan="2">
-&nbsp;</td></tr>
-</table>
 <table class="detail wide_list">
 <tr class="list">
 <td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
@@ -176,6 +168,14 @@ Create a robot conexión. You must indicate the address of the robot, for exampl
 &nbsp;</td></tr>
 </table>
 <h3 class="detail">Properties</h3>
+<table class="detail wide_list">
+<tr class="list">
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><span id="RobotUrl"></span><code>property <strong>RobotUrl</strong>: string read FRobotUrl write SetRobotUrl;</code></td>
+</tr>
+<tr><td colspan="2">
+&nbsp;</td></tr>
+</table>
 <table class="detail wide_list">
 <tr class="list">
 <td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>

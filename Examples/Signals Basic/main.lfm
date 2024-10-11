@@ -1,89 +1,89 @@
 object mainfrm: Tmainfrm
   Left = 368
-  Height = 599
+  Height = 749
   Top = 31
-  Width = 883
+  Width = 1104
   Caption = 'Get Signals'
-  ClientHeight = 599
-  ClientWidth = 883
+  ClientHeight = 749
+  ClientWidth = 1104
+  DesignTimePPI = 120
   OnCreate = FormCreate
   OnDestroy = FormDestroy
-  LCLVersion = '3.0.0.3'
   object Panel1: TPanel
     Left = 0
-    Height = 88
+    Height = 110
     Top = 0
-    Width = 883
+    Width = 1104
     Align = alTop
-    ClientHeight = 88
-    ClientWidth = 883
+    ClientHeight = 110
+    ClientWidth = 1104
     TabOrder = 0
     object edRobotAddress: TEdit
-      Left = 32
-      Height = 23
-      Top = 40
-      Width = 248
+      Left = 40
+      Height = 28
+      Top = 50
+      Width = 310
       TabOrder = 0
-      Text = 'https://localhost:80'
+      Text = 'http://192.168.125.1'
     end
     object btConnect: TButton
-      Left = 688
-      Height = 25
-      Top = 40
-      Width = 75
+      Left = 860
+      Height = 31
+      Top = 50
+      Width = 94
       Caption = 'Connect'
       TabOrder = 1
       OnClick = btConnectClick
     end
     object edUser: TEdit
-      Left = 344
-      Height = 23
-      Top = 40
-      Width = 112
+      Left = 430
+      Height = 28
+      Top = 50
+      Width = 140
       TabOrder = 2
       Text = 'Default User'
     end
     object edPassword: TEdit
-      Left = 504
-      Height = 23
-      Top = 40
-      Width = 120
+      Left = 630
+      Height = 28
+      Top = 50
+      Width = 150
       TabOrder = 3
       Text = 'robotics'
     end
     object Label1: TLabel
-      Left = 36
-      Height = 15
-      Top = 24
-      Width = 114
+      Left = 45
+      Height = 20
+      Top = 30
+      Width = 144
       Caption = 'Robot ip o host name'
     end
     object Label2: TLabel
-      Left = 344
-      Height = 15
-      Top = 24
-      Width = 23
+      Left = 430
+      Height = 20
+      Top = 30
+      Width = 29
       Caption = 'User'
     end
     object Label3: TLabel
-      Left = 504
-      Height = 15
-      Top = 24
-      Width = 50
+      Left = 630
+      Height = 20
+      Top = 30
+      Width = 61
       Caption = 'Password'
     end
   end
   object Splitter1: TSplitter
     Left = 0
-    Height = 511
-    Top = 88
-    Width = 5
+    Height = 639
+    Top = 110
+    Width = 6
   end
   object stGridSenales: TStringGrid
-    Left = 5
-    Height = 511
-    Top = 88
-    Width = 878
+    Left = 6
+    Height = 639
+    Top = 110
+    Width = 1098
     Align = alClient
     ColCount = 6
     Columns = <    

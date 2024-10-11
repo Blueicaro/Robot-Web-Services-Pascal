@@ -1,5 +1,5 @@
 unit rw6robotwareservices;
- { This unit contains robotware services}
+{ This unit contains robotware services}
 {$mode ObjFPC}{$H+}
 
 interface
@@ -16,19 +16,35 @@ type
     FLocalUrl: string;
     FConexion: TRobotConnection;
   public
+    //Returns a list of links to RobotWare services. The content of the list depends on which services are installed
     procedure GetRobotWareservices(aServicesList: TRw6RwServiceList);
+    //Returns a list of all rapid tasks
     procedure GetTaskList(aListTaskList: TRw6TaskList);
+    //Returns a list of RAPID modules loaded in a rapid task
     procedure GetRapidModules(aModulesList: TRw6ModuleInfoList; aTaskName: string);
+    //Get Module Text
     procedure GetModuleText(aModuleName: string; aTaskName: string;
       var ModuleContent: TRw6ModuleTextItem);
+    //Update RAPID variable. When updating a RAPID variable, mastership over RAPID is required. Mastership is taken internally on behalf of the client, if not already taken.
     function UpdateRapidVariable(NombreTarea: string; NombreModulo: string;
       NombreDato: string; Valor: string): integer;
   public
+    // Get the operation mode of the controller
     function GetOperationMode: TOpMode;
+    // Request mastership on all domains i.e. CFG, Motion and RAPID
     function MastershipRequest: boolean;
+    // Release mastership on all domains i.e. CFG, Motion and RAPID
     function MastershipRelease: boolean;
   public
-     procedure GetSystemOptions(aSystemOptionsList :TSysOptionList);
+    //Get options installed on robot controller
+    procedure GetSystemOptions(aSystemOptionsList: TSysOptionList);
+    //Get the type of the robots installed
+    procedure GetRobotType(aRobotTypeList: TRobotTypeList);
+  public
+    //Gets the list of avalible networks
+    procedure GetIONetworks(aIoNetWorkList: TIoNetWorkList);
+    //GetIOSignals
+    procedure GetIOSignals(aioIOSignals: TIoSignalList);
   public
     constructor Create(aRobotConexion: TRobotConnection);
     destructor Destroy; override;
@@ -57,6 +73,8 @@ begin
 end;
 
 procedure TRw6RobotWareServices.GetTaskList(aListTaskList: TRw6TaskList);
+var
+  Lista: TRw6TaskList;
 begin
   try
     FConexion.Get(FLocalUrl + '/rapid/tasks?json=1');
@@ -65,8 +83,11 @@ begin
   end;
   if FConexion.StatusCode = 200 then
   begin
-    GetEmbeddedStateList(FConexion.Respuesta.Text, aListTaskList as
-      TCollection, TRw6TaskItem, rap_task_li);
+    Lista := TRw6TaskList.Create;
+    GetEmbeddedStateList(FConexion.Respuesta.Text, Lista as TCollection,
+      TRw6TaskItem, rap_task_li);
+    aListTaskList.Assign(Lista);
+    FreeAndNil(Lista);
   end;
 end;
 
@@ -90,9 +111,12 @@ procedure TRw6RobotWareServices.GetModuleText(aModuleName: string;
   aTaskName: string; var ModuleContent: TRw6ModuleTextItem);
 var
   ModuleInfo: TRw6ModuleTextList;
+  cadena: string;
 begin
-  //http://localhost/rw/rapid/modules/User?resource=module-text&task=T_ROB1&json=1
+  //http://localhost/rw/rapid/modules/MainModule?resource=module-text&task=T_ROB1
   try
+    cadena := FLocalUrl + '/rapid/modules/' + aModuleName +
+      '?resource=module-text&task=' + aTaskName + '&json=1';
     FConexion.Get(FLocalUrl + '/rapid/modules/' + aModuleName +
       '?resource=module-text&task=' + aTaskName + '&json=1');
   except
@@ -181,20 +205,79 @@ begin
   end;
 end;
 { #todo : Pendiente de depurar }
-procedure TRw6RobotWareServices.GetSystemOptions(
-  aSystemOptionsList: TSysOptionList);
+procedure TRw6RobotWareServices.GetSystemOptions(aSystemOptionsList: TSysOptionList);
 var
-  Opciones: TCollection;
+  Opciones: TSysOptionList;
 begin
-  Try
-    FConexion.Get(FLocalUrl+'/system/options?json=1');
+  try
+    FConexion.Get(FLocalUrl + '/system/options?json=1');
   except
-      ErrorWebService('Error conexión. codigo: ' + FConexion.StatusText);
+    ErrorWebService('Error conexión. codigo: ' + FConexion.StatusText);
   end;
   if FConexion.StatusCode = 200 then
   begin
-    GetEmbeddedStateList(FConexion.Respuesta.Text,Opciones as TCollection,TSysOptionItem,SYS_OPTION_LI);
+    Opciones := TSysOptionList.Create;
+    GetEmbeddedStateList(FConexion.Respuesta.Text, Opciones as
+      TCollection, TSysOptionItem, SYS_OPTION_LI);
     aSystemOptionsList.Assign(Opciones);
+    FreeAndNil(Opciones);
+  end;
+end;
+
+procedure TRw6RobotWareServices.GetRobotType(aRobotTypeList: TRobotTypeList);
+var
+  ListaRobots: TRobotTypeList;
+begin
+  try
+    FConexion.Get(FLocalUrl + '/system/robottype?json=1');
+  except
+    ErrorWebService('Error conexión. codigo: ' + FConexion.StatusText);
+  end;
+  if FConexion.StatusCode = 200 then
+  begin
+    ListaRobots := TRobotTypeList.Create;
+    GetEmbeddedStateList(FConexion.Respuesta.Text, ListaRobots as
+      TCollection, TRobotTypeItem, SYS_ROBOTTYPE);
+    aRobotTypeList.Assign(ListaRobots);
+    FreeAndNil(ListaRobots);
+  end;
+end;
+
+procedure TRw6RobotWareServices.GetIONetworks(aIoNetWorkList: TIoNetWorkList);
+var
+  ListaRedes: TIoNetWorkList;
+begin
+  try
+    FConexion.Get('/iosystem/networks?json=1');
+  except
+    ErrorWebService('Error conexión. codigo: ' + FConexion.StatusText);
+  end;
+  if FConexion.StatusCode = 200 then
+  begin
+    ListaRedes := TIoNetWorkList.Create;
+    GetEmbeddedStateList(FConexion.Respuesta.Text, ListaRedes as
+      TCollection, TIoNetWorkItem, IOS_NETWORK_LI);
+    aIoNetWorkList.Assign(ListaRedes);
+    FreeAndNil(ListaRedes);
+  end;
+end;
+
+procedure TRw6RobotWareServices.GetIOSignals(aioIOSignals: TIoSignalList);
+var
+  ListaSenales: TIoSignalList;
+begin
+  try
+    FConexion.Get(FLocalUrl + '/iosystem/signals?json=1');
+  except
+    ErrorWebService('Error conexión. codigo: ' + FConexion.StatusText);
+  end;
+  if FConexion.StatusCode = 200 then
+  begin
+    ListaSenales := TIoSignalList.Create;
+    GetEmbeddedStateList(FConexion.Respuesta.Text, ListaSenales as
+      TCollection, TIoSignalItem, IOS_SIGNAL_LI);
+    aioIOSignals.Assign(ListaSenales);
+    FreeAndNil(ListaSenales);
   end;
 end;
 

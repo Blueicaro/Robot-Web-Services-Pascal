@@ -18,7 +18,7 @@ type
   TRw6WebServices = class
 
   private
-     FConection: TRobotConnection;
+    FConection: TRobotConnection;
     FControllerService: Trw6controllerservice;
     FFileService: TRw6FileServices;
     FRobotWareServices: TRw6RobotWareServices;
@@ -44,7 +44,7 @@ implementation
 
 procedure TRw6WebServices.SetRobotUrl(aUrl: string);
 begin
-  FConection.SetRobotUrl(aUrl);
+  FConection.RobotUrl:=aUrl;
 end;
 
 procedure TRw6WebServices.SetUserPassword(aUser: string; aPassword: string);
@@ -54,7 +54,7 @@ end;
 
 procedure TRw6WebServices.Connect;
 begin
-  FConection.PrimeraConexion;
+  FConection.Conectar;
 
 end;
 
@@ -70,7 +70,7 @@ end;
 constructor TRw6WebServices.Create(aUrlRobot: string; aUser: string; aPassword: string);
 begin
   Create;
-  FConection.SetRobotUrl(aUrlRobot);
+  FConection.RobotUrl:=(aUrlRobot);
   FConection.SetUserPassword(aUser, aPassword);
 end;
 

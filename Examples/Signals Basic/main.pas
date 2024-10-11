@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls,
-  ComCtrls, Grids, AbbWebServices, abbwstypes;
+  ComCtrls, Grids, abbconexion, rw6abbwstypes, rw6robotwareservices;
 
 type
 
@@ -27,7 +27,8 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
   private
-    Robot: TAbbWebServices;
+    Robot: TRobotConnection;
+    function Connect: boolean;
   public
 
   end;
@@ -44,19 +45,19 @@ implementation
 procedure Tmainfrm.btConnectClick(Sender: TObject);
 var
   I: integer;
-  SenalesList: TIoSignalList;
   Data: array [1..6] of string;
-  It: TIoSignalItem;
+  RobotWareServices: TRw6RobotWareServices;
+  SenalesList: TIoSignalList;
 begin
-  Robot.SetRobotUrl(edRobotAddress.Text);
-  Robot.SetUserPassword(edUser.Text, edPassword.Text);
+  if not Connect then Exit;
   try
-    SenalesList := TIoSignalList.Create;
+    RobotWareServices := TRw6RobotWareServices.Create(Robot);
     try
-      Robot.RobotWare.GetSignalsList(SenalesList);
+      SenalesList := TIoSignalList.Create;
+      RobotWareServices.GetIOSignals(SenalesList);
       for I := 0 to SenalesList.Count - 1 do
       begin
-        It := SenalesList[i];
+        //It := SenalesList[i];
         with SenalesList[I] do
         begin
           Data[1] := Name;
@@ -76,17 +77,38 @@ begin
     end;
   finally
     FreeAndNil(SenalesList);
+    FreeAndNil(RobotWareServices);
   end;
 end;
 
 procedure Tmainfrm.FormCreate(Sender: TObject);
 begin
-  Robot := TAbbWebServices.Create;
+
 end;
 
 procedure Tmainfrm.FormDestroy(Sender: TObject);
 begin
   FreeAndNil(Robot);
+end;
+
+function Tmainfrm.Connect: boolean;
+begin
+  Result := False;
+  try
+    if not Assigned(Robot) then
+    begin
+      Robot := TRobotConnection.Create(edRobotAddress.Text, edUser.Text,
+        edPassword.Text);
+    end
+    else
+    begin
+      Robot.Conectar;
+    end;
+    Result := True;
+  except
+    on E: Exception do
+      ShowMessage(E.Message);
+  end;
 end;
 
 end.
