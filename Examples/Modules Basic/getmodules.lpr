@@ -16,6 +16,7 @@ var
 begin
   try
     Robot := TRobotConnection.Create('http://192.168.125.1');
+    //Robot := TRobotConnection.Create('http://Localhost');
 
     RobotWareServices := TRw6RobotWareServices.Create(Robot);
     TaskList := TRw6TaskList.Create;

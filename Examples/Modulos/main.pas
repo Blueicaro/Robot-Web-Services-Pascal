@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls,
-  ComCtrls, abbconexion, rw6abbwstypes, rw6robotwareservices, rw6fileservices;
+  ComCtrls, abbconexion, abbwstypes, rw6robotwareservices, rw6fileservices;
 
 type
 
@@ -123,14 +123,11 @@ procedure Tmainfrm.TreeView1Click(Sender: TObject);
 var
   Nodo: TTreeNode;
   Nombre, TaskName: string;
-  L: integer;
 begin
   if TreeView1.Selected = nil then Exit;
   Nodo := TreeView1.Selected;
-  L := nodo.Level;
   if Nodo.HasChildren = False then
   begin
-
     Nombre := Nodo.Text;
     Nombre := ExtractDelimited(2, Nombre, ['/']);
     TaskName := Nodo.Parent.Text;
@@ -157,15 +154,15 @@ begin
     end
     else
     begin
-     try
-       Contenido := TStringList.Create;
-       FileService := TRw6FileServices.create(Robot);
-       FileService.Getfile(Cadena,Contenido);
-       mmContent.text := Contenido.text;
-     finally
-       FreeAndNil(Contenido);
-       FreeAndNil(FileService);
-     end;
+      try
+        Contenido := TStringList.Create;
+        FileService := TRw6FileServices.Create(Robot);
+        FileService.Getfile(Cadena, Contenido);
+        mmContent.Text := Contenido.Text;
+      finally
+        FreeAndNil(Contenido);
+        FreeAndNil(FileService);
+      end;
     end;
   finally
     FreeAndNil(ModuleContent);

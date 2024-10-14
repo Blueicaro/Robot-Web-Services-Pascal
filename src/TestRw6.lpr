@@ -13,29 +13,22 @@ uses
     LazLogger,
   {$ENDIF}
   abbconexion,
-  rw6robotwareservices,
-  rw6abbwstypes;
+  abbwstypes;
 
 var
-  Modo: TOpMode;
-  Tarea, Modulo, NombreVariable, Valor: string;
-  Re, I: integer;
   R: TRobotConnection;
-  RobotWareService: TRw6RobotWareServices;
-
-
 
 begin
-  R := TRobotConnection.Create('http://192.168.125.1');
-  RobotWareService := TRw6RobotWareServices.Create(R);
-  Modo := RobotWareService.GetOperationMode;
-  if Modo.opmode = opAUTO then
-  begin
-    WriteLn('auto');
+  //R := TRobotConnection.Create('http://192.168.125.1');
+  try
+    try
+      R := TRobotConnection.Create('https://localhost:80');
+    except
+      On E: Exception do
+        writeln(E.Message)
+    end;
+  finally
+    FreeAndNil(R)
   end;
-
   Readln();
-  FreeAndNil(RobotWareService);
-  FreeAndNil(R);
-
 end.

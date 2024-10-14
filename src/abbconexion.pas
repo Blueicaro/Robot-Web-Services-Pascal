@@ -264,6 +264,8 @@ begin
 
   if FDigestAuthentication = False then
   begin
+    GenerarClave;
+    GenerarCabeceras();
     FHttpSend.Get(FRobotUrl);
     GenerarCookie;
   end
