@@ -10,7 +10,7 @@
         <MainUnitHasScaledStatement Value="False"/>
       </Flags>
       <SessionStorage Value="InProjectDir"/>
-      <Title Value="project1"/>
+      <Title Value="Testing"/>
       <UseAppBundle Value="False"/>
       <ResourceType Value="res"/>
     </General>
@@ -25,6 +25,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
+            <OtherUnitFiles Value="rw7"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -49,6 +50,12 @@
               <UseExternalDbgSyms Value="True"/>
             </Debugging>
           </Linking>
+          <Other>
+            <CustomOptions Value="-dabbdebug"/>
+            <OtherDefines Count="1">
+              <Define0 Value="abbdebug"/>
+            </OtherDefines>
+          </Other>
         </CompilerOptions>
       </Item>
       <Item Name="Release">
@@ -60,6 +67,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
+            <OtherUnitFiles Value="rw7"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <CodeGeneration>
@@ -86,6 +94,9 @@
     </RunParams>
     <RequiredPackages>
       <Item>
+        <PackageName Value="idelazlogger"/>
+      </Item>
+      <Item>
         <PackageName Value="laz_synapse"/>
       </Item>
     </RequiredPackages>
@@ -95,25 +106,15 @@
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
-        <Filename Value="abbwebservices.pas"/>
-        <IsPartOfProject Value="True"/>
-        <UnitName Value="AbbWebServices"/>
-      </Unit>
-      <Unit>
-        <Filename Value="controllerservices.pas"/>
-        <IsPartOfProject Value="True"/>
-        <UnitName Value="ControllerServices"/>
-      </Unit>
-      <Unit>
-        <Filename Value="robotwareservices.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="abbwstypes.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
         <Filename Value="abbconexion.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="rw7\rw7abbwstypes.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="rw7\rw7webservices.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
     </Units>
@@ -126,6 +127,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
+      <OtherUnitFiles Value="rw7"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Linking>

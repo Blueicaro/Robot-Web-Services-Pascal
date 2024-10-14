@@ -1,4 +1,4 @@
-unit ControllerServices;
+unit rw7controllerservices;
 
 {$mode ObjFPC}{$H+}
 
@@ -10,26 +10,26 @@ uses
 
 type
 
-  { TControllerServices }
+  { TRw7ControllerServices }
 
-  TControllerServices = class(TRobotConexion)
+  TRw7ControllerServices = class(TRobotConnection)
   private
     FLocalUrl: string;
-    FConection: TRobotConexion;
+    FConection: TRobotConnection;
   public
     function GetVariableEnviroment(aVar: string): string;
     procedure GetListOfServices(aList: TStringList);
   public
-    constructor Create(aRobotConexion: TRobotConexion);
+    constructor Create(aRobotConexion: TRobotConnection);
     destructor Destroy; override;
   end;
 
 implementation
 
 
-{ TControllerServices }
+{ TRw7ControllerServices }
 
-function TControllerServices.GetVariableEnviroment(aVar: string): string;
+function TRw7ControllerServices.GetVariableEnviroment(aVar: string): string;
 begin
   Result := '';
   if not Assigned(FConection) then
@@ -46,7 +46,7 @@ begin
   end;
 end;
 
-procedure TControllerServices.GetListOfServices(aList: TStringList);
+procedure TRw7ControllerServices.GetListOfServices(aList: TStringList);
 begin
   if not Assigned(FConection) then
   begin
@@ -56,7 +56,7 @@ begin
     FConection.Get(FLocalUrl);
     if FConection.StatusCode = 200 then
     begin
-      WriteLn(FConection.Respuesta.Text);
+      //debugln(FConection.Respuesta.Text);
       GetListResources(FConection.Respuesta, aList);
     end
     else
@@ -72,14 +72,14 @@ begin
 
 end;
 
-constructor TControllerServices.Create(aRobotConexion: TRobotConexion);
+constructor TRw7ControllerServices.Create(aRobotConexion: TRobotConnection);
 begin
   inherited Create;
   FLocalUrl := 'ctrl';
   FConection := aRobotConexion;
 end;
 
-destructor TControllerServices.Destroy;
+destructor TRw7ControllerServices.Destroy;
 begin
   inherited Destroy;
 end;

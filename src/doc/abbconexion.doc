@@ -1,0 +1,32 @@
+#abbconexion.TRobotConexion
+This class is used to connect to the robot
+
+ #abbconexion.TRobotConexion.SetRobotUrl   
+ URL or ip of the robot. If you are connecting to virtual controller running on RobotStudio in the same
+ pc use:  
+ https://Localhost:80
+    
+
+
+#abbconexion.TRobotConexion.SetUserPassword
+User and password. ABB robots by default use Default User for user and robotics for password.
+Try this if your robot hasn't any user configured  
+
+#abbconexion.TRobotConexion.Connection
+Opens the connection to the robot
+
+#abbconexion.TRobotConexion.RobotWare
+Access to RobotWare services see: TRobotWare class
+
+#robotwareservices.TRobotWareService
+This class gives access to the services of the robotwareservices. 
+
+#robotwareservices.GetListServices
+Returns a list of strings (TstringList) with all services available in the robot.
+The content of the list depends on which services are installed.
+
+#robotwareservices.GetNetWorksList
+uno
+
+
+

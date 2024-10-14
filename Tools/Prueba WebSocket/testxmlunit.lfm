@@ -1,0 +1,67 @@
+object Form1: TForm1
+  Left = 350
+  Height = 427
+  Top = 250
+  Width = 776
+  Caption = 'Form1'
+  ClientHeight = 427
+  ClientWidth = 776
+  object Panel1: TPanel
+    Left = 0
+    Height = 50
+    Top = 0
+    Width = 776
+    Align = alTop
+    ClientHeight = 50
+    ClientWidth = 776
+    TabOrder = 0
+    object Button1: TButton
+      Left = 320
+      Height = 25
+      Top = 16
+      Width = 75
+      Caption = 'TestXml'
+      TabOrder = 0
+      OnClick = Button1Click
+    end
+  end
+  object Memo1: TMemo
+    Left = 0
+    Height = 186
+    Top = 50
+    Width = 776
+    Align = alTop
+    Lines.Strings = (
+      '<?xml version="1.0" encoding="utf-8"?>'
+      '<html xmlns="http://www.w3.org/1999/xhtml">'
+      '    <head>'
+      '        <base href="https://localhost:80/"/>'
+      '    </head>'
+      '    <body>'
+      '        <div class="state">'
+      '            <a href="subscription/9" rel="group"></a>'
+      '            <a href="wss://localhost:80/poll/9" rel="self"></a>'
+      '            <ul>'
+      '                <li class="ios-signalstate-ev" title="ethernet/board1/do0">'
+      '                    <a href="/rw/iosystem/signals/ethernet/board1/do0;state" rel="self"/>'
+      '                    <span class="lvalue">0</span>'
+      '                    <span class="lstate">not simulated</span>'
+      '                    <span class="quality">good</span>'
+      '                    <span class="time">0</span>'
+      '                </li>'
+      '            </ul>'
+      '        </div>'
+      '    </body>'
+      '</html>'
+    )
+    TabOrder = 1
+  end
+  object Memo2: TMemo
+    Left = 0
+    Height = 191
+    Top = 236
+    Width = 776
+    Align = alClient
+    TabOrder = 2
+  end
+end

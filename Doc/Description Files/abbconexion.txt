@@ -1,0 +1,8 @@
+#abbconexion.TRobotConnection.Create
+Create a robot conexión. 
+You must indicate the address of the robot, for example: Http://192.168.125.1
+Optionally you can also indicate the username and password.
+#rw6abbwstypes.TRw6TaskItem
+A task item. 
+#rw6abbwstypes.TRw6TaskList
+List of Task avaliable on robot
