@@ -22,6 +22,14 @@ type
     AUTO : State automatic mode
     UNDEF : Undefined
 }
+
+type
+  TMotorState = (msMotorOn, msMotorOf);
+
+type
+  TRestartModes = (rmRestart, rmShutDown, rmBootAplication, rmResetSystem,
+    rmResetRapid, rmRevertToAutoSave);
+
 type
   opModes = (opINIT, opAUTO_CH, opMANF_CH, opMANR, opMANF, opAUTO, opUNDEF);
 
@@ -915,5 +923,3 @@ begin
 end;
 
 end.
-
-

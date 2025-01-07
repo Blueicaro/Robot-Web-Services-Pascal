@@ -39,6 +39,7 @@ type
     property StatusText: string read FStatusText;
     property Respuesta: TStringList read FRespuesta;
     property ReturnHeader: TStringList read FReturnHeader;
+    property DigestAuthentication: boolean read FDigestAuthentication;
   public
     procedure Conectar;
     procedure SetUserPassword(aUser, aPassword: string);
@@ -51,8 +52,8 @@ type
   public
     constructor Create;
     //Creates a Robot conexion.
-    constructor Create(RobotAddrs: string; User: string='Default User'; Password: string='robotics';
-      Connect: boolean = True); overload;
+    constructor Create(RobotAddrs: string; User: string = 'Default User';
+      Password: string = 'robotics'; Connect: boolean = True); overload;
     destructor Destroy; override;
   end;
 
@@ -158,7 +159,8 @@ begin
     GenerarCookie;
   finally
     FreeAndNil(Response);
-    FHttpSend.RequestBody := nil;
+    //FHttpSend.RequestBody := nil;
+    FHttpSend.RequestBody.Free;;
   end;
 
 end;

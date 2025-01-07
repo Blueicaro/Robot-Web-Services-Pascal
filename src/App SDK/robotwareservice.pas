@@ -5,7 +5,7 @@ unit RobotWareService;
 interface
 
 uses
-  Classes, SysUtils, abbconexion,controller;
+  Classes, SysUtils, abbconexion, controller;
 
 type
 
@@ -17,12 +17,12 @@ type
     FController: TController;
   published
     property Conexion: TRobotConnection read FConexion;
-    public
-      property Controller: TController read FController;
+  public
+    property Controller: TController read FController;
   public
     constructor Create;
-    constructor  Create(RobotAddrs: string; User: string='Default User'; Password: string='robotics';
-      Connect: boolean = True); overload;
+    constructor Create(RobotAddrs: string; User: string = 'Default User';
+      Password: string = 'robotics'; Connect: boolean = True); overload;
     destructor Destroy; override;
   end;
 
@@ -34,16 +34,22 @@ implementation
 
 constructor TRWS.Create;
 begin
-
   FConexion := TRobotConnection.Create;
-  FController := TControllerRw7.Create(nil);
 end;
 
 constructor TRWS.Create(RobotAddrs: string; User: string; Password: string;
   Connect: boolean);
 begin
   { #todo : Capturar excepcion }
-  FConexion.Create(RobotAddrs,User,Password,Connect);
+  FConexion := TRobotConnection.Create(RobotAddrs, User, Password, Connect);
+  if FConexion.DigestAuthentication then
+  begin
+    FController := TControllerRw6.Create(FConexion);
+  end
+  else
+  begin
+    FController := TControllerRw7.Create;
+  end;
 end;
 
 destructor TRWS.Destroy;
