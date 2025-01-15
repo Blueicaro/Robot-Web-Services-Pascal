@@ -5,18 +5,15 @@ unit controller;
 interface
 
 uses
-  Classes, SysUtils, abbconexion, abbwstypes, fpjson;
+  Classes, SysUtils, abbconexion, robotwaredata, fpjson;
 
 type
 
   { TControllerBase }
 
-  TControllerBase = class
-  private
-  class var FConexion: TRobotConnection;
-    class procedure SetConexion(AValue: TRobotConnection); static;
+  TControllerBase = class(Tbase)
   public
-    class property Conexion: TRobotConnection read FConexion write SetConexion;
+   // class property Conexion: TRobotConnection read FConexion write SetConexion;
     class function isVirtualController: boolean; virtual; abstract;
     class function getControllerState: string virtual; abstract;
     class function setMotorsState(aMotorState: TMotorState): string; virtual; abstract;
@@ -87,6 +84,7 @@ type
     class function verifyBackup(Path: string): string; override;
     class function verifyOption(aValue: string): boolean; override;
   public
+    constructor Create(aConexion: TRobotConnection);
     class function restartController(aRestartMode: TRestartModes): string; override;
     class function setMotorsState(aMotorState: TMotorState): string; override;
   end;
@@ -94,27 +92,11 @@ type
 type
   TController = TControllerBase;
 
-type
 
-  { TControllerRw6Helper }
-
-  TControllerRw6Helper = class helper for tControllerRw6
-    class function GetStateArrayElemento(NombreCampo: string): string;
-    class function GetCodeError: string;
-
-  end;
 
 
 implementation
 
-uses StrUtils;
-  { TControllerBase }
-
-class procedure TControllerBase.SetConexion(AValue: TRobotConnection);
-begin
-  if FConexion = AValue then Exit;
-  FConexion := AValue;
-end;
 
 { TControllerRw6 }
 
@@ -131,7 +113,7 @@ begin
   except
     raise TAbbWebServicesError.Create('Error de conexión');
   end;
-  Result := GetStateArrayElemento('ctrlstate');
+  Result := FConexion.GetStateArrayElemento('ctrlstate');
 end;
 
 class function TControllerRw6.GetEnvironmentVariable: string;
@@ -146,7 +128,7 @@ begin
   except
     raise TAbbWebServicesError.Create('Error de conexión');
   end;
-  Result := GetStateArrayElemento('ctrl-name');
+  Result := FConexion.GetStateArrayElemento('ctrl-name');
 end;
 
 class function TControllerRw6.getNetworkConnections: string;
@@ -166,21 +148,21 @@ begin
   except
     raise TAbbWebServicesError.Create('Error de conexión');
   end;
-  Result := GetStateArrayElemento('opmode');
+  Result := FConexion.GetStateArrayElemento('opmode');
 end;
 
 class function TControllerRw6.GetTimezone: string;
 begin
-    Result := '';
+  Result := '';
   try
     FConexion.Get('ctrl/clock/timezone?json=1');
   except
     raise TAbbWebServicesError.Create('Error de conexión');
   end;
-  Result := GetCodeError;
-  if Result <> ''then
+  Result := FConexion.GetCodeError;
+  if Result = '' then
   begin
-    Result := GetStateArrayElemento('timezone');
+    Result := FConexion.GetStateArrayElemento('timezone');
   end;
 end;
 
@@ -194,7 +176,7 @@ begin
   except
     raise TAbbWebServicesError.Create('Error de conexión');
   end;
-  cadena := GetStateArrayElemento('ctrl-type');
+  cadena := FConexion.GetStateArrayElemento('ctrl-type');
   Result := 'Virtual Controller' = Cadena;
 
 end;
@@ -245,8 +227,7 @@ begin
     raise TAbbWebServicesError.Create('Error de conexión');
   end;
 
-  result := GetStateArrayElemento('datetime');
-
+  Result := FConexion.getStateArrayElemento('datetime');
 
 end;
 
@@ -277,7 +258,7 @@ begin
   except
     raise TAbbWebServicesError.Create('Error de conexión');
   end;
-  Result := GetCodeError;
+  Result := FConexion.GetCodeError;
 
 end;
 
@@ -361,6 +342,11 @@ begin
 
 end;
 
+constructor TControllerRw7.Create(aConexion: TRobotConnection);
+begin
+
+end;
+
 class function TControllerRw7.restartController(aRestartMode: TRestartModes): string;
 begin
 
@@ -371,47 +357,6 @@ begin
 
 end;
 
-{ TControllerRw6Helper }
 
-class function TControllerRw6Helper.GetStateArrayElemento(NombreCampo: string): string;
-var
-  dato, json: TJSONData;
-  I: integer;
-  Campo: string;
-begin
-  Result := '';
-  try
-    json := GetJSON(FConexion.Respuesta.Text);
-    dato := json.GetPath('_embedded._state');
-    for I := 0 to dato.Items[0].Count - 1 do
-    begin
-      Campo := TJSONObject(dato.Items[0]).Names[I];
-      if Campo = NombreCampo then
-      begin
-        Result := dato.Items[0].Items[I].AsString;
-        Break;
-      end;
-    end;
-  finally
-    FreeAndNil(json);
-  end;
-end;
-
-class function TControllerRw6Helper.GetCodeError: string;
-var
-  Dato: TJSONData;
-  Cadena: TJSONStringType;
-begin
-  Result := '';
-  if FConexion.StatusCode <> 200 then
-  begin
-    Dato := GetJSON(FConexion.Respuesta.Text);
-    Cadena := Dato.GetPath('_embedded.status.msg').AsString;
-    Cadena := trim(ExtractDelimited(2, Cadena, [']']));
-    Cadena := trim(ExtractDelimited(1, Cadena, ['-']));
-    Result := Cadena;
-    FreeAndNil(Dato);
-  end;
-end;
 
 end.

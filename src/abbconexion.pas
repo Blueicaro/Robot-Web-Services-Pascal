@@ -57,13 +57,25 @@ type
     destructor Destroy; override;
   end;
 
+type
+
+  { TRobotConnectionHelper }
+
+  TRobotConnectionHelper = class helper for TRobotConnection
+    function GetStateArrayElemento(NombreCampo: string): string;
+    function GetCodeError: string;
+    function GetHref(Index: integer): string;
+    function GetName(Index: integer = 0): string;
+    function GetLengthArray: integer;
+  end;
+
 implementation
 
 uses
   {$IFDEF abbdebug}
     LazLogger,
   {$ENDIF}
-  base64, StrUtils, md5, dateutils, URIParser;
+  base64, StrUtils, md5, dateutils, URIParser, robotwaredata;
 //{ TRobotConexionCustom }
 //{ #todo : Añadir más verificaciones al parámetro URL }
 procedure TRobotConnection.SetRobotUrl(Url: string);
@@ -160,7 +172,8 @@ begin
   finally
     FreeAndNil(Response);
     //FHttpSend.RequestBody := nil;
-    FHttpSend.RequestBody.Free;;
+    FHttpSend.RequestBody.Free;
+    ;
   end;
 
 end;
@@ -463,6 +476,83 @@ begin
   FreeAndNil(FReturnHeader);
   FreeAndNil(FCookie);
   inherited Destroy;
+end;
+
+{ TRobotConnectionHelper }
+function TRobotConnectionHelper.GetStateArrayElemento(NombreCampo: string): string;
+var
+  dato, json: TJSONData;
+  I: integer;
+  Campo: string;
+  j: TJSONtype;
+begin
+  Result := '';
+  try
+    json := GetJSON(FRespuesta.Text);
+    dato := json.GetPath('_embedded._state');
+    for I := 0 to dato.Items[0].Count - 1 do
+    begin
+      j := dato.Items[0].JSONType;
+      Campo := TJSONObject(dato.Items[0]).Names[I];
+      if Campo = NombreCampo then
+      begin
+        Result := dato.Items[0].Items[I].AsString;
+        Break;
+      end;
+    end;
+  finally
+    FreeAndNil(json);
+  end;
+end;
+
+function TRobotConnectionHelper.GetCodeError: string;
+var
+  Dato: TJSONData;
+  Cadena: TJSONStringType;
+begin
+  Result := '';
+  if StatusCode <> 200 then
+  begin
+    Dato := GetJSON(FRespuesta.Text);
+    Cadena := Dato.GetPath('_embedded.status.msg').AsString;
+    Cadena := trim(ExtractDelimited(2, Cadena, [']']));
+    Cadena := trim(ExtractDelimited(1, Cadena, ['-']));
+    Result := Cadena;
+    FreeAndNil(Dato);
+  end;
+end;
+
+function TRobotConnectionHelper.GetHref(Index: integer): string;
+var
+  Data: TJSONData;
+begin
+  Result := '';
+  Data := GetJSON(FRespuesta.Text);
+  Result := Data.GetPath('_embedded._state').Items[Index].Items[0].GetPath(
+    'self.href').AsString;
+  FreeAndNil(Data);
+end;
+
+function TRobotConnectionHelper.GetName(Index: integer): string;
+var
+  Data, jCampo: TJSONData;
+  Cadena: TJSONStringType;
+begin
+  Result := '';
+  Data := GetJSON(FRespuesta.Text);
+  Result := Data.GetPath('_embedded._state').Items[Index].GetPath('name').AsString;
+  FreeAndNil(Data);
+
+end;
+
+
+function TRobotConnectionHelper.GetLengthArray: integer;
+var
+  Data: TJSONData;
+begin
+  Data := GetJSON(FRespuesta.Text);
+  Result := Data.GetPath('_embedded._state').Count;
+  FreeAndNil(Data);
 end;
 
 end.
