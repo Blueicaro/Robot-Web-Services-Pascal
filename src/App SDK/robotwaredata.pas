@@ -30,6 +30,7 @@ type
 
   TBase = class
   class var FConexion: TRobotConnection;
+    constructor Create(aRobotConexion: TRobotConnection); virtual; abstract;
     class procedure SetConexion(AValue: TRobotConnection); static;
   end;
 
@@ -118,9 +119,10 @@ type
     ActiveState: string;
     IsMotionTask: boolean;
     TrustLevel: string;
-    id: integer;
+    id: string;
     ExecutionLevel: string;
     ExecutionMode: string;
+    ExecutionType: string;
     ProgEntryPoint: string;
     BindRef: boolean;
     TaskForeground: string;
@@ -132,6 +134,8 @@ type
     BindRef: boolean;
   end;
 
+
+
   TTaskItem = class
   private
     FGetData: TDataObject;
@@ -139,22 +143,28 @@ type
     FProgramInfo: TProgramInfo;
     FProperties: TTaksProperties;
     Fhref: string;
+    FRobotConexion: TRobotConnection;
+    function GetProperties: TTaksProperties;
     procedure SetGetData(AValue: TDataObject);
     procedure SetGetName(AValue: string);
     procedure SetProgramInfo(AValue: TProgramInfo);
     procedure SetProperties(AValue: TTaksProperties);
+    procedure SetRobotConexion(AValue: TRobotConnection);
   public
+    property RobotConexion: TRobotConnection read FRobotConexion write SetRobotConexion;
     property href: string read Fhref write Fhref;
     property GetName: string read FGetName write SetGetName;
-    property Properties: TTaksProperties read FProperties write SetProperties;
+    property Properties: TTaksProperties read GetProperties write SetProperties;
     //property GetServiceRoutine:
     property GetData: TDataObject read FGetData write SetGetData;
     property ProgramInfo: TProgramInfo read FProgramInfo write SetProgramInfo;
-    //    property GetModuleNames
+    procedure GetModuleNames(var ProgramModulesList: TStringList;
+      var SystemModuleList: TStringList);
     //property GetPointers
     //function MovePPToRoutine;string;
     //function AbortServiceRoutine
-
+  public
+    destructor Destroy; override;
   end;
 
 type
@@ -260,6 +270,36 @@ type
   TNetworkSetting = TNetworkSettingBase;
 
 
+type
+  TNetWork = class
+
+  end;
+
+type
+  TDevice = class
+
+  end;
+
+type
+
+  { TSignal }
+
+  TSignal = class
+  private
+    FGetDeviceName: string;
+    FGetName: string;
+    FgetNetWorkName: string;
+    FGetPath: string;
+    procedure SetGetDeviceName(AValue: string);
+    procedure SetGetName(AValue: string);
+    procedure SetgetNetWorkName(AValue: string);
+    procedure SetGetPath(AValue: string);
+  published
+    property GetName: string read FGetName write SetGetName;
+    property GetPath : string read FGetPath write SetGetPath;
+    property getNetWorkName: string read FgetNetWorkName write SetgetNetWorkName;
+    property GetDeviceName:string read FGetDeviceName write SetGetDeviceName;
+  end;
 
 implementation
 
@@ -283,10 +323,80 @@ begin
   FGetData := AValue;
 end;
 
+function TTaskItem.GetProperties: TTaksProperties;
+begin
+  Result := Self.FProperties;
+  if not Assigned(FRobotConexion) then
+  begin
+    raise TAbbWebServicesError.Create('TaksItem conexion not set');
+  end;
+  try
+    FRobotConexion.Get('rw/rapid/' + Fhref);
+  except
+    raise TAbbWebServicesError.Create('Error de conexión');
+  end;
+  Result.Name := FRobotConexion.GetStateArrayElemento('name');
+  Result.TaskType := FRobotConexion.GetStateArrayElemento('type');
+  Result.ExecutionState := FRobotConexion.GetStateArrayElemento('excstate');
+  Result.ActiveState := FRobotConexion.GetStateArrayElemento('active');
+  Result.IsMotionTask := StrToBoolDef(FRobotConexion.GetStateArrayElemento(
+    'motiontask'), True);
+  Result.TrustLevel := FRobotConexion.GetStateArrayElemento('trust');
+  Result.id := FRobotConexion.GetStateArrayElemento('id');
+  Result.ExecutionMode := FRobotConexion.GetStateArrayElemento('excstate');
+  Result.ExecutionType := FRobotConexion.GetStateArrayElemento('exectype');
+  Result.ProgEntryPoint := FRobotConexion.GetStateArrayElemento('prodentrypt');
+  Result.BindRef := StrToBoolDef(FRobotConexion.GetStateArrayElemento('bind_ref'), True);
+  Result.TaskForeground := FRobotConexion.GetStateArrayElemento('task_in_forgnd');
+end;
+
 procedure TTaskItem.SetProperties(AValue: TTaksProperties);
 begin
   //if FProperties = AValue then Exit;
   FProperties := AValue;
+end;
+
+procedure TTaskItem.SetRobotConexion(AValue: TRobotConnection);
+begin
+  if FRobotConexion = AValue then Exit;
+  FRobotConexion := AValue;
+end;
+
+destructor TTaskItem.Destroy;
+begin
+  FRobotConexion := nil;
+  inherited Destroy;
+end;
+
+procedure TTaskItem.GetModuleNames(var ProgramModulesList: TStringList;
+  var SystemModuleList: TStringList);
+var
+  I: integer;
+begin
+  ProgramModulesList.Clear;
+  SystemModuleList.Clear;
+  if not Assigned(FRobotConexion) then
+  begin
+    raise TAbbWebServicesError.Create('TaksItem conexion not set');
+  end;
+  try
+    FRobotConexion.Get('rw/rapid/modules?task=' + GetName + '&json=1');
+  except
+    raise TAbbWebServicesError.Create('Error de conexión');
+  end;
+
+  for I := 0 to FRobotConexion.GetLengthArray - 1 do
+  begin
+    if FRobotConexion.GetStateArrayElemento('type', I) = 'ProgMod' then
+    begin
+      ProgramModulesList.Add(FRobotConexion.GetStateArrayElemento('name', I));
+    end
+    else
+    begin
+      SystemModuleList.Add(FRobotConexion.GetStateArrayElemento('name', I));
+    end;
+  end;
+
 end;
 
 { TTaskListHelper }
@@ -501,6 +611,32 @@ end;
 function TNetworkSettingRw7.DnsSecundario: string;
 begin
 
+end;
+
+{ TSignal }
+
+procedure TSignal.SetGetName(AValue: string);
+begin
+  if FGetName = AValue then Exit;
+  FGetName := AValue;
+end;
+
+procedure TSignal.SetGetDeviceName(AValue: string);
+begin
+  if FGetDeviceName=AValue then Exit;
+  FGetDeviceName:=AValue;
+end;
+
+procedure TSignal.SetgetNetWorkName(AValue: string);
+begin
+  if FgetNetWorkName=AValue then Exit;
+  FgetNetWorkName:=AValue;
+end;
+
+procedure TSignal.SetGetPath(AValue: string);
+begin
+  if FGetPath=AValue then Exit;
+  FGetPath:=AValue;
 end;
 
 end.

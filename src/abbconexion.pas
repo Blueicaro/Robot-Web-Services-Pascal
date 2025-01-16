@@ -62,7 +62,7 @@ type
   { TRobotConnectionHelper }
 
   TRobotConnectionHelper = class helper for TRobotConnection
-    function GetStateArrayElemento(NombreCampo: string): string;
+    function GetStateArrayElemento(NombreCampo: string;SubArrayIndice:integer=0): string;
     function GetCodeError: string;
     function GetHref(Index: integer): string;
     function GetName(Index: integer = 0): string;
@@ -479,7 +479,8 @@ begin
 end;
 
 { TRobotConnectionHelper }
-function TRobotConnectionHelper.GetStateArrayElemento(NombreCampo: string): string;
+function TRobotConnectionHelper.GetStateArrayElemento(NombreCampo: string;
+  SubArrayIndice: integer): string;
 var
   dato, json: TJSONData;
   I: integer;
@@ -490,13 +491,13 @@ begin
   try
     json := GetJSON(FRespuesta.Text);
     dato := json.GetPath('_embedded._state');
-    for I := 0 to dato.Items[0].Count - 1 do
+    for I := 0 to dato.Items[SubArrayIndice].Count - 1 do
     begin
       j := dato.Items[0].JSONType;
-      Campo := TJSONObject(dato.Items[0]).Names[I];
+      Campo := TJSONObject(dato.Items[SubArrayIndice]).Names[I];
       if Campo = NombreCampo then
       begin
-        Result := dato.Items[0].Items[I].AsString;
+        Result := dato.Items[SubArrayIndice].Items[I].AsString;
         Break;
       end;
     end;

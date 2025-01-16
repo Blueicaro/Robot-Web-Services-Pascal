@@ -13,7 +13,6 @@ type
 
   TRapidBase = class(TBase)
     class function GetTasks: TTaskList; virtual; abstract;
-
   end;
 
 type
@@ -25,8 +24,6 @@ type
     constructor Create(aConexion: TRobotConnection);
     destructor Destroy; override;
     class function GetTasks: TTaskList; override;
-
-
   end;
 
 type
@@ -75,6 +72,7 @@ begin
     aItem := TTaskItem.Create;
     aItem.GetName := FConexion.GetName(I);
     aItem.href := FConexion.GetHref(I);
+    aItem.RobotConexion:=FConexion;
     Result.Add(aItem);
   end;
 end;
