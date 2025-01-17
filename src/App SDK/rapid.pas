@@ -15,16 +15,7 @@ type
     class function GetTasks: TTaskList; virtual; abstract;
   end;
 
-type
 
-  { TRapidRw6 }
-
-  TRapidRw6 = class(TRapidBase)
-  public
-    constructor Create(aConexion: TRobotConnection);
-    destructor Destroy; override;
-    class function GetTasks: TTaskList; override;
-  end;
 
 type
 
@@ -32,6 +23,7 @@ type
 
   TRapidRw7 = class(TRapidBase)
     constructor Create(aConexion: TRobotConnection);
+    destructor Destroy; override;
     class function GetTasks: TTaskList; override;
   end;
 
@@ -42,50 +34,45 @@ type
 implementation
 
 uses fpjson;
-  { TRapidRw6 }
 
-constructor TRapidRw6.Create(aConexion: TRobotConnection);
+
+  { TRapidRw7 }
+
+constructor TRapidRw7.Create(aConexion: TRobotConnection);
 begin
   FConexion := aConexion;
 end;
 
-destructor TRapidRw6.Destroy;
+destructor TRapidRw7.Destroy;
 begin
   FConexion := nil;
   inherited Destroy;
 end;
 
-class function TRapidRw6.GetTasks: TTaskList;
+class function TRapidRw7.GetTasks: TTaskList;
 var
   aItem: TTaskItem;
   I: integer;
+  Propiedades: TTaksProperties;
 begin
   Result := TTaskList.Create;
   try
-    FConexion.Get('rw/rapid/tasks?json=1');
+    FConexion.Get('rw/rapid/tasks');
   except
     raise TAbbWebServicesError.Create('Error de conexión');
   end;
 
-  for I := 0 to FConexion.GetLengthArray-1 do
+  for I := 0 to FConexion.ResourcesCount - 1 do
   begin
-    aItem := TTaskItem.Create;
-    aItem.GetName := FConexion.GetName(I);
-    aItem.href := FConexion.GetHref(I);
-    aItem.RobotConexion:=FConexion;
-    Result.Add(aItem);
+    if FConexion.GetResourceItem('_type', I) = 'rap-task-li' then
+    begin
+      aItem := TTaskItem.Create;
+      aItem.GetName := FConexion.GetResourceName(I);
+      aItem.href := FConexion.GetHref(I);
+      aItem.RobotConexion := FConexion;
+      Result.Add(aItem);
+    end;
   end;
-end;
-
-{ TRapidRw7 }
-
-constructor TRapidRw7.Create(aConexion: TRobotConnection);
-begin
-
-end;
-
-class function TRapidRw7.GetTasks: TTaskList;
-begin
 
 end;
 

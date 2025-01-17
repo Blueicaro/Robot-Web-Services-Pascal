@@ -296,9 +296,9 @@ type
     procedure SetGetPath(AValue: string);
   published
     property GetName: string read FGetName write SetGetName;
-    property GetPath : string read FGetPath write SetGetPath;
+    property GetPath: string read FGetPath write SetGetPath;
     property getNetWorkName: string read FgetNetWorkName write SetgetNetWorkName;
-    property GetDeviceName:string read FGetDeviceName write SetGetDeviceName;
+    property GetDeviceName: string read FGetDeviceName write SetGetDeviceName;
   end;
 
 implementation
@@ -335,19 +335,20 @@ begin
   except
     raise TAbbWebServicesError.Create('Error de conexión');
   end;
-  Result.Name := FRobotConexion.GetStateArrayElemento('name');
-  Result.TaskType := FRobotConexion.GetStateArrayElemento('type');
-  Result.ExecutionState := FRobotConexion.GetStateArrayElemento('excstate');
-  Result.ActiveState := FRobotConexion.GetStateArrayElemento('active');
-  Result.IsMotionTask := StrToBoolDef(FRobotConexion.GetStateArrayElemento(
+  Result.Name := FRobotConexion.GetStateName('name');
+  Result.TaskType := FRobotConexion.GetStateName('type');
+  Result.TaskState:= FRobotConexion.GetStateName('taskstate');
+  Result.ExecutionState := FRobotConexion.GetStateName('excstate');
+  Result.ActiveState := FRobotConexion.GetStateName('active');
+  Result.IsMotionTask := StrToBoolDef(FRobotConexion.GetStateName(
     'motiontask'), True);
-  Result.TrustLevel := FRobotConexion.GetStateArrayElemento('trust');
-  Result.id := FRobotConexion.GetStateArrayElemento('id');
-  Result.ExecutionMode := FRobotConexion.GetStateArrayElemento('excstate');
-  Result.ExecutionType := FRobotConexion.GetStateArrayElemento('exectype');
-  Result.ProgEntryPoint := FRobotConexion.GetStateArrayElemento('prodentrypt');
-  Result.BindRef := StrToBoolDef(FRobotConexion.GetStateArrayElemento('bind_ref'), True);
-  Result.TaskForeground := FRobotConexion.GetStateArrayElemento('task_in_forgnd');
+  Result.TrustLevel := FRobotConexion.GetStateName('trust');
+  Result.id := FRobotConexion.GetStateName('taskID');
+  Result.ExecutionMode := FRobotConexion.GetStateName('excstate');
+  Result.ExecutionType := FRobotConexion.GetStateName('exectype');
+  Result.ProgEntryPoint := FRobotConexion.GetStateName('prodentrypt');
+  Result.BindRef := StrToBoolDef(FRobotConexion.GetStateName('bind_ref'), True);
+  Result.TaskForeground := FRobotConexion.GetStateName('task_in_forgnd');
 end;
 
 procedure TTaskItem.SetProperties(AValue: TTaksProperties);
@@ -385,15 +386,15 @@ begin
     raise TAbbWebServicesError.Create('Error de conexión');
   end;
 
-  for I := 0 to FRobotConexion.GetLengthArray - 1 do
+  for I := 0 to FRobotConexion.ResourcesCount - 1 do
   begin
-    if FRobotConexion.GetStateArrayElemento('type', I) = 'ProgMod' then
+    if FRobotConexion.GetResourceItem('type', I) = 'ProgMod' then
     begin
-      ProgramModulesList.Add(FRobotConexion.GetStateArrayElemento('name', I));
+      ProgramModulesList.Add(FRobotConexion.GetResourceItem('name', I));
     end
     else
     begin
-      SystemModuleList.Add(FRobotConexion.GetStateArrayElemento('name', I));
+      SystemModuleList.Add(FRobotConexion.GetResourceItem('name', I));
     end;
   end;
 
@@ -623,20 +624,20 @@ end;
 
 procedure TSignal.SetGetDeviceName(AValue: string);
 begin
-  if FGetDeviceName=AValue then Exit;
-  FGetDeviceName:=AValue;
+  if FGetDeviceName = AValue then Exit;
+  FGetDeviceName := AValue;
 end;
 
 procedure TSignal.SetgetNetWorkName(AValue: string);
 begin
-  if FgetNetWorkName=AValue then Exit;
-  FgetNetWorkName:=AValue;
+  if FgetNetWorkName = AValue then Exit;
+  FgetNetWorkName := AValue;
 end;
 
 procedure TSignal.SetGetPath(AValue: string);
 begin
-  if FGetPath=AValue then Exit;
-  FGetPath:=AValue;
+  if FGetPath = AValue then Exit;
+  FGetPath := AValue;
 end;
 
 end.

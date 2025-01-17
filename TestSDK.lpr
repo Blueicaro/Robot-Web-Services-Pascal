@@ -6,49 +6,41 @@ uses
   RobotWareService,
   abbwstypes,
   rapid,
-  robotwaredata, io;
+  robotwaredata,
+  io;
 
 var
   R: TRWS;
-  Tasks: TTaskList;
-  I: integer;
-  Cadena: string;
-  It: TTaskItem;
-  SystemModule, ProgramModule: TStringList;
+  Lista: TTaskList;
+  Propiedades: TTaksProperties;
+  I: Integer;
 begin
-  R := TRWS.Create('http://localhost');
-  SystemModule := TStringList.Create;
-  ProgramModule := TStringList.Create;
+
   try
     try
+      R := TRWS.Create('https://localhost:80');
       WriteLn('Operation mode: ' + R.Controller.getOperationMode);
-      Writeln('Control State: ' + R.Controller.getControllerState);
-      Writeln('Identity: ' + R.Controller.getIdentity);
-      Writeln('Virtual: ' + BoolToStr(R.Controller.isVirtualController, True));
-      //Writeln('Fecha y hora: ' + R.Controller.GetTime);
-      //Writeln('TimeZone: ' + R.Controller.getTimezone);
-      Tasks := R.Rapid.GetTasks;
-      for I := 0 to Tasks.Count - 1 do
+      Writeln('IsVirtual: ' + BoolToStr(R.Controller.isVirtualController, True));
+      Writeln('Controler state: ' + R.Controller.GetControllerState);
+      WriteLn('Controller Identity: ' + R.Controller.GetIdentity);
+      Writeln('Time: '+R.Controller.GetTime);
+      // R.Controller.restartController(rmRestart);
+      Lista := R.Rapid.GetTasks;
+      For I := 0 To Lista.Count-1 do
       begin
-        WriteLn(Tasks[I].GetName);
-        Writeln(Tasks[i].Properties.TaskType);
-        Tasks[I].GetModuleNames(ProgramModule, SystemModule);
-        WriteLn(ProgramModule.text);
-        WriteLn(SystemModule.text);
+        Propiedades := Lista[I].Properties;
       end;
-
-
-
     except
       on E: Exception do
+      begin
         Writeln(e.Message);
+      end;
     end;
-
   finally
-    FreeAndNil(SystemModule);
-    FreeAndNil(ProgramModule);
-    FreeAndNil(Tasks);
+    FreeAndNil(Lista);
     FreeAndNil(R);
+    WriteLn('Pulsa enter para terminar');
+    ReadLn;
   end;
-  ReadLn;
+
 end.

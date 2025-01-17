@@ -1,0 +1,1 @@
+{ "_links" : { "base" : { "href" : "https://localhost:80/ctrl/identity/" }, "self" : { "href" : "" } }  , "state" : [ { "_type" : "ctrl-identity-info", "_title" : "identity", "ctrl-name" : "IRB2600_12_165","ctrl-type":"VIRTUAL_CONTROLLER" } ]}

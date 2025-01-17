@@ -25,7 +25,6 @@ type
     FUser: string;
     FHttpSend: TFPHTTPClient;
     FClave: string;
-    FDigestAuthentication: boolean;
     procedure GenerarCabeceras(Get: boolean = True);
     procedure GenerarClave;
     procedure GenerarCookie;
@@ -39,7 +38,6 @@ type
     property StatusText: string read FStatusText;
     property Respuesta: TStringList read FRespuesta;
     property ReturnHeader: TStringList read FReturnHeader;
-    property DigestAuthentication: boolean read FDigestAuthentication;
   public
     procedure Conectar;
     procedure SetUserPassword(aUser, aPassword: string);
@@ -62,11 +60,14 @@ type
   { TRobotConnectionHelper }
 
   TRobotConnectionHelper = class helper for TRobotConnection
-    function GetStateArrayElemento(NombreCampo: string;SubArrayIndice:integer=0): string;
+    function GetResourceItem(NombreCampo: string;
+      SubArrayIndice: integer = 0): string;
+    function GetStateName(ItemName: string): string;
     function GetCodeError: string;
     function GetHref(Index: integer): string;
     function GetName(Index: integer = 0): string;
-    function GetLengthArray: integer;
+    function GetResourceName(Index: integer): string;
+    function ResourcesCount: integer;
   end;
 
 implementation
@@ -173,7 +174,6 @@ begin
     FreeAndNil(Response);
     //FHttpSend.RequestBody := nil;
     FHttpSend.RequestBody.Free;
-    ;
   end;
 
 end;
@@ -182,36 +182,21 @@ end;
 
 procedure TRobotConnection.GenerarCabeceras(Get: boolean);
 begin
+  GenerarClave;
   FHttpSend.RequestHeaders.Clear;
-
   FHttpSend.AddHeader('Connection', 'Keep-Alive');
-  if FDigestAuthentication = False then  //RobotWare 7
+  FHttpSend.AddHeader('Accept', 'application/hal+json;v=2.0');
+  FHttpSend.AddHeader('Authorization', 'Basic ' + FClave);
+  if get then
   begin
-    FHttpSend.AddHeader('Authorization', 'Basic ' + FClave);
-    FHttpSend.AddHeader('Accept', 'application/hal+json;v=2.0');
-    if get then
-    begin
-      FHttpSend.AddHeader('Content-Type', 'application/hal+json;v=2.0');
-    end
-    else
-    begin
-      FHttpSend.AddHeader('Content-Type', 'application/x-www-form-urlencoded;v=2.0');
-    end;
+    FHttpSend.AddHeader('Content-Type', 'application/hal+json;v=2.0');
   end
   else
   begin
-    FHttpSend.AddHeader('Accept', 'application/hal+json');
-    if get then
-    begin
-      FHttpSend.AddHeader('Content-Type', 'application/hal+json');
-    end
-    else
-    begin
-      FHttpSend.AddHeader('Content-Type', 'application/x-www-form-urlencoded');
-    end;
+    FHttpSend.AddHeader('Content-Type', 'application/x-www-form-urlencoded');
   end;
-
 end;
+
 
 procedure TRobotConnection.GenerarClave;
 begin
@@ -259,129 +244,10 @@ begin
 end;
 { #todo -oJorge : Modificaciónes para loggin Rw6. Trabajando aqui }
 procedure TRobotConnection.PrimeraConexion;
-var
-  I, J: integer;
-  realm, nonce, qop, opaque, cnonce, aStr, h1, h2, h3, UriStr, h4,
-  login, pass, URL: string;
-  aList: TStringList;
-  URI: TURI;
-  Stream: TStringStream;
 begin
-
-  if ExtractDelimited(1, FRobotUrl, [':']) = 'http' then
-  begin
-    FDigestAuthentication := True;
-  end
-  else
-  begin
-    FDigestAuthentication := False;
-  end;
-
-  if FDigestAuthentication = False then
-  begin
-    FHttpSend.Get(FRobotUrl);
-    GenerarCookie;
-  end
-  else
-  begin
-    try
-      login := FUser;
-      pass := FPassword;
-      URL := FRobotUrl;
-      Stream := TStringStream.Create;
-      aList := TStringList.Create;
-      URI := ParseURI(URL, False);
-      UriStr := URI.Path;
-      begin
-        if (Length(URI.Path) > 0) and ((Length(UriStr) = 0) or
-          (UriStr[Length(UriStr)] <> '/')) then
-          UriStr := UriStr + '/';
-        UriStr := UriStr + URI.Document;
-      end;
-      if Length(URI.Params) > 0 then
-        UriStr := UriStr + '?' + URI.Params;
-      {$IFDEF abbdebug}
-        DebugLn(UriStr);
-      {$ENDIF}
-      FHttpSend.KeepConnection := True;
-      FHttpSend.AllowRedirect := True;
-      FHttpSend.HTTPMethod('GET', URL, Stream, [200, 401]);
-      if FHttpSend.ResponseStatusCode = 401 then
-      begin
-
-        for I := 0 to FHttpSend.ResponseHeaders.Count - 1 do
-        begin
-          if LeftStr(uppercase(FHttpSend.ResponseHeaders.Strings[I]), 24) =
-            'WWW-AUTHENTICATE: DIGEST' then
-          begin
-            realm := '';
-            nonce := '';
-            qop := '';
-            opaque := '';
-            cnonce := md5Print(md5String(IntToStr(DateTimeToUnix(Now()))));
-
-            aList.Clear;
-            aList.StrictDelimiter := True;
-            aList.Delimiter := ',';
-            aList.DelimitedText :=
-              trim(Copy(FHttpSend.ResponseHeaders.Strings[I], 25));
-            for J := 0 to pred(aList.Count) do
-            begin
-              aStr := trim(aList.Strings[J]);
-              if LeftStr(aStr, 5) = 'realm' then
-                realm := Copy(aStr, 7, Length(aStr)).DeQuotedString(#34);
-              if LeftStr(aStr, 5) = 'nonce' then
-                nonce := Copy(aStr, 7, Length(aStr)).DeQuotedString(#34);
-              if LeftStr(aStr, 3) = 'qop' then
-                qop := Copy(aStr, 5, Length(aStr)).DeQuotedString(#34);
-              if LeftStr(aStr, 6) = 'opaque' then
-                opaque := Copy(aStr, 8, Length(aStr)).DeQuotedString(#34);
-            end;
-
-            h1 := md5Print(md5String(login + ':' + realm + ':' + pass));
-            h2 := md5Print(md5String('GET' + ':' + UriStr));
-            if (qop = 'auth') or (qop = 'auth-int') then
-              h3 := md5Print(md5String(h1 + ':' + nonce + ':00000001:' +
-                cnonce + ':' + qop + ':' + h2))
-            else
-              h3 := md5Print(md5String(h1 + ':' + nonce + ':' + h2));
-
-            h4 := 'username=' + AnsiQuotedStr(login, #34);
-            h4 := h4 + ', realm=' + AnsiQuotedStr(realm, #34);
-            h4 := h4 + ', nonce=' + AnsiQuotedStr(nonce, #34);
-            h4 := h4 + ', uri=' + AnsiQuotedStr(UriStr, #34);
-            if (qop = 'auth') or (qop = 'auth-int') then
-            begin
-              h4 := h4 + ', qop=' + qop;
-              h4 := h4 + ', nc=00000001';
-            end;
-            h4 := h4 + ', cnonce=' + AnsiQuotedStr(cnonce, #34);
-            h4 := h4 + ', response=' + AnsiQuotedStr(h3, #34);
-            if opaque <> '' then
-              h4 := h4 + ', opaque=' + AnsiQuotedStr(opaque, #34);
-
-            FHttpSend.RequestHeaders.Add('Authorization: Digest ' + h4);
-
-            Stream.Clear; // clear the previous request in the stream
-            FHttpSend.Password := '';
-            FHttpSend.UserName := '';
-            FHttpSend.HTTPMethod('GET', URL, Stream, [200]);
-            GenerarCookie;
-
-            {$IFDEF abbdebug}
-              Debugln(FHttpSend.ResponseHeaders.Text);
-              Debugln(Stream.DataString);
-            {$ENDIF}
-
-          end;
-        end;
-      end;
-    finally
-      Stream.Free;
-      aList.Free;
-    end;
-  end;
-
+  GenerarCabeceras();
+  FHttpSend.Get(FRobotUrl);
+  GenerarCookie;
 end;
 
 
@@ -463,6 +329,8 @@ begin
   FUser := User;
   FPassword := Password;
   Create;
+  FHttpSend.UserName := User;
+  FHttpSend.Password := Password;
   if Connect then
   begin
     PrimeraConexion;
@@ -479,7 +347,7 @@ begin
 end;
 
 { TRobotConnectionHelper }
-function TRobotConnectionHelper.GetStateArrayElemento(NombreCampo: string;
+function TRobotConnectionHelper.GetResourceItem(NombreCampo: string;
   SubArrayIndice: integer): string;
 var
   dato, json: TJSONData;
@@ -490,16 +358,50 @@ begin
   Result := '';
   try
     json := GetJSON(FRespuesta.Text);
-    dato := json.GetPath('_embedded._state');
-    for I := 0 to dato.Items[SubArrayIndice].Count - 1 do
-    begin
-      j := dato.Items[0].JSONType;
-      Campo := TJSONObject(dato.Items[SubArrayIndice]).Names[I];
-      if Campo = NombreCampo then
+    try
+      dato := json.GetPath('_embedded.resources');
+      for I := 0 to dato.Items[SubArrayIndice].Count - 1 do
       begin
-        Result := dato.Items[SubArrayIndice].Items[I].AsString;
-        Break;
+        j := dato.Items[0].JSONType;
+        Campo := TJSONObject(dato.Items[SubArrayIndice]).Names[I];
+        if Campo = NombreCampo then
+        begin
+          Result := dato.Items[SubArrayIndice].Items[I].AsString;
+          Break;
+        end;
       end;
+    except
+      FRespuesta.SaveToFile('GetResourceItem.txt');
+    end;
+  finally
+    FreeAndNil(json);
+  end;
+end;
+
+function TRobotConnectionHelper.GetStateName(ItemName: string): string;
+var
+  json, dato: TJSONData;
+  I: Integer;
+  j: TJSONtype;
+  Campo: String;
+begin
+  Result := '';
+  try
+    json := GetJSON(FRespuesta.Text);
+    try
+      dato := json.GetPath('state');
+      for I := 0 to dato.items[0].count - 1 do
+      begin
+        j := dato.Items[0].JSONType;
+        Campo := TJSONObject(dato.Items[0]).Names[I];
+        if Campo = ItemName then
+        begin
+          Result := dato.Items[0].items[I].AsString;
+          Break;
+        end;
+      end;
+    except
+      FRespuesta.SaveToFile('GetStateItem.txt');
     end;
   finally
     FreeAndNil(json);
@@ -529,8 +431,7 @@ var
 begin
   Result := '';
   Data := GetJSON(FRespuesta.Text);
-  Result := Data.GetPath('_embedded._state').Items[Index].Items[0].GetPath(
-    'self.href').AsString;
+  Result := Data.GetPath('_embedded.resources').items[index].GetPath('_links.self.href').AsString;
   FreeAndNil(Data);
 end;
 
@@ -546,13 +447,18 @@ begin
 
 end;
 
+function TRobotConnectionHelper.GetResourceName(Index: integer): string;
+begin
+  Result := GetResourceItem('name', Index);
+end;
 
-function TRobotConnectionHelper.GetLengthArray: integer;
+//Obtiene la longuitud de los elementos de _embedded.resources
+function TRobotConnectionHelper.ResourcesCount: integer;
 var
   Data: TJSONData;
 begin
   Data := GetJSON(FRespuesta.Text);
-  Result := Data.GetPath('_embedded._state').Count;
+  Result := Data.GetPath('_embedded.resources').Count;
   FreeAndNil(Data);
 end;
 
