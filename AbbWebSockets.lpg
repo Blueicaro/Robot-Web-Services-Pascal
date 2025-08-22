@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectGroup FileVersion="2">
+    <Targets>
+      <Target FileName="TestWebSocketRw7\TestWebSocketRw7.lpi">
+        <BuildModes>
+          <Mode Name="Default"/>
+          <Mode Name="Debug"/>
+          <Mode Name="Release"/>
+        </BuildModes>
+      </Target>
+      <Target FileName="src\TestRw7.lpi">
+        <BuildModes>
+          <Mode Name="Default" Compile="True"/>
+          <Mode Name="Debug"/>
+          <Mode Name="Release"/>
+        </BuildModes>
+      </Target>
+      <Target FileName="src\TestRw6.lpi">
+        <BuildModes>
+          <Mode Name="Default" Compile="True"/>
+          <Mode Name="Debug"/>
+          <Mode Name="Release"/>
+        </BuildModes>
+      </Target>
+    </Targets>
+  </ProjectGroup>
+</CONFIG>

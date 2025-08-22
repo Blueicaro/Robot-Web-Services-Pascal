@@ -6,7 +6,20 @@ interface
 
 uses
   Classes, SysUtils, Rw7abbwstypes, TypInfo,
-  fpjson, abbconexion;
+  fpjson, abbconexion, Fgl;
+
+type
+  TOnSysSystemInfo = procedure(Sender: TObject; Rw7SysSystemInfo: TRw7SysSystemInfo;
+    Status: integer) of object;
+  {
+   Event: Gets task list
+  }
+  TOnTasksList = procedure(Sender: TObject; Rw7SysSystemInfo: TRw7SysSystemInfo;
+    Status: integer) of object;
+
+
+type
+  TTaskList = specialize TFPGObjectList<TTaskItem>;
 
 type
 
@@ -16,10 +29,15 @@ type
   private
     FLocalUrl: string;
     FConexion: TRobotConnection;
+    FOnChanged: TOnSysSystemInfo;
+    FInit: boolean;
+    FTaskList: TTaskList;
+    function SystemInfo: TRw7SysSystemInfo;
   protected
     procedure doMasterShip(Operation: string);
+    procedure FGetSystemInfo;
   public
-    procedure GetListServices(aList: TStringList);
+    procedure GetListServices(aList: TStringList);  //Convertir en función
     procedure GetTasksList(aListItems: TCollection);
     procedure GetTasksList(aListTask: TStringList); overload;
   public
@@ -31,7 +49,6 @@ type
     procedure GetDomainList(aList: TStringList);
     procedure GetDomainDomain(aDomain: string; ListDomain: TStringList);
   public
-
     procedure RequestMastership;
     procedure ReleaseMastership;
     procedure RemoveMastership;
@@ -40,11 +57,10 @@ type
     procedure GetNetWorksList(aList: TStringList);
     procedure GetDevicesList(aListItems: TCollection);
     procedure GetDevicesList(aList: TStringList);
-
     procedure GetSignalsList(aList: TStringList);
     procedure GetSignalsList(aListItems: TRw7IoSignalList);
   public
-    function GetSystemInfo: TRw7SysSystemInfo;
+    procedure GetSystemInfo;
     function GetRobotType: string; //Obtiene el tipo de manipulador
     function GetSystemLicence: string; //Obtiene la licencia del robot
     procedure GetSystemProducts(aListItems: TCollection); //Obtiene la lista de productos
@@ -53,7 +69,11 @@ type
   public
     constructor Create(aRobotConexion: TRobotConnection);
     destructor Destroy; override;
+    procedure AfterConstruction; override;
+    property OnSystemInfo: TOnSysSystemInfo read FOnchanged write FOnChanged;
   end;
+
+
 
 implementation
 
@@ -72,6 +92,11 @@ begin
   begin
     raise TRw7AbbWebServicesError.Create(FConexion.StatusText);
   end;
+end;
+
+procedure TRw7RobotWareService.FGetSystemInfo;
+begin
+
 end;
 
 procedure TRw7RobotWareService.GetListServices(aList: TStringList);
@@ -106,7 +131,8 @@ begin
   end;
   if FConexion.StatusCode = 200 then
   begin
-    GetEmbeddedClassList(FConexion.Respuesta.Text, aListItems, TRw7TaskItem, rap_task_li);
+    GetEmbeddedClassList(FConexion.Respuesta.Text, aListItems,
+      TRw7TaskItem, rap_task_li);
   end;
 
 end;
@@ -144,7 +170,8 @@ begin
 
 end;
 
-procedure TRw7RobotWareService.GetModulesList(TaksName: string; aListModule: TStringList);
+procedure TRw7RobotWareService.GetModulesList(TaksName: string;
+  aListModule: TStringList);
 var
   Lista: TCollection;
   I: integer;
@@ -262,7 +289,8 @@ begin
 
 end;
 
-procedure TRw7RobotWareService.GetDomainDomain(aDomain: string; ListDomain: TStringList);
+procedure TRw7RobotWareService.GetDomainDomain(aDomain: string;
+  ListDomain: TStringList);
 var
   Lista: TListItems;
   I: integer;
@@ -396,7 +424,7 @@ end;
 procedure TRw7RobotWareService.GetSignalsList(aListItems: TRw7IoSignalList);
 var
   Lista: TCollection;
-  cadena: String;
+  cadena: string;
 begin
 
   try
@@ -417,6 +445,18 @@ begin
     end;
   end;
 
+end;
+
+procedure TRw7RobotWareService.GetSystemInfo;
+var
+  Data: TRw7SysSystemInfo;
+begin
+
+  if Assigned(FOnChanged) then
+  begin
+    Data := SystemInfo;
+    Self.FOnChanged(Self, Data, FConexion.StatusCode);
+  end;
 end;
 
 procedure TRw7RobotWareService.GetSignalsList(aList: TStringList);
@@ -441,7 +481,7 @@ begin
 
 end;
 
-function TRw7RobotWareService.GetSystemInfo: TRw7SysSystemInfo;
+function TRw7RobotWareService.SystemInfo: TRw7SysSystemInfo;
 var
   Lista: TCollection;
 begin
@@ -492,7 +532,8 @@ begin
     Lista := TCollection.Create(TRw7RobotTypeItem);
     if FConexion.StatusCode = 200 then
     begin
-      GetStatusClassList(FConexion.Respuesta.Text, Lista, TRw7RobotTypeItem, SYS_ROBOTTYPE);
+      GetStatusClassList(FConexion.Respuesta.Text, Lista, TRw7RobotTypeItem,
+        SYS_ROBOTTYPE);
 
       if Lista.Count = 1 then
       begin
@@ -601,13 +642,19 @@ constructor TRw7RobotWareService.Create(aRobotConexion: TRobotConnection);
 begin
   FConexion := aRobotConexion;
   FLocalUrl := 'rw';
-
+  FTaskList := TTaskList.Create();
 end;
 
 destructor TRw7RobotWareService.Destroy;
 begin
   FConexion := nil;
   inherited Destroy;
+end;
+
+procedure TRw7RobotWareService.AfterConstruction;
+begin
+  FInit := False;
+  inherited AfterConstruction;
 end;
 
 

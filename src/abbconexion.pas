@@ -30,8 +30,11 @@ type
     procedure GenerarCookie;
     procedure CargarCookie;
     procedure PrimeraConexion;
-    procedure SetRobotUrl(Url: string);
+  protected
+
   public
+    function GetUrlRobot: string;
+    procedure SetRobotUrl(Url: string);
     property RobotUrl: string read FRobotUrl write SetRobotUrl;
     property Cookie: TStringList read FCookie write FCookie;
     property StatusCode: integer read FStatusCode;
@@ -250,6 +253,11 @@ begin
   GenerarCookie;
 end;
 
+function TRobotConnection.GetUrlRobot: string;
+begin
+  Result := FRobotUrl;
+end;
+
 
 
 
@@ -381,16 +389,16 @@ end;
 function TRobotConnectionHelper.GetStateName(ItemName: string): string;
 var
   json, dato: TJSONData;
-  I: Integer;
+  I: integer;
   j: TJSONtype;
-  Campo: String;
+  Campo: string;
 begin
   Result := '';
   try
     json := GetJSON(FRespuesta.Text);
     try
       dato := json.GetPath('state');
-      for I := 0 to dato.items[0].count - 1 do
+      for I := 0 to dato.items[0].Count - 1 do
       begin
         j := dato.Items[0].JSONType;
         Campo := TJSONObject(dato.Items[0]).Names[I];
@@ -431,7 +439,8 @@ var
 begin
   Result := '';
   Data := GetJSON(FRespuesta.Text);
-  Result := Data.GetPath('_embedded.resources').items[index].GetPath('_links.self.href').AsString;
+  Result := Data.GetPath('_embedded.resources').items[index].GetPath(
+    '_links.self.href').AsString;
   FreeAndNil(Data);
 end;
 

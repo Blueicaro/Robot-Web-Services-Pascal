@@ -20,6 +20,7 @@ type
     FElogService: TRw7ElogService;
     FFileService: TRw7FileService;
     FRobotWareService: TRw7RobotWareService;
+    function FUrlRobot:String;
   public
     // URL or ip of the robot
     procedure SetRobotUrl(aUrl: string);
@@ -30,8 +31,7 @@ type
     property Controller: TRw7ControllerServices read FController;
     property FileService: TRw7FileService read FFileService;
     property ElogService: TRw7ElogService read FElogService write FElogService;
-
-
+    property UrlRobot:string read FUrlRobot;
   public
     constructor Create;
     constructor Create(aUrlRobot: string; aUser: string = 'Default User';
@@ -45,6 +45,11 @@ implementation
 uses TypInfo;
 
   { TRw7WebServices }
+
+function TRw7WebServices.FUrlRobot: String;
+begin
+  Result := FConection.RobotUrl;
+end;
 
 procedure TRw7WebServices.SetRobotUrl(aUrl: string);
 begin
@@ -66,11 +71,11 @@ end;
 constructor TRw7WebServices.Create;
 begin
   FConection := TRobotConnection.Create;
-
   FRobotWareService := TRw7RobotWareService.Create(FConection);
   FController := TRw7ControllerServices.Create(FConection);
   FFileService := TRw7FileService.Create(FConection);
   FElogService := TRw7ElogService.Create(FConection);
+
 end;
 
 constructor TRw7WebServices.Create(aUrlRobot: string; aUser: string; aPassword: string);

@@ -10,7 +10,25 @@ uses
 type
   TRw7AbbWebServicesError = class(Exception);
 
+  Type TElogDomainItem = class
 
+  end;
+
+  Type TElogDomainList = class
+
+  end;
+  Type TElogMessageList = class
+
+  end;
+
+
+  Type TElogMessageItem = class
+
+  end;
+
+  Type TElogMessageInfo = record
+
+  end;
 
 type
 
@@ -156,7 +174,29 @@ type
 
   { TRw7TaskItem }
 
-  TRw7TaskItem = class(TCollectionItem)
+  TRw7TaskItem = class (TCollectionItem)
+  private
+    Factive: string;
+    Fexcstate: string;
+    Fmotiontask: boolean;
+    fname: string;
+    Ftaskstate: string;
+    Ftitle: string;
+    FTType: string;
+  published
+    property Name: string read fname write fname;
+    property _title: string read Ftitle write Ftitle;
+    property active: string read Factive write Factive;
+    property excstate: string read Fexcstate write Fexcstate;
+    property motiontask: boolean read Fmotiontask write Fmotiontask;
+    property taskstate: string read Ftaskstate write Ftaskstate;
+    property TType: string read FTType write FTType;
+  end;
+
+  type
+
+
+  TTaskItem = class
   private
     Factive: string;
     Fexcstate: string;
@@ -517,6 +557,8 @@ procedure GetEmbeddedClassList(aDatos: string; aListItems: TCollection;
 
 procedure GetStatusClassList(aDatos: string; aListItems: TCollection;
   aItemClass: TCollectionItemClass; TipoLista: string);
+
+//procedure GetStatusClassList(ADatos:string; aItems:TObject
 
 implementation
 

@@ -10,7 +10,7 @@ uses
   SysUtils,
   rw7webservices,
   rw7elogservices,
-  rw7abbwstypes;
+  rw7abbwstypes, robotwaredata;
 
 var
   Robot: TRw7WebServices;
@@ -26,7 +26,7 @@ begin
     Lista := TStringList.Create;
     try
       begin
-        Robot.Connection.PrimeraConexion;
+        //Robot.Connection.PrimeraConexion;
         Robot.RobotWare.GetDomainList(Lista);
         for I := 0 to Lista.Count - 1 do
         begin
